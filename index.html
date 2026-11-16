@@ -1552,7 +1552,7 @@
       <div class="progress-banner">
         <div class="progress-header">
           <span class="progress-title">全体のクリア状況</span>
-          <span class="progress-count" id="progress-summary-count">0 / 27 レッスン</span>
+          <span class="progress-count" id="progress-summary-count">0 / 33 レッスン</span>
         </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progress-summary-bar"></div>
@@ -1778,6 +1778,8 @@
           <button type="button" class="btn-sample" data-sample="=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)" data-sheet="注文">商品名 VLOOKUP</button>
           <button type="button" class="btn-sample" data-sample="=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)" data-sheet="注文">商品名 XLOOKUP</button>
           <button type="button" class="btn-sample" data-sample='=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))' data-sheet="商品">ID検索 INDEX+MATCH</button>
+          <button type="button" class="btn-sample" data-sample='=A2&"さん（"&B2&"）"' data-sheet="顧客">文字結合 &</button>
+          <button type="button" class="btn-sample" data-sample='=TEXT(SUM(D2:D6), "#,##0")&"円"' data-sheet="売上">表示形式 TEXT</button>
         </div>
       </div>
 
@@ -1860,7 +1862,7 @@
       </div>
       <div class="modal-badge" id="modal-clear-badge">🎉 STAGE CLEAR!</div>
       <h2 class="modal-title" id="modal-stage-title">プロローグ クリア！</h2>
-      <div class="modal-stats" id="modal-stage-stats">全27レッスン中 5レッスン クリア</div>
+      <div class="modal-stats" id="modal-stage-stats">全33レッスン中 5レッスン クリア</div>
       <div class="modal-message" id="modal-stage-message">
         まるもち：「お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！」
       </div>
@@ -1974,9 +1976,9 @@
       {
         id: 'stage-4',
         num: '4',
-        title: 'Stage 4：文字列の操作',
-        desc: '文字をくっつけたり、左から取り出したり自由自在',
-        locked: true
+        title: 'Stage 4：文字列と日付',
+        desc: '文字の結合・切り出し・TEXT関数・日付の計算をマスターしよう',
+        locked: false
       },
       {
         id: 'stage-5',
@@ -2759,6 +2761,201 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           '「=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))」と入力してみてね！'
         ],
         afterNote: 'お見事！ID列が右側にあっても見事に「たろう」さんを名寄せできたね！VLOOKUP・XLOOKUP・INDEX+MATCHを使い分けられれば、Excelの表照合は完全制覇だよ！Stage 3完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 4：文字列と日付 (6レッスン) ---
+      {
+        id: 's4-01',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 1/6',
+        title: '& で文字をつなぐ',
+        subtitle: '文字列の結合（アンパサンド）',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `文字と文字を合体させたいときは、半角の**「&（アンパサンド）」**を使うよ！<br><br>
+セルとセルをつなぐだけでなく、直接文字を挟むこともできるんだ。<br>
+数式の中で直接文字を書くときは、必ず**半角の「" "（ダブルクォーテーション）」**で囲むのがExcelのルールだよ！<br><br>
+・<code>=A2 & B2</code> ➔ 「さくら関東」<br>
+・<code>=A2 & "さん"</code> ➔ 「さくらさん」<br>
+・<code>=A2 & "さん（" & B2 & "）"</code> ➔ 「さくらさん（関東）」<br><br>
+顧客名簿から送信用ラベルを作ったり、敬称の「様」を付けたり、実務で毎日使う超基本ワザだよ！`,
+        example: {
+          label: '顧客名に「様」をつけてつなぐ',
+          formula: '=A2&"様"',
+          desc: 'A2セル（さくら）の後ろに「様」をつなげるよ',
+          result: 'さくら様'
+        },
+        question: '顧客シート2行目の名前（A2: さくら）と地域（B2: 関東）を「&」でつないで、「さくらさん（関東）」と表示してみよう！（答えは「さくらさん（関東）」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 'さくらさん（関東）',
+        modelFormula: '=A2&"さん（"&B2&"）"',
+        hints: [
+          'セルどうしをつなぐときは「&」を使うよ。',
+          '直接文字を挟むときは「"さん（"」のようにダブルクォーテーションで囲んで「&」で前後のセルとつなぐよ。',
+          '「=A2&"さん（"&B2&"）"」と入力してみてね！'
+        ],
+        afterNote: '大正解！「&」を使えば、別々の列のデータを組み合わせて見やすい表示が自由自在に作れるよ！'
+      },
+      {
+        id: 's4-02',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 2/6',
+        title: '文字を取り出す（LEFT / RIGHT / MID）',
+        subtitle: '左・右・途中から指定文字数を切り出す',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `長い文字列の中から「左から○文字」「右から○文字」「途中から○文字」を取り出す関数が3兄弟だよ！<br><br>
+・<strong>LEFT(セル, 文字数)</strong>：左（先頭）から取り出す（例: <code>=LEFT(C2, 6)</code> ➔ sakura）<br>
+・<strong>RIGHT(セル, 文字数)</strong>：右（末尾）から取り出す（例: <code>=RIGHT(C2, 11)</code> ➔ example.com）<br>
+・<strong>MID(セル, 開始位置, 文字数)</strong>：途中から取り出す（例: <code>=MID(C2, 8, 7)</code> ➔ example ※8文字目から7文字分）<br><br>
+郵便番号の先頭3桁だけ抜き出したり、メールのドメインを取り出すときに大活躍するよ！`,
+        example: {
+          label: 'メールアドレスからユーザー名（左6文字）を取り出す',
+          formula: '=LEFT(C2, 6)',
+          desc: 'C2セル（sakura@example.com）の左端から6文字を抜き出すよ',
+          result: 'sakura'
+        },
+        question: '顧客シート2行目のメールアドレス（C2: sakura@example.com）から、RIGHT関数を使って右側のドメイン部分「example.com」（11文字）を取り出してみよう！（答えは「example.com」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 'example.com',
+        modelFormula: '=RIGHT(C2, 11)',
+        hints: [
+          '右端から文字を取り出すときは「RIGHT(セル, 文字数)」を使うよ。',
+          'セルは「C2」、取り出す文字数は「11」文字だよ。',
+          '「=RIGHT(C2, 11)」と入力してみてね！'
+        ],
+        afterNote: '完璧！RIGHT関数で右から11文字のドメイン部分をきれいに抜き出せたね！LEFTやMIDと合わせて覚えれば文字の切り出しは自由自在だよ！'
+      },
+      {
+        id: 's4-03',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 3/6',
+        title: '文字を整える（LEN / TRIM / SUBSTITUTE）',
+        subtitle: '文字数を数える・空白削除・文字列の置換',
+        type: 'calc',
+        sheet: '売上',
+        explain: `実務のデータ整理・お掃除（データクレンジング）で必須の3大関数だよ！<br><br>
+・<strong>LEN(セル)</strong>：文字数を数える（例: <code>=LEN(B6)</code> ➔ 13）<br>
+・<strong>TRIM(セル)</strong>：先頭や末尾の余計な半角空白（スペース）を削除（例: <code>=TRIM(" まるもち ")</code> ➔ 「まるもち」）<br>
+・<strong>SUBSTITUTE(セル, "検索文字", "置換文字")</strong>：文字を別の文字に置き換える（消したいときは <code>""</code> を指定）<br><br>
+表記ゆれの統一や不要な記号の除去に欠かせない頼れる関数たちだよ！`,
+        example: {
+          label: 'スタンプ名の文字数を数える',
+          formula: '=LEN(B6)',
+          desc: 'B6セル（あけおめ！まるもち2027）の文字数をカウントするよ',
+          result: 13
+        },
+        question: '売上シート6行目のスタンプ名（B6: あけおめ！まるもち2027）から、SUBSTITUTE関数を使って「！」を取り除いてみよう！（答えは「あけおめまるもち2027」）',
+        targetCell: { col: 4, row: 5, label: 'E6' },
+        answerCell: 'E6',
+        expectedValue: 'あけおめまるもち2027',
+        modelFormula: '=SUBSTITUTE(B6, "！", "")',
+        hints: [
+          '文字の置換は「SUBSTITUTE(対象セル, "古い文字", "新しい文字")」だよ。',
+          '文字を取り除く（消す）ときは、新しい文字に空文字「""」を指定するよ。古い文字は全角の「"！"」だよ。',
+          '「=SUBSTITUTE(B6, "！", "")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！「！」が消えてきれいな文字になったね！全角・半角スペースやハイフンの削除など、データ整備で一番よく使われる関数だよ！'
+      },
+      {
+        id: 's4-04',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 4/6',
+        title: '表示形式を整える（TEXT関数）',
+        subtitle: '数字や日付を好きな形式の文字列に変換',
+        type: 'calc',
+        sheet: '売上',
+        explain: `計算結果の数字をそのまま「&」で文字とつなぐと、「1390円」のようにカンマが消えてしまいます。<br>
+そんなときは**TEXT（テキスト）関数**の出番！数字に3桁カンマや日付フォーマットを適用して文字列にしてくれるよ！<br><br>
+**書き方：<code>=TEXT(値, "表示形式")</code>**<br>
+・3桁カンマ区切り：<code>=TEXT(SUM(D2:D6), "#,##0") & "円"</code> ➔ 「1,390円」<br>
+・日付を日本語形式にする：<code>=TEXT(A2, "yyyy年m月d日")</code> ➔ 「2026年11月6日」<br><br>
+報告書やメッセージ作成で、綺麗な書式を自動生成するときの定番テクニックだよ！`,
+        example: {
+          label: '売上合計を3桁カンマ区切りにする',
+          formula: '=TEXT(SUM(D2:D6), "#,##0")',
+          desc: 'SUMで合計した1390を3桁カンマ付きの「1,390」に変換するよ',
+          result: '1,390'
+        },
+        question: '売上シートの売上金額の合計（SUM(D2:D6)）を、TEXT関数を使って3桁区切りの「1,390円」の形で表示してみよう！（答えは「1,390円」）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        answerCell: 'D7',
+        expectedValue: '1,390円',
+        modelFormula: '=TEXT(SUM(D2:D6), "#,##0")&"円"',
+        hints: [
+          '「TEXT(計算式, "#,##0")」で3桁カンマ区切りの文字列になるよ。',
+          '計算式には金額の合計「SUM(D2:D6)」を入れ、後ろに「&"円"」をつなげよう。',
+          '「=TEXT(SUM(D2:D6), "#,##0")&"円"」と入力してみてね！'
+        ],
+        afterNote: 'すばらしい！3桁カンマのついた「1,390円」が綺麗に作れたね！「#,##0」はExcelで一番よく使う表示形式の書き方だよ！'
+      },
+      {
+        id: 's4-05',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 5/6',
+        title: '日付から年月を取り出す（YEAR / MONTH / DAY）',
+        subtitle: '日付から年・月・日を個別に取り出す＆DATE関数',
+        type: 'calc',
+        sheet: '売上',
+        explain: `日付データから「年」「月」「日」を個別に取り出したいときは、この3つの関数を使うよ！<br><br>
+・<strong>YEAR(日付セル)</strong>：年を取り出す（例: <code>=YEAR(A2)</code> ➔ 2026）<br>
+・<strong>MONTH(日付セル)</strong>：月を取り出す（例: <code>=MONTH(A2)</code> ➔ 11）<br>
+・<strong>DAY(日付セル)</strong>：日を取り出す（例: <code>=DAY(A2)</code> ➔ 6）<br><br>
+逆に、年・月・日の数字から日付を作るときは <strong>DATE(年, 月, 日)</strong> を使うよ。<br>
+（例: <code>=DATE(2026, 11, 6)</code>）<br>
+月別の売上集計をしたいときに、MONTH関数で「月」の列を作っておくとSUMIFで簡単に集計できるようになるよ！`,
+        example: {
+          label: '日付から「年」を取り出す',
+          formula: '=YEAR(A2)',
+          desc: 'A2セル（2026-11-06）から年の「2026」を取り出すよ',
+          result: 2026
+        },
+        question: '売上シート2行目の日付（A2: 2026-11-06）から、MONTH関数を使って「月」を取り出してみよう！（答えは 11）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 11,
+        modelFormula: '=MONTH(A2)',
+        hints: [
+          '日付から月を取り出す関数は「MONTH」だよ。',
+          'カッコの中に対象のセル「A2」を指定しよう。',
+          '「=MONTH(A2)」と入力してみてね！'
+        ],
+        afterNote: '大正解！見事に「11」月が取り出せたね！YEAR・MONTH・DAYを使い分ければ、月別集計や年別集計が驚くほど簡単になるよ！'
+      },
+      {
+        id: 's4-06',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 6/6',
+        title: '日付を計算する',
+        subtitle: '日付の引き算・経過日数・月末（EOMONTH）',
+        type: 'calc',
+        sheet: '売上',
+        explain: `Excelの中では、日付は**「1900年1月1日からの通算日数（シリアル値）」**という数字で管理されています。<br>
+1日につき「1」増えるだけなので、**日付どうしはそのまま足し算・引き算ができる**んです！<br><br>
+・日数の差（引き算）：<code>=新しい日付 - 古い日付</code><br>
+　例: <code>=A6 - A2</code> ➔ 「11/12」引く「11/6」で **6日間** の差！<br>
+・7日後（足し算）：<code>=A2 + 7</code> ➔ 7日後の日付<br>
+・月末を求める：<strong>EOMONTH(開始日, 0)</strong> ➔ 当月の末日（End of Monthの略）<br><br>
+締め切りまでの残り日数や、納品予定日の計算など、実務で毎日大活躍する感覚だよ！`,
+        example: {
+          label: '2日目（A3）と初日（A2）の日数の差を引く',
+          formula: '=A3-A2',
+          desc: '2026-11-08 から 2026-11-06 を引き算して日数の差（2日）を計算するよ',
+          result: 2
+        },
+        question: '売上シートの最後の売上日（A6: 2026-11-12）から最初の売上日（A2: 2026-11-06）を引き算して、何日間のデータがあるか日数の差を求めてみよう！（答えは 6）',
+        targetCell: { col: 4, row: 5, label: 'E6' },
+        answerCell: 'E6',
+        expectedValue: 6,
+        modelFormula: '=A6-A2',
+        hints: [
+          'Excelでは日付どうしを「-」で引き算するだけで日数の差が求められるよ。',
+          '最後の売上日は「A6」、最初の売上日は「A2」だよ。',
+          '「=A6-A2」と入力してみてね！'
+        ],
+        afterNote: '完璧！「=A6-A2」で日数の差（6日間）を計算できたね！日付が「ただの数字（日数）」として引き算できる感覚をつかめば、スケジュール管理もバッチリだよ！Stage 4制覇おめでとう！🎉'
       }
     ];
 
@@ -2786,6 +2983,10 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           }
           if (Array.isArray(parsed.celebratedStages)) {
             appState.celebratedStages = parsed.celebratedStages;
+            // 新レッスンが追加されて全クリア状態でなくなっていれば 'all_clear' を外して再度祝えるようにする
+            if (!isAllImplementedLessonsCompleted()) {
+              appState.celebratedStages = appState.celebratedStages.filter(s => s !== 'all_clear');
+            }
           }
         }
       } catch (e) {
@@ -2945,7 +3146,8 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           '商品': productsData,
           '注文': ordersData
         }, {
-          licenseKey: 'gpl-v3'
+          licenseKey: 'gpl-v3',
+          dateFormats: ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']
         });
 
         const targetSheetId = hf.getSheetId(sheetName) !== undefined ? hf.getSheetId(sheetName) : 0;
@@ -2973,9 +3175,15 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           };
         }
 
+        let processedVal = rawVal;
+        // HyperFormulaのTEXT関数のカンマ区切り補助（#,##0 など）
+        if (typeof processedVal === 'string') {
+          processedVal = processedVal.replace(/(\d+),(?:##0|###)/g, (_, n) => Number(n).toLocaleString('en-US'));
+        }
+
         return {
           success: true,
-          value: rawVal
+          value: processedVal
         };
 
       } catch (err) {
@@ -3688,6 +3896,8 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
         mochiMsg = 'Stage 2 制覇！IF・IFSやCOUNTIF・SUMIFなど、条件に応じた計算を完全マスターしたね！';
       } else if (stage.id === 'stage-3') {
         mochiMsg = 'Stage 3 制覇！VLOOKUPやXLOOKUP、INDEX+MATCHまで表の検索と名寄せを完全マスターしたね！';
+      } else if (stage.id === 'stage-4') {
+        mochiMsg = 'Stage 4 制覇！文字列の操作や日付の計算までExcelの実務スキルを完全マスターしたね！';
       }
 
       if (badgeEl) badgeEl.textContent = '🎉 STAGE CLEAR!';
