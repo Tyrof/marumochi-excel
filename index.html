@@ -3194,7 +3194,7 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
 
         const inputEl = document.getElementById('lesson-formula-input');
         inputEl.value = lesson.defaultFormula || '=';
-        setTimeout(() => inputEl.focus(), 150);
+        // レッスン開始時は解説とタイトルを先頭で読めるよう、入力欄への自動フォーカスは行わない
       }
 
       // ヒントのリセット
@@ -3203,8 +3203,11 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       // まるもちの案内
       setMarumochi(`「${lesson.title}」へようこそ！解説を読んだら問題にチャレンジしてみてね！🍡`, 'normal');
 
-      // 画面切り替え
+      // 画面切り替え & レッスン画面最上部へスクロール
       switchView('lesson');
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }
 
     // 選択肢問題のレンダリング (プロローグ)
@@ -3732,7 +3735,9 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       document.getElementById('nav-btn-home').classList.toggle('active', viewName === 'home');
       document.getElementById('nav-btn-playground').classList.toggle('active', viewName === 'playground');
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
 
       if (viewName === 'home') {
         renderHomeView();
