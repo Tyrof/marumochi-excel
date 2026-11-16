@@ -1552,7 +1552,7 @@
       <div class="progress-banner">
         <div class="progress-header">
           <span class="progress-title">全体のクリア状況</span>
-          <span class="progress-count" id="progress-summary-count">0 / 33 レッスン</span>
+          <span class="progress-count" id="progress-summary-count">0 / 39 レッスン</span>
         </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progress-summary-bar"></div>
@@ -1780,6 +1780,8 @@
           <button type="button" class="btn-sample" data-sample='=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))' data-sheet="商品">ID検索 INDEX+MATCH</button>
           <button type="button" class="btn-sample" data-sample='=A2&"さん（"&B2&"）"' data-sheet="顧客">文字結合 &</button>
           <button type="button" class="btn-sample" data-sample='=TEXT(SUM(D2:D6), "#,##0")&"円"' data-sheet="売上">表示形式 TEXT</button>
+          <button type="button" class="btn-sample" data-sample='=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")' data-sheet="売上">複数条件 COUNTIFS</button>
+          <button type="button" class="btn-sample" data-sample='=AVERAGEIFS(D2:D6, C2:C6, ">=1")' data-sheet="売上">売上平均 AVERAGEIFS</button>
         </div>
       </div>
 
@@ -1862,7 +1864,7 @@
       </div>
       <div class="modal-badge" id="modal-clear-badge">🎉 STAGE CLEAR!</div>
       <h2 class="modal-title" id="modal-stage-title">プロローグ クリア！</h2>
-      <div class="modal-stats" id="modal-stage-stats">全33レッスン中 5レッスン クリア</div>
+      <div class="modal-stats" id="modal-stage-stats">全39レッスン中 5レッスン クリア</div>
       <div class="modal-message" id="modal-stage-message">
         まるもち：「お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！」
       </div>
@@ -1983,9 +1985,9 @@
       {
         id: 'stage-5',
         num: '5',
-        title: 'Stage 5：日付と時刻',
-        desc: '今日の日付、あと何日？期限や勤続年数を自動計算',
-        locked: true
+        title: 'Stage 5：複数条件と実務集計',
+        desc: 'COUNTIFS・SUMIFS・SUMPRODUCT・MAXIFS・AVERAGEIFSで高度な実務集計',
+        locked: false
       },
       {
         id: 'stage-6',
@@ -2956,6 +2958,206 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           '「=A6-A2」と入力してみてね！'
         ],
         afterNote: '完璧！「=A6-A2」で日数の差（6日間）を計算できたね！日付が「ただの数字（日数）」として引き算できる感覚をつかめば、スケジュール管理もバッチリだよ！Stage 4制覇おめでとう！🎉'
+      },
+
+      // --- Stage 5：複数条件と実務集計 (6レッスン) ---
+      {
+        id: 's5-01',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 1/6',
+        title: '複数条件で数える（COUNTIFS）',
+        subtitle: 'AND条件で指定した複数の条件に当てはまる行をカウント',
+        type: 'calc',
+        sheet: '売上',
+        explain: `Stage 2で学んだ COUNTIF は「条件1つ」でしたが、実務では「AかつB」と複数条件で数えたい場面が山ほどあります。<br>
+そんなときに使うのが末尾に「S」がついた**COUNTIFS（カウント・イフ・エス）関数**！<br><br>
+**書き方：<code>=COUNTIFS(範囲1, 条件1, 範囲2, 条件2, ...)</code>**<br>
+条件をペアにして後ろに並べるだけで、すべてを満たす行（AND条件）を自動で数えてくれます。<br>
+例: <code>=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")</code> ➔ スタンプ名が「癒しのまるもち」かつ個数が2個以上の行（行3と行5の2件）<br><br>
+「関東在住かつ会員登録あり」のように、顧客の絞り込みやアンケート集計で大活躍するよ！`,
+        example: {
+          label: '「癒しのまるもち」かつ個数1の行を数える',
+          formula: '=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, 1)',
+          desc: 'B列が「癒しのまるもち」かつC列が1個の行をカウントするよ',
+          result: 1
+        },
+        question: '売上シートから「スタンプ名（B2:B6）が『癒しのまるもち』で、かつ個数（C2:C6）が2以上（>=2）」の行が何件あるか、COUNTIFS関数を使って数えてみよう！（答えは 2）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 2,
+        modelFormula: '=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")',
+        hints: [
+          '書き方は「=COUNTIFS(範囲1, 条件1, 範囲2, 条件2)」だよ。',
+          '範囲1はB2:B6、条件1は"癒しのまるもち"、範囲2はC2:C6、条件2は">=2"だよ。',
+          '「=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")」と入力してみてね！'
+        ],
+        afterNote: '大正解！条件を2つ並べて、条件にピッタリ合う「2件」を正確にカウントできたね！3つ以上の条件も同じように後ろにつなげていけるよ！'
+      },
+      {
+        id: 's5-02',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 2/6',
+        title: '複数条件で合計する（SUMIFS）',
+        subtitle: '合計範囲が先頭にくる順番に注意しよう',
+        type: 'calc',
+        sheet: '売上',
+        explain: `複数条件を満たす行だけ合計したいときは**SUMIFS（サム・イフ・エス）関数**を使うよ！<br><br>
+⚠️ **超重要ポイント：引数の順番に注意！**<br>
+単数条件のSUMIFは「条件範囲 ➔ 条件 ➔ 合計範囲」でしたが、<br>
+複数条件のSUMIFSは**「合計範囲」が一番最初**に来ます！<br><br>
+**書き方：<code>=SUMIFS(合計範囲, 条件範囲1, 条件1, 条件範囲2, 条件2, ...)</code>**<br>
+・金額を合計したいなら、まず先頭に <code>D2:D6</code><br>
+・その後ろに条件ペア <code>B2:B6, "癒しのまるもち", C2:C6, ">=2"</code> と続けます。<br><br>
+「合計したい列を真っ先に指定する」と覚えておけば迷わないよ！`,
+        example: {
+          label: '「癒しのまるもち」で個数1の金額合計',
+          formula: '=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, 1)',
+          desc: '合計範囲D2:D6を先頭に、条件を並べて合計するよ',
+          result: 190
+        },
+        question: '売上シートから「スタンプ名が『癒しのまるもち』で、かつ個数が2以上」の行だけ、売上金額（D2:D6）を合計してみよう！（行3の380円と行5の570円で、答えは 950）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 950,
+        modelFormula: '=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")',
+        hints: [
+          'SUMIFSは「合計範囲」を先頭に書くよ！合計したいのは金額（D2:D6）だよ。',
+          '「=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")」の順で指定しよう。',
+          '「=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！合計範囲を先頭に書く順番をバッチリ押さえて「950」円を算出できたね！実務の売上レポート作成で最も信頼される関数の1つだよ！'
+      },
+      {
+        id: 's5-03',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 3/6',
+        title: '配列の掛け算合計（SUMPRODUCT入門）',
+        subtitle: '条件判定（TRUE/FALSE）× 金額の掛け算で集計',
+        type: 'calc',
+        sheet: '売上',
+        explain: `**SUMPRODUCT（サム・プロダクト）**は、「対応する要素を掛け算して、その合計を出す」関数です。<br>
+単なる個数×単価の計算だけでなく、実務では**「条件判定×数値」の強力な集計ツール**として大活躍します！<br><br>
+例えば <code>(B2:B6="癒しのまるもち")*D2:D6</code> と書くと：<br>
+・条件が一致する行は <code>TRUE(1)</code>、違う行は <code>FALSE(0)</code> になる<br>
+・<code>1 × 金額</code> はそのまま金額になり、<code>0 × 金額</code> はゼロになる！<br>
+・それをすべて合計すると、Stage 2で学んだSUMIFとまったく同じ「1,140円」になるんだ！<br><br>
+この「条件を掛け算する配列計算」の感覚が身につくと、Excel上級者への階段を一気に駆け上がれるよ！`,
+        example: {
+          label: '個数（C列）と単価（仮に全品190円）の掛け算合計',
+          formula: '=SUMPRODUCT(C2:C6*190)',
+          desc: '個数の配列に190を掛けた合計（7個×190=1330）を計算するよ',
+          result: 1330
+        },
+        question: '売上シートで、SUMPRODUCT関数を使って「スタンプ名が『癒しのまるもち』」の行の売上金額（D2:D6）を合計してみよう！（SUMIFと同じ答え 1140）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 1140,
+        modelFormula: '=SUMPRODUCT((B2:B6="癒しのまるもち")*D2:D6)',
+        hints: [
+          '「(条件)*合計範囲」の掛け算をSUMPRODUCTのカッコの中に入れよう。',
+          '条件は「(B2:B6="癒しのまるもち")」、金額範囲は「D2:D6」だよ。掛け算記号「*」でつなごう。',
+          '「=SUMPRODUCT((B2:B6="癒しのまるもち")*D2:D6)」と入力してみてね！'
+        ],
+        afterNote: 'すばらしい！「条件が合えば1、違えば0」を掛けて足し合わせる配列計算の仕組みを体感できたね！SUMIFでは書けない複雑な複数条件の集計でも重宝される奥義だよ！'
+      },
+      {
+        id: 's5-04',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 4/6',
+        title: '条件付きの最大・最小（MAXIFS / MINIFS）',
+        subtitle: '指定条件に合うデータの中から最大値・最小値を抽出',
+        type: 'calc',
+        sheet: '売上',
+        explain: `「ある商品の中での最高売上」や「特定部署の中での最低点数」を求めたいときに使うのが**MAXIFS（マックス・イフ・エス）**と**MINIFS（ミニ・イフ・エス）**です！<br><br>
+SUMIFSと同じで、**「調べたい数値の範囲」が先頭**に来ます。<br>
+**書き方：<code>=MAXIFS(最大値範囲, 条件範囲, 条件)</code>**<br>
+・最大値を求める：<code>=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")</code> ➔ 570<br>
+・最小値を求める：<code>=MINIFS(D2:D6, B2:B6, "癒しのまるもち")</code> ➔ 190<br><br>
+フィルターを手動でかけて探す手間がなくなり、瞬時にトップやワーストの数値を把握できるよ！`,
+        example: {
+          label: '「癒しのまるもち」の最小売上金額を求める（MINIFS）',
+          formula: '=MINIFS(D2:D6, B2:B6, "癒しのまるもち")',
+          desc: 'B列が癒しのまるもちの中で最も小さい金額（190）を抽出するよ',
+          result: 190
+        },
+        question: '売上シートから、スタンプ名（B2:B6）が「癒しのまるもち」の行の中で、一番大きい売上金額（D2:D6）をMAXIFS関数で求めてみよう！（答えは 570）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 570,
+        modelFormula: '=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")',
+        hints: [
+          '最大値を調べる範囲（D2:D6）を先頭に書くよ。',
+          '後ろに条件範囲「B2:B6」、探す条件「"癒しのまるもち"」を指定しよう。',
+          '「=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")」と入力してみてね！'
+        ],
+        afterNote: '完璧！MAXIFSで「癒しのまるもち」の最高売上570円を瞬時に取り出せたね！最小値を調べたいときは関数名を「MINIFS」に変えるだけでOKだよ！'
+      },
+      {
+        id: 's5-05',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 5/6',
+        title: '重複データのチェック',
+        subtitle: 'COUNTIFと絶対参照で2回目以降の重複を発見する',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `名簿や売上データに「同じ人が2回登録されていないか？」を調べるのは実務の最頻出タスクです！<br><br>
+まずは表全体の中で名前が何件あるかを数える基本：<br>
+<code>=COUNTIF(A2:A7, "さくら")</code> ➔ 2件あるので「重複あり」と分かります。<br><br>
+💡 **実務のプロワザ：範囲の始点を「$」で固定する！**<br>
+各行の横に <code>=COUNTIF($A$2:A2, A2)</code> と書いて下へコピーしていくと…<br>
+・1回目の登場では <code>1</code> になる<br>
+・2回目以降の登場では <code>2</code> や <code>3</code> になる！<br>
+「2以上の行＝重複データ」と一目で判定できる、現場で重宝される超名作テクニックだよ！`,
+        example: {
+          label: '顧客リストの先頭行（A2）での登場回数を調べる',
+          formula: '=COUNTIF($A$2:A2, A2)',
+          desc: '先頭A$2を固定して数えるプロ技。1回目の出現なので結果は1になるよ',
+          result: 1
+        },
+        question: '顧客シートの名前一覧（A2:A7）の中に、名前「さくら」が全部で何件登録されているか、COUNTIF関数で数えてみよう！（答えは 2）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 2,
+        modelFormula: '=COUNTIF(A2:A7, "さくら")',
+        hints: [
+          '範囲内の特定の文字を数えるのは「COUNTIF(範囲, 検索条件)」だよ。',
+          '範囲は名簿の名前列「A2:A7」、探す文字は「"さくら"」だよ。',
+          '「=COUNTIF(A2:A7, "さくら")」と入力してみてね！'
+        ],
+        afterNote: '大正解！名簿の中に「さくら」さんが2件あることが確認できたね！「$A$2:A2」のように始点をピン留めして上から伸ばしていくテクニックもぜひ現場で使ってみてね！'
+      },
+      {
+        id: 's5-06',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 6/6',
+        title: '実務集計の総合問題（AVERAGEIFS）',
+        subtitle: '売れた行（個数1以上）だけを対象にした平均金額の算出',
+        type: 'calc',
+        sheet: '売上',
+        explain: `実務のデータ分析では「0個（未売上）のデータも含めて平均すると、平均値が不当に下がってしまう」という問題がよく起きます。<br>
+そんなときは**AVERAGEIFS（アベレージ・イフ・エス）関数**で「売れた行（個数が1以上）だけ」を対象に平均を求めましょう！<br><br>
+SUMIFSと同じく、**「平均したい数値の範囲」を先頭**に書きます。<br>
+**書き方：<code>=AVERAGEIFS(平均範囲, 条件範囲, ">=1")</code>**<br>
+・売上金額 D2:D6 のうち、個数が1以上の行（行2〜5の4件）だけを集計<br>
+・合計1,390円 ÷ 4件 ＝ **347.5円**！<br><br>
+条件を絞り込んで正確な分析数値を導き出す、実務集計の総仕上げ問題だよ！`,
+        example: {
+          label: '「癒しのまるもち」だけの平均金額を求める',
+          formula: '=AVERAGEIFS(D2:D6, B2:B6, "癒しのまるもち")',
+          desc: '癒しのまるもち3件の金額（190, 380, 570）の平均（380）を計算するよ',
+          result: 380
+        },
+        question: '売上シートから「売れた行（個数C2:C6が1以上：">=1"）だけ」を対象にして、売上金額（D2:D6）の平均値をAVERAGEIFS関数で求めてみよう！（答えは 347.5）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 347.5,
+        modelFormula: '=AVERAGEIFS(D2:D6, C2:C6, ">=1")',
+        hints: [
+          '平均範囲は金額「D2:D6」だよ。これを先頭に書こう。',
+          '条件範囲は個数「C2:C6」、条件は「">=1"」だよ。',
+          '「=AVERAGEIFS(D2:D6, C2:C6, ">=1")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！個数0の行を除外して正確な平均値「347.5」を算出できたね！複数条件のCOUNTIFS・SUMIFS・MAXIFS・AVERAGEIFS、そして配列計算のSUMPRODUCTまでマスターすれば、実務の集計業務はもうプロ級だよ！Stage 5完全制覇おめでとう！🎉'
       }
     ];
 
@@ -3074,7 +3276,7 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       };
     }
 
-    // HyperFormula用の数式正規化（日本語シート名のクォート処理およびTRUE/FALSEの補正）
+    // HyperFormula用の数式正規化（日本語シート名のクォート処理およびTRUE/FALSE、AVERAGEIFSの補正）
     function normalizeFormulaForHyperFormula(formula) {
       if (!formula) return '';
       // 1. 日本語シート名のクォート処理（商品! ➔ '商品'!、顧客! ➔ '顧客'! など）
@@ -3091,7 +3293,86 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           .replace(/\bTRUE\b(?!\s*\()/gi, 'TRUE()')
           .replace(/\bFALSE\b(?!\s*\()/gi, 'FALSE()');
       }
-      return parts.join('');
+      formula = parts.join('');
+
+      // 3. AVERAGEIFS の補正（HyperFormula に AVERAGEIFS が未搭載のため、同等の SUMIFS(...) / COUNTIFS(...) に変換）
+      formula = formula.replace(/\bAVERAGEIFS\s*\(([^()]+)\)/gi, (_, argsStr) => {
+        const args = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < argsStr.length; i++) {
+          const ch = argsStr[i];
+          if (ch === '"') {
+            inQuotes = !inQuotes;
+            cur += ch;
+          } else if (ch === ',' && !inQuotes) {
+            args.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        if (cur.trim()) args.push(cur.trim());
+        if (args.length < 3) return `AVERAGEIFS(${argsStr})`;
+        const sumifsArgs = args.join(', ');
+        const countifsArgs = args.slice(1).join(', ');
+        return `(SUMIFS(${sumifsArgs}) / COUNTIFS(${countifsArgs}))`;
+      });
+
+      return formula;
+    }
+
+    // SUMPRODUCT の配列掛け算合計評価関数（HyperFormulaの配列積和未対応を補正）
+    function evaluateSumproduct(formula, sheetData) {
+      const match = formula.match(/SUMPRODUCT\s*\(([\s\S]+)\)/i);
+      if (!match) return null;
+      const inner = match[1].trim();
+      const rangeMatches = [...inner.matchAll(/(?:'?[^'!]+'?!)?([A-Z]+)(\d+):(?:'?[^'!]+'?!)?([A-Z]+)(\d+)/gi)];
+      if (rangeMatches.length === 0) return null;
+
+      let minRow = Infinity;
+      let maxRow = -Infinity;
+      for (const m of rangeMatches) {
+        minRow = Math.min(minRow, parseInt(m[2], 10), parseInt(m[4], 10));
+        maxRow = Math.max(maxRow, parseInt(m[2], 10), parseInt(m[4], 10));
+      }
+
+      let totalSum = 0;
+      for (let r = minRow; r <= maxRow; r++) {
+        let rowExpr = inner;
+        for (const m of rangeMatches) {
+          const fullRange = m[0];
+          const colLetter = m[1];
+          rowExpr = rowExpr.split(fullRange).join(colLetter + r);
+        }
+
+        const evaluatedRow = rowExpr.replace(/(?:'?[^'!]+'?!)?([A-Z]+)(\d+)/gi, (cell, colStr, rowNum) => {
+          const c = colStr.toUpperCase().charCodeAt(0) - 65;
+          const rIdx = parseInt(rowNum, 10) - 1;
+          const cellVal = (sheetData[rIdx] && sheetData[rIdx][c] !== undefined) ? sheetData[rIdx][c] : 0;
+          if (typeof cellVal === 'string') {
+            return JSON.stringify(cellVal);
+          }
+          return Number(cellVal) || 0;
+        });
+
+        let jsExpr = evaluatedRow
+          .replace(/<>/g, '!==')
+          .replace(/<=/g, '<=')
+          .replace(/>=/g, '>=')
+          .replace(/(?<![<>=!])=(?!=)/g, '===')
+          .replace(/--/g, '+')
+          .replace(/,/g, '*');
+
+        try {
+          const rowVal = Function('"use strict"; return (' + jsExpr + ')')();
+          totalSum += Number(rowVal) || 0;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      return totalSum;
     }
 
     // HyperFormula を使って指定セルで数式を評価する
@@ -3128,6 +3409,17 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
         };
 
         const activeData = sheetsMap[sheetName] || salesData;
+
+        // SUMPRODUCT の配列計算補正（HyperFormula では配列引数の積和が未対応のため独自計算）
+        if (/SUMPRODUCT\s*\(/i.test(normalized)) {
+          const spVal = evaluateSumproduct(normalized, activeData);
+          if (spVal !== null) {
+            return {
+              success: true,
+              value: spVal
+            };
+          }
+        }
 
         // ターゲットセルが入るように配列を行・列方向に拡張
         while (activeData.length <= targetRow) {
@@ -3898,6 +4190,8 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
         mochiMsg = 'Stage 3 制覇！VLOOKUPやXLOOKUP、INDEX+MATCHまで表の検索と名寄せを完全マスターしたね！';
       } else if (stage.id === 'stage-4') {
         mochiMsg = 'Stage 4 制覇！文字列の操作や日付の計算までExcelの実務スキルを完全マスターしたね！';
+      } else if (stage.id === 'stage-5') {
+        mochiMsg = 'Stage 5 制覇！複数条件の集計やSUMPRODUCT、重複チェックまで高度な実務ワザを完全マスターしたね！';
       }
 
       if (badgeEl) badgeEl.textContent = '🎉 STAGE CLEAR!';
