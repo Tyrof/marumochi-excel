@@ -1153,6 +1153,158 @@
       pointer-events: none;
       z-index: 9999;
     }
+
+    /* S0-04 Copy Demo Styles */
+    .demo-card {
+      background: #ffffff;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .demo-header-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      background: var(--bg-sub);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+    .demo-tab-btn {
+      flex: 1;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--primary-green-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .demo-tab-btn.active {
+      background: var(--primary-green);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25);
+    }
+    .demo-info-banner {
+      background: #f4faf5;
+      border-left: 3.5px solid var(--primary-green);
+      padding: 8px 12px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 13px;
+      color: var(--primary-green-dark);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .demo-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+    .demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-code);
+      font-size: 13px;
+    }
+    .demo-table th {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      padding: 6px 8px;
+      border: 1px solid var(--excel-grid);
+      font-weight: 700;
+      text-align: center;
+    }
+    .demo-table td {
+      border: 1px solid var(--excel-grid);
+      padding: 6px 10px;
+    }
+    .demo-cell-source {
+      background: #e8f5e9 !important;
+      border: 2px dashed var(--primary-green) !important;
+      position: relative;
+    }
+    .demo-cell-target-active {
+      background: #fff9c4 !important;
+      border: 2.5px solid #fbc02d !important;
+      animation: pulseDemo 1.5s infinite alternate;
+    }
+    .demo-cell-ref-highlight {
+      background: #e1f5fe !important;
+      border: 2px solid #0288d1 !important;
+      font-weight: 800;
+    }
+    @keyframes pulseDemo {
+      from { box-shadow: 0 0 0 1px #fbc02d; }
+      to { box-shadow: 0 0 0 3px #f57f17; }
+    }
+    .formula-tag {
+      display: inline-block;
+      background: #ffffff;
+      border: 1px solid var(--primary-green);
+      color: var(--primary-green-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12.5px;
+      margin-right: 6px;
+    }
+    .result-tag {
+      font-weight: 900;
+      color: var(--primary-green);
+      font-size: 13px;
+    }
+    .demo-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-demo-action {
+      flex: 1;
+      min-width: 140px;
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-demo-action:hover {
+      background: var(--primary-green-hover);
+    }
+    .btn-demo-action:disabled {
+      background: #cfd8dc;
+      color: #78909c;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-demo-reset {
+      background: var(--bg-sub);
+      color: var(--primary-green-dark);
+      border: 1.5px solid var(--border-color);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+    .btn-demo-reset:hover {
+      background: #ffffff;
+      border-color: var(--primary-green);
+    }
   </style>
 </head>
 <body>
@@ -1265,6 +1417,45 @@
         </div>
       </div>
 
+      <!-- S0-04 Interactive Demo Card (参照をコピーする感覚) -->
+      <div id="s004-demo-card" class="demo-card" style="display: none;">
+        <div class="card-title">
+          🎬 体験デモ：数式を下にコピーするとどうなる？
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
+          下のボタンを押して、数式が1行ずつコピーされていく動きを目で確かめてみよう！
+        </p>
+
+        <!-- Mode Toggle Tabs -->
+        <div class="demo-header-tabs">
+          <button type="button" class="demo-tab-btn active" id="demo-tab-relative">
+            相対参照（=A2*2）
+          </button>
+          <button type="button" class="demo-tab-btn" id="demo-tab-absolute">
+            絶対参照（=$A$2*2）
+          </button>
+        </div>
+
+        <div class="demo-info-banner" id="demo-info-banner-text">
+          <strong>【相対参照モード】</strong> 1行下にコピーするたびに、参照先のセル（A2 ➔ A3 ➔ A4...）も一緒に1行ズレていきます！
+        </div>
+
+        <!-- Mini Table -->
+        <div class="demo-table-wrapper" id="demo-table-container">
+          <!-- Dynamically populated via HyperFormula -->
+        </div>
+
+        <!-- Controls -->
+        <div class="demo-controls">
+          <button type="button" class="btn-demo-action" id="btn-demo-step-copy">
+            ⬇️ 1行下にコピーする（<span id="demo-step-label">1/3</span>）
+          </button>
+          <button type="button" class="btn-demo-reset" id="btn-demo-reset">
+            🔄 最初に戻す
+          </button>
+        </div>
+      </div>
+
       <!-- Sales Spreadsheet Table Preview -->
       <div class="sheet-container">
         <div class="sheet-title-bar">
@@ -1306,6 +1497,7 @@
             <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
             <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
             <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="$">$</button>
           </div>
           <div class="fn-btn-group" style="margin-top: -6px;">
             <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
@@ -1399,6 +1591,7 @@
           <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
           <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
           <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="$">$</button>
         </div>
         <div class="fn-btn-group" style="margin-top: -6px;">
           <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
@@ -2251,6 +2444,199 @@ Excelに「ねえねえ、これ計算して！」とお願いするときは、
       }
     }
 
+    /* ====================================================
+       S0-04 INTERACTIVE DEMO (HyperFormula 実機計算駆動)
+       ==================================================== */
+    let s004DemoState = {
+      mode: 'relative', // 'relative' | 'absolute'
+      step: 0,          // 0: B2のみ, 1: B3追加, 2: B4追加, 3: B5追加
+      maxStep: 3
+    };
+
+    function initS004Demo() {
+      s004DemoState.step = 0;
+      updateS004DemoView();
+
+      const btnRelative = document.getElementById('demo-tab-relative');
+      const btnAbsolute = document.getElementById('demo-tab-absolute');
+      const btnCopy = document.getElementById('btn-demo-step-copy');
+      const btnReset = document.getElementById('btn-demo-reset');
+
+      if (btnRelative) {
+        btnRelative.onclick = () => {
+          s004DemoState.mode = 'relative';
+          s004DemoState.step = 0;
+          btnRelative.classList.add('active');
+          if (btnAbsolute) btnAbsolute.classList.remove('active');
+          updateS004DemoView();
+        };
+      }
+
+      if (btnAbsolute) {
+        btnAbsolute.onclick = () => {
+          s004DemoState.mode = 'absolute';
+          s004DemoState.step = 0;
+          btnAbsolute.classList.add('active');
+          if (btnRelative) btnRelative.classList.remove('active');
+          updateS004DemoView();
+        };
+      }
+
+      if (btnCopy) {
+        btnCopy.onclick = () => {
+          if (s004DemoState.step < s004DemoState.maxStep) {
+            s004DemoState.step++;
+            updateS004DemoView();
+          }
+        };
+      }
+
+      if (btnReset) {
+        btnReset.onclick = () => {
+          s004DemoState.step = 0;
+          updateS004DemoView();
+        };
+      }
+    }
+
+    function updateS004DemoView() {
+      const banner = document.getElementById('demo-info-banner-text');
+      const stepBtn = document.getElementById('btn-demo-step-copy');
+
+      if (banner) {
+        if (s004DemoState.mode === 'relative') {
+          banner.innerHTML = `<strong>【相対参照モード】</strong> 下にコピーするたびに、数式内のセル番号（<code>A2</code> ➔ <code>A3</code> ➔ <code>A4</code>...）が1行ずつズレていきます！`;
+        } else {
+          banner.innerHTML = `<strong>【絶対参照モード】</strong> <code>$A$2</code> とピン留め（$）されているので、下にコピーしても参照先がズレずにずっと A2 のままです！`;
+        }
+      }
+
+      if (stepBtn) {
+        if (s004DemoState.step >= s004DemoState.maxStep) {
+          stepBtn.disabled = true;
+          stepBtn.innerHTML = `✅ すべての行へコピー完了！`;
+        } else {
+          stepBtn.disabled = false;
+          stepBtn.innerHTML = `⬇️ 1行下にコピーする（${s004DemoState.step + 1}/${s004DemoState.maxStep}）`;
+        }
+      }
+
+      // HyperFormula による実際の計算（見た目だけの偽デモにしない）
+      const initialSheet = [
+        ['数値', '計算結果'],
+        [10, ''],
+        [20, ''],
+        [30, ''],
+        [40, '']
+      ];
+
+      let hf;
+      try {
+        hf = HyperFormula.buildFromArray(initialSheet, { licenseKey: 'gpl-v3' });
+      } catch (e) {
+        console.error('HyperFormula build error in demo:', e);
+      }
+      const sheetId = hf ? (hf.getSheetId('Sheet1') || 0) : 0;
+
+      const rowsData = [
+        { rowNum: 2, aVal: 10 },
+        { rowNum: 3, aVal: 20 },
+        { rowNum: 4, aVal: 30 },
+        { rowNum: 5, aVal: 40 }
+      ];
+
+      let tableHtml = `
+        <table class="demo-table">
+          <thead>
+            <tr>
+              <th style="width: 36px;"></th>
+              <th style="width: 90px;">A (数値)</th>
+              <th>B (式 と 計算結果)</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      rowsData.forEach((row, i) => {
+        const isCopied = (i <= s004DemoState.step);
+        let formula = '';
+        let calcVal = '';
+
+        if (isCopied) {
+          if (s004DemoState.mode === 'relative') {
+            formula = `=A${row.rowNum}*2`;
+          } else {
+            formula = `=$A$2*2`;
+          }
+
+          if (hf) {
+            try {
+              hf.setCellContents({ col: 1, row: i + 1, sheet: sheetId }, [[ formula ]]);
+              calcVal = hf.getCellValue({ col: 1, row: i + 1, sheet: sheetId });
+            } catch (err) {
+              calcVal = 'エラー';
+            }
+          }
+        }
+
+        // ハイライトのクラス判定
+        // コピー元: i === 0
+        // コピー先（最新）: i === s004DemoState.step && s004DemoState.step > 0
+        let bClass = '';
+        let bBadge = '';
+        if (i === 0) {
+          bClass = 'demo-cell-source';
+          bBadge = `<span style="font-size:10px; color:#2e7d32; display:block; font-weight:800; line-height:1; margin-bottom:3px;">📌 コピー元（最初の式）</span>`;
+        } else if (i === s004DemoState.step) {
+          bClass = 'demo-cell-target-active';
+          bBadge = `<span style="font-size:10px; color:#e65100; display:block; font-weight:800; line-height:1; margin-bottom:3px;">✨ コピー先（最新）</span>`;
+        }
+
+        // 参照されているA列セルのハイライト
+        let aClass = 'num-cell';
+        let aBadge = '';
+        const isReferenced = (s004DemoState.mode === 'relative')
+          ? (i === s004DemoState.step)
+          : (i === 0);
+
+        if (isReferenced) {
+          aClass += ' demo-cell-ref-highlight';
+          aBadge = `<span style="font-size:9px; color:#0288d1; display:block; line-height:1; margin-bottom:2px;">参照先</span>`;
+        }
+
+        let bCellContent = '';
+        if (isCopied) {
+          bCellContent = `
+            ${bBadge}
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+              <span class="formula-tag">${formula}</span>
+              <span class="result-tag">➔ ${calcVal}</span>
+            </div>
+          `;
+        } else {
+          bCellContent = `<span style="color:#b0bec5; font-size:12px;">（未コピー）</span>`;
+        }
+
+        tableHtml += `
+          <tr>
+            <td style="background:var(--excel-header-bg); text-align:center; font-weight:700; color:var(--text-muted);">${row.rowNum}</td>
+            <td class="${aClass}" style="text-align:right; font-weight:700;">
+              ${aBadge}${row.aVal}
+            </td>
+            <td class="${bClass}">
+              ${bCellContent}
+            </td>
+          </tr>
+        `;
+      });
+
+      tableHtml += `</tbody></table>`;
+      const tableContainer = document.getElementById('demo-table-container');
+      if (tableContainer) {
+        tableContainer.innerHTML = tableHtml;
+      }
+    }
+
     // レッスン詳細画面を開く
     function openLesson(lessonId) {
       const lesson = LESSONS.find(l => l.id === lessonId);
@@ -2281,6 +2667,17 @@ Excelに「ねえねえ、これ計算して！」とお願いするときは、
         };
       } else {
         exampleCard.style.display = 'none';
+      }
+
+      // s0-04 デモ表示制御（参照をコピーする感覚）
+      const s004DemoCard = document.getElementById('s004-demo-card');
+      if (s004DemoCard) {
+        if (lessonId === 's0-04') {
+          s004DemoCard.style.display = 'block';
+          initS004Demo();
+        } else {
+          s004DemoCard.style.display = 'none';
+        }
       }
 
       // シート描画
