@@ -751,6 +751,14 @@
       transition: all 0.15s ease;
     }
 
+    .fn-chip.fn-symbol {
+      font-size: 14px;
+      font-weight: 800;
+      min-width: 32px;
+      text-align: center;
+      padding: 4px 8px;
+    }
+
     .fn-chip:hover {
       background: var(--primary-green);
       color: #fff;
@@ -1287,14 +1295,25 @@
             <input type="text" class="formula-input" id="lesson-formula-input" placeholder="=から始まる数式を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">
           </div>
 
-          <!-- Function Quick Insert Chips -->
+          <!-- Quick Insert Chips -->
           <div class="fn-btn-group">
-            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">ワンタップ入力:</span>
-            <button class="fn-chip" data-fn="SUM">SUM</button>
-            <button class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
-            <button class="fn-chip" data-fn="COUNT">COUNT</button>
-            <button class="fn-chip" data-fn="IF">IF</button>
-            <button class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">記号:</span>
+            <button type="button" class="fn-chip fn-symbol" data-insert="=">=</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="+">+</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="-">−</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="*">×</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="/">÷</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+          </div>
+          <div class="fn-btn-group" style="margin-top: -6px;">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
+            <button type="button" class="fn-chip" data-fn="SUM">SUM</button>
+            <button type="button" class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+            <button type="button" class="fn-chip" data-fn="COUNT">COUNT</button>
+            <button type="button" class="fn-chip" data-fn="IF">IF</button>
+            <button type="button" class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
           </div>
 
           <!-- Run Formula Button -->
@@ -1371,11 +1390,23 @@
         </div>
 
         <div class="fn-btn-group">
-          <button class="fn-chip" data-fn="SUM">SUM</button>
-          <button class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
-          <button class="fn-chip" data-fn="COUNT">COUNT</button>
-          <button class="fn-chip" data-fn="IF">IF</button>
-          <button class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">記号:</span>
+          <button type="button" class="fn-chip fn-symbol" data-insert="=">=</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="+">+</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="-">−</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="*">×</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="/">÷</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+        </div>
+        <div class="fn-btn-group" style="margin-top: -6px;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
+          <button type="button" class="fn-chip" data-fn="SUM">SUM</button>
+          <button type="button" class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+          <button type="button" class="fn-chip" data-fn="COUNT">COUNT</button>
+          <button type="button" class="fn-chip" data-fn="IF">IF</button>
+          <button type="button" class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
         </div>
 
         <button class="btn-primary" id="btn-run-playground">
@@ -2526,10 +2557,34 @@ Excelに「ねえねえ、これ計算して！」とお願いするときは、
       }
     }
 
-    // 関数チップボタンの挿入処理
+    // 入力補助ボタンのセットアップ
     function setupFunctionChips() {
-      document.querySelectorAll('.fn-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
+      // 記号ボタン（カーソル位置に文字を挿入: SQL版と同じ方式）
+      document.querySelectorAll('[data-insert]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const char = btn.getAttribute('data-insert');
+          const isPlayground = (appState.currentView === 'playground');
+          const input = isPlayground
+            ? document.getElementById('playground-formula-input')
+            : document.getElementById('lesson-formula-input');
+
+          if (!input) return;
+
+          const start = (input.selectionStart !== null && input.selectionStart !== undefined) ? input.selectionStart : input.value.length;
+          const end = (input.selectionEnd !== null && input.selectionEnd !== undefined) ? input.selectionEnd : input.value.length;
+          const val = input.value;
+
+          input.value = val.substring(0, start) + char + val.substring(end);
+          input.focus();
+          input.selectionStart = input.selectionEnd = start + char.length;
+        });
+      });
+
+      // 関数ボタン（カーソル位置に関数を挿入）
+      document.querySelectorAll('.fn-chip[data-fn]').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.preventDefault();
           const fnName = chip.getAttribute('data-fn');
           const isPlayground = (appState.currentView === 'playground');
           const input = isPlayground
@@ -2545,8 +2600,8 @@ Excelに「ねえねえ、これ計算して！」とお願いするときは、
             input.setSelectionRange(fnName.length + 2, fnName.length + 2);
           } else {
             // カーソル位置に挿入
-            const start = input.selectionStart || val.length;
-            const end = input.selectionEnd || val.length;
+            const start = (input.selectionStart !== null && input.selectionStart !== undefined) ? input.selectionStart : val.length;
+            const end = (input.selectionEnd !== null && input.selectionEnd !== undefined) ? input.selectionEnd : val.length;
             const textToInsert = `${fnName}()`;
             input.value = val.substring(0, start) + textToInsert + val.substring(end);
             input.focus();
