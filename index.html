@@ -1552,7 +1552,7 @@
       <div class="progress-banner">
         <div class="progress-header">
           <span class="progress-title">全体のクリア状況</span>
-          <span class="progress-count" id="progress-summary-count">0 / 21 レッスン</span>
+          <span class="progress-count" id="progress-summary-count">0 / 27 レッスン</span>
         </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progress-summary-bar"></div>
@@ -1741,16 +1741,22 @@
       <span class="playground-badge">🧪 自由練習モード</span>
       <h2 class="lesson-title-main">数式を自由に試してみよう！</h2>
       <p class="lesson-subtitle-main">
-        練習シート「売上」「顧客」のデータを使って、好きな数式を打ち込んで計算結果を確かめられるよ。
+        全4シート（売上・顧客・商品・注文）のデータを使って、好きな数式を打ち込んで計算結果を確かめられるよ。
       </p>
 
       <!-- Sheet Switcher Tabs -->
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <button type="button" class="btn-sheet-tab active" id="btn-tab-sheet-sales">
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+        <button type="button" class="btn-sheet-tab active" id="btn-tab-sheet-sales" data-sheet="売上">
           📊 練習シート「売上」
         </button>
-        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-customers">
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-customers" data-sheet="顧客">
           👥 練習シート「顧客」
+        </button>
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-products" data-sheet="商品">
+          📦 練習シート「商品」
+        </button>
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-orders" data-sheet="注文">
+          🛒 練習シート「注文」
         </button>
       </div>
 
@@ -1767,11 +1773,11 @@
         <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">試してみるサンプル：</span>
         <div class="quick-samples">
           <button type="button" class="btn-sample" data-sample="=SUM(D2:D6)" data-sheet="売上">売上合計 =SUM(D2:D6)</button>
-          <button type="button" class="btn-sample" data-sample="=AVERAGE(C2:C6)" data-sheet="売上">平均個数 =AVERAGE(C2:C6)</button>
           <button type="button" class="btn-sample" data-sample='=IF(C2>=2, "まとめ買い", "通常")' data-sheet="売上">条件分岐 IF</button>
-          <button type="button" class="btn-sample" data-sample='=SUMIF(B2:B6, "癒しのまるもち", D2:D6)' data-sheet="売上">条件合計 SUMIF</button>
           <button type="button" class="btn-sample" data-sample='=COUNTIF(B2:B7, "関東")' data-sheet="顧客">関東の人数 COUNTIF</button>
-          <button type="button" class="btn-sample" data-sample="=COUNTA(C2:C7)" data-sheet="顧客">メール登録数 COUNTA</button>
+          <button type="button" class="btn-sample" data-sample="=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)" data-sheet="注文">商品名 VLOOKUP</button>
+          <button type="button" class="btn-sample" data-sample="=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)" data-sheet="注文">商品名 XLOOKUP</button>
+          <button type="button" class="btn-sample" data-sample='=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))' data-sheet="商品">ID検索 INDEX+MATCH</button>
         </div>
       </div>
 
@@ -1854,7 +1860,7 @@
       </div>
       <div class="modal-badge" id="modal-clear-badge">🎉 STAGE CLEAR!</div>
       <h2 class="modal-title" id="modal-stage-title">プロローグ クリア！</h2>
-      <div class="modal-stats" id="modal-stage-stats">全21レッスン中 5レッスン クリア</div>
+      <div class="modal-stats" id="modal-stage-stats">全27レッスン中 5レッスン クリア</div>
       <div class="modal-message" id="modal-stage-message">
         まるもち：「お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！」
       </div>
@@ -1889,14 +1895,44 @@
 
     // 練習シート「顧客」の初期データ
     const CUSTOMERS_SHEET_DATA = [
-      ['名前', '地域', 'メールアドレス'],
-      ['さくら', '関東', 'sakura@example.com'],
-      ['たろう', '関東', ''],
-      ['はなこ', '関西', 'hanako@example.com'],
-      ['じろう', '関西', ''],
-      ['みき', '関東', 'miki@example.com'],
-      ['さくら', '関西', 'sakura2@example.com']
+      ['名前', '地域', 'メールアドレス', '顧客ID'],
+      ['さくら', '関東', 'sakura@example.com', 1],
+      ['たろう', '関東', '', 2],
+      ['はなこ', '関西', 'hanako@example.com', 3],
+      ['じろう', '関西', '', 4],
+      ['みき', '関東', 'miki@example.com', 5],
+      ['さくら', '関西', 'sakura2@example.com', 6]
     ];
+
+    // 練習シート「商品」の初期データ
+    const PRODUCTS_SHEET_DATA = [
+      ['商品ID', '商品名', 'カテゴリ', '価格'],
+      [1, '癒しのまるもち', '静止画', 190],
+      [2, '動く！癒しのまるもち', 'アニメ', 250],
+      [3, 'あけおめ！まるもち2027', '季節', 250],
+      [4, 'まるもち絵本', '絵本', 480]
+    ];
+
+    // 練習シート「注文」の初期データ
+    const ORDERS_SHEET_DATA = [
+      ['注文ID', '顧客ID', '商品ID', '個数', '日付'],
+      [1, 1, 1, 2, '2026-11-06'],
+      [2, 1, 2, 1, '2026-11-08'],
+      [3, 2, 1, 1, '2026-11-09'],
+      [4, 3, 3, 2, '2026-11-10'],
+      [5, 5, 2, 3, '2026-11-11'],
+      [6, 6, 3, 1, '2026-11-12'],
+      [7, 3, 1, 1, '2026-11-13'],
+      [8, 2, 2, 1, '2026-11-14']
+    ];
+
+    // 全シート参照マップ
+    const SHEETS_DATA = {
+      '売上': SALES_SHEET_DATA,
+      '顧客': CUSTOMERS_SHEET_DATA,
+      '商品': PRODUCTS_SHEET_DATA,
+      '注文': ORDERS_SHEET_DATA
+    };
 
     // ステージ一覧定義
     const STAGES = [
@@ -1932,8 +1968,8 @@
         id: 'stage-3',
         num: '3',
         title: 'Stage 3：検索と照合（VLOOKUP / XLOOKUP）',
-        desc: '別の表から目当てのデータを探して持ってくる神ワザ',
-        locked: true
+        desc: 'VLOOKUP・XLOOKUP・INDEX+MATCHで別の表から自由自在にデータを引こう',
+        locked: false
       },
       {
         id: 'stage-4',
@@ -2538,6 +2574,191 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           '「=AVERAGEIF(B2:B6, "癒しのまるもち", C2:C6)」と入力してみてね！'
         ],
         afterNote: 'お見事！平均2個と正確に算出できたね！IF・IFSからCOUNTIF・SUMIF・AVERAGEIFまで条件計算の武器が勢揃いしたよ！Stage 2完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 3 (6レッスン) ---
+      {
+        id: 's3-01',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 1/6',
+        title: 'VLOOKUPの基本',
+        subtitle: '商品IDから商品名を引き当てる',
+        type: 'formula',
+        sheet: '注文',
+        explain: `別の表から目当てのデータを探して持ってくるとき、Excelで最も使われる代表格が**「VLOOKUP（ブイルックアップ）」**関数！<br><br>
+書き方は**「=VLOOKUP(検索値, 範囲, 列番号, 検索の型)」**。<br>
+・**検索値**：探したい手がかり（注文シートのC2にある商品ID: 1）<br>
+・**範囲**：探す対象の表（商品シートのA2:D5。別のシートは \`商品!A2:D5\` と書くよ！）<br>
+・**列番号**：範囲の中で左から何列目の値が欲しいか（商品名は2列目なので \`2\`）<br>
+・**検索の型**：ぴったり一致を探すときは必ず **\`FALSE\`**！<br><br>
+※VLOOKUPの大事なルール：**探すキー（商品ID）は、範囲の一番左の列（A列）にある必要があります！**`,
+        example: {
+          formula: '=VLOOKUP(C3, 商品!A2:D5, 2, FALSE)',
+          desc: '注文3行目の商品ID（2）を商品シートから検索すると「動く！癒しのまるもち」が引けるよ',
+          result: '動く！癒しのまるもち'
+        },
+        question: '注文シート1行目（2行目のセルC2）の商品ID（1）を手がかりに、商品シート（商品!A2:D5）から「商品名（2列目）」をVLOOKUP関数で完全一致で引いてみよう！（答えは「癒しのまるもち」）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: '癒しのまるもち',
+        modelFormula: '=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)',
+        hints: [
+          '別の表から縦方向に検索する関数は「VLOOKUP」だよ。下のVLOOKUPボタンも使ってみてね！',
+          '検索値はC2、範囲は商品シートの「商品!A2:D5」、取り出したい列は2、完全一致は「FALSE」だよ。',
+          '「=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '大正解！注文シートの商品ID「1」から、商品シートの「癒しのまるもち」を見事に引っ張ってこれたね！実務で最も愛されている検索関数だよ！'
+      },
+      {
+        id: 's3-02',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 2/6',
+        title: 'VLOOKUPの落とし穴',
+        subtitle: '列番号の数え方とFALSE（完全一致）の超重要性',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPで初心者が一番ハマりやすい大事故ポイントが2つあります！<br><br>
+**① 列番号の数え間違い**<br>
+商品シートの列は、A列=1（商品ID）、B列=2（商品名）、C列=3（カテゴリ）、D列=4（価格）です。価格を取りたいなら列番号は「**4**」を指定します！<br><br>
+**② 最後の「FALSE」を省略すると大事故に！**<br>
+最後の引数を省略すると「TRUE（近似一致＝だいたい近い値）」になり、全然関係ない行の値を持ってきてしまいます！実務では必ず**「FALSE（完全一致）」**を書くのが鉄則だよ！`,
+        example: {
+          formula: '=VLOOKUP(C2, 商品!A2:D5, 4, FALSE)',
+          desc: '注文2行目の商品ID（1）から価格を引くと 190円になるよ',
+          result: 190
+        },
+        question: '注文シート2行目（3行目のセルC3）の商品ID（2）から、商品シート（商品!A2:D5）を検索して「価格（4列目）」を完全一致で引いてみよう！（答えは 250）',
+        targetCell: { col: 5, row: 2, label: 'F3' },
+        answerCell: 'F3',
+        expectedValue: 250,
+        modelFormula: '=VLOOKUP(C3, 商品!A2:D5, 4, FALSE)',
+        hints: [
+          '商品シートの価格はA列から数えて4列目（D列）だから、列番号は「4」だよ。',
+          '検索値はC3、範囲は「商品!A2:D5」、完全一致なので最後は「FALSE」だよ。',
+          '「=VLOOKUP(C3, 商品!A2:D5, 4, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '完璧！価格250円が正しく引けたね！列番号の正確な指定と末尾のFALSEを忘れないことで、実務の集計ミスをゼロに防げるよ！'
+      },
+      {
+        id: 's3-03',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 3/6',
+        title: 'XLOOKUP',
+        subtitle: '次世代の超進化系検索関数',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPの弱点をぜんぶ克服した最新の関数が**「XLOOKUP（エックスルックアップ）」**！<br><br>
+書き方は**「=XLOOKUP(検索値, 検索範囲, 戻り値範囲)」**。<br>
+・列番号（2とか4）を指折り数える必要なし！欲しい列を直接選べる！<br>
+・最初から「完全一致」なので、最後の「FALSE」を書かなくてOK！<br>
+・検索列より左側にある列も探せる！<br>
+「探す列」と「欲しい列」を2つ指定するだけの、これからのスタンダード関数です！`,
+        example: {
+          formula: '=XLOOKUP(C2, 商品!A2:A5, 商品!B2:B5)',
+          desc: '商品ID（C2: 1）から商品名「癒しのまるもち」をスマートに引けるよ',
+          result: '癒しのまるもち'
+        },
+        question: '注文シート4行目（5行目のセルC5）の商品ID（3）から、XLOOKUP関数を使って商品シートの「商品名」を引いてみよう！（答えは「あけおめ！まるもち2027」）',
+        targetCell: { col: 5, row: 4, label: 'F5' },
+        answerCell: 'F5',
+        expectedValue: 'あけおめ！まるもち2027',
+        modelFormula: '=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)',
+        hints: [
+          'XLOOKUPの書き方は「=XLOOKUP(検索値, 探す範囲, 欲しい結果の範囲)」だよ。',
+          '検索値はC5、探す範囲は商品ID列「商品!A2:A5」、欲しい範囲は商品名列「商品!B2:B5」だよ。',
+          '「=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)」と入力してみてね！'
+        ],
+        afterNote: 'お見事！列番号を数える必要がなくなり、直感的に書けたね！新しいExcelではこのXLOOKUPが主役だよ！'
+      },
+      {
+        id: 's3-04',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 4/6',
+        title: 'INDEX + MATCH',
+        subtitle: '左方向の列を探す伝統の最強タッグ',
+        type: 'formula',
+        sheet: '商品',
+        explain: `VLOOKUPには**「検索する列より左側にあるデータは取ってこれない」**という大きな弱点があります。<br>
+たとえば商品シートで「商品名（B列）」から「商品ID（左のA列）」を引くことはVLOOKUPではできません！<br><br>
+そこでプロが愛用してきたのが**「INDEX + MATCH」**の組み合わせ！<br>
+・**MATCH("まるもち絵本", B2:B5, 0)** ➔ 「まるもち絵本」が範囲の何行目にあるか探す（4行目）<br>
+・**INDEX(A2:A5, 行番号)** ➔ A列の指定した行の値を取り出す！<br>
+これらを組み合わせることで、左向きの検索も自由自在になります！`,
+        example: {
+          formula: '=INDEX(A2:A5, MATCH("癒しのまるもち", B2:B5, 0))',
+          desc: '「癒しのまるもち」の商品ID（左のA列にある 1）を引くよ',
+          result: 1
+        },
+        question: '商品シートで、商品名が「まるもち絵本」である行の「商品ID（左のA列）」を、INDEXとMATCH関数を組み合わせて引いてみよう！（答えは 4）',
+        targetCell: { col: 4, row: 4, label: 'E5' },
+        answerCell: 'E5',
+        expectedValue: 4,
+        modelFormula: '=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))',
+        hints: [
+          '書き方は「=INDEX(取り出したい範囲, MATCH(探す言葉, 探す範囲, 0))」だよ。',
+          '取り出したいのは商品ID（A2:A5）、探す言葉は "まるもち絵本"、商品名の範囲は B2:B5 だよ。',
+          '「=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！VLOOKUPでは不可能だった「左側の列の取得」を見事に解決できたね！古いバージョンのExcelでも確実に動く実務必須のテクニックだよ！'
+      },
+      {
+        id: 's3-05',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 5/6',
+        title: 'IFERRORと #N/A の扱い',
+        subtitle: '見つからないエラーを優しく包み込む',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPで表に存在しない商品ID（例: 99）を検索すると、Excelは**「#N/A（データが見つからない）」**エラーを出してしまいます！😱<br><br>
+書類に「#N/A」が並んでいると困ってしまいますよね。<br>
+そこで大活躍するのが**「IFERROR（イフエラー）」**関数！<br>
+**「=IFERROR(数式, エラー時の表示)」**<br>
+数式がエラーになったときだけ、代わりに指定した文字（「見つかりません」など）を表示してくれます！`,
+        example: {
+          formula: '=IFERROR(VLOOKUP(100, 商品!A2:D5, 2, FALSE), "未登録")',
+          desc: '存在しないID 100 を検索しても、エラーにならず「未登録」と表示されるよ',
+          result: '未登録'
+        },
+        question: '商品シートから存在しない商品ID「99」の商品名をVLOOKUPで検索し、#N/A エラーになったら「見つかりません」と表示する数式をIFERRORを使って書いてみよう！（答えは「見つかりません」）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: '見つかりません',
+        modelFormula: '=IFERROR(VLOOKUP(99, 商品!A2:D5, 2, FALSE), "見つかりません")',
+        hints: [
+          'エラーを包み込む関数は「IFERROR」だよ。書き方は「=IFERROR(数式, エラーのとき表示する文字)」だよ。',
+          '中の数式は「VLOOKUP(99, 商品!A2:D5, 2, FALSE)」、エラー時は「"見つかりません"」だよ。',
+          '「=IFERROR(VLOOKUP(99, 商品!A2:D5, 2, FALSE), "見つかりません")」と入力してみてね！'
+        ],
+        afterNote: '完璧！「#N/A」が親切なメッセージに変わったね！実務の帳票やダッシュボード作成で必ず使われる必須テクニックだよ！'
+      },
+      {
+        id: 's3-06',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 6/6',
+        title: '検索で名寄せ',
+        subtitle: 'ID列が右にある表から名前を引く実践ワザ',
+        type: 'formula',
+        sheet: '注文',
+        explain: `実務でよくあるデータ構造：「顧客シート」では名前がA列、新しく追加された顧客IDが一番右のD列にあります！<br><br>
+注文シートの顧客ID（B列）を手がかりに顧客名を引こうとしても、顧客シートでは検索対象（顧客ID）が名前の右側にあるため、**VLOOKUPでは引けません**！<br>
+ここで学んだ**「INDEX + MATCH」**（または **XLOOKUP**）が大活躍します！<br>
+注文シート3行目（注文ID: 3、顧客ID: 2）のお客さんの名前を顧客シートから引き当ててみよう！`,
+        example: {
+          formula: '=INDEX(顧客!A2:A7, MATCH(B2, 顧客!D2:D7, 0))',
+          desc: '注文シート2行目の顧客ID（B2: 1）から、顧客シートのさくらさんを引けるよ',
+          result: 'さくら'
+        },
+        question: '注文シート3行目（4行目のセルB4）の顧客ID（2）を手がかりに、顧客シートから顧客名（A列）を引いてみよう！（顧客ID: 2 のお客さんなので答えは「たろう」）',
+        targetCell: { col: 5, row: 3, label: 'F4' },
+        answerCell: 'F4',
+        expectedValue: 'たろう',
+        modelFormula: '=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))',
+        hints: [
+          '顧客シートでは顧客IDがD列（右側）、名前がA列（左側）にあるので、INDEX+MATCHかXLOOKUPを使うよ。',
+          '注文3行目の顧客IDは「B4」だよ。INDEX+MATCHなら「=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))」、XLOOKUPなら「=XLOOKUP(B4, 顧客!D2:D7, 顧客!A2:A7)」と書けるよ。',
+          '「=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))」と入力してみてね！'
+        ],
+        afterNote: 'お見事！ID列が右側にあっても見事に「たろう」さんを名寄せできたね！VLOOKUP・XLOOKUP・INDEX+MATCHを使い分けられれば、Excelの表照合は完全制覇だよ！Stage 3完全制覇おめでとう！🎉'
       }
     ];
 
@@ -2652,9 +2873,17 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       };
     }
 
-    // HyperFormula用の数式正規化（ダブルクォーテーション外の単独 TRUE / FALSE を TRUE() / FALSE() に変換）
+    // HyperFormula用の数式正規化（日本語シート名のクォート処理およびTRUE/FALSEの補正）
     function normalizeFormulaForHyperFormula(formula) {
       if (!formula) return '';
+      // 1. 日本語シート名のクォート処理（商品! ➔ '商品'!、顧客! ➔ '顧客'! など）
+      const sheetNames = ['売上', '顧客', '商品', '注文'];
+      sheetNames.forEach(sheet => {
+        const re = new RegExp(`(?<!['"a-zA-Z0-9_])${sheet}!`, 'g');
+        formula = formula.replace(re, `'${sheet}'!`);
+      });
+
+      // 2. ダブルクォーテーション外の単独 TRUE / FALSE を TRUE() / FALSE() に変換
       const parts = formula.split(/("(?:[^"\\]|\\.)*")/);
       for (let i = 0; i < parts.length; i += 2) {
         parts[i] = parts[i]
@@ -2687,8 +2916,17 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
         // 練習シートデータをクローン
         const salesData = SALES_SHEET_DATA.map(row => [...row]);
         const customersData = CUSTOMERS_SHEET_DATA.map(row => [...row]);
+        const productsData = PRODUCTS_SHEET_DATA.map(row => [...row]);
+        const ordersData = ORDERS_SHEET_DATA.map(row => [...row]);
 
-        const activeData = (sheetName === '顧客') ? customersData : salesData;
+        const sheetsMap = {
+          '売上': salesData,
+          '顧客': customersData,
+          '商品': productsData,
+          '注文': ordersData
+        };
+
+        const activeData = sheetsMap[sheetName] || salesData;
 
         // ターゲットセルが入るように配列を行・列方向に拡張
         while (activeData.length <= targetRow) {
@@ -2700,10 +2938,12 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
           }
         }
 
-        // HyperFormula インスタンス生成 (GPL-v3 ライセンスキー指定、複数シート対応)
+        // HyperFormula インスタンス生成 (GPL-v3 ライセンスキー指定、全シート対応)
         const hf = HyperFormula.buildFromSheets({
           '売上': salesData,
-          '顧客': customersData
+          '顧客': customersData,
+          '商品': productsData,
+          '注文': ordersData
         }, {
           licenseKey: 'gpl-v3'
         });
@@ -2767,16 +3007,22 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       }
     }
 
-    // スプレッドシートHTMLを生成する関数（売上・顧客の両シートおよび任意セル配置に対応）
+    // スプレッドシートHTMLを生成する関数（全シートおよび任意セル配置に対応）
     function renderSpreadsheet(targetCell = null, targetValue = null, sheetName = '売上') {
-      const rawData = (sheetName === '顧客') ? CUSTOMERS_SHEET_DATA : SALES_SHEET_DATA;
+      const sheetsMap = {
+        '売上': SALES_SHEET_DATA,
+        '顧客': CUSTOMERS_SHEET_DATA,
+        '商品': PRODUCTS_SHEET_DATA,
+        '注文': ORDERS_SHEET_DATA
+      };
+      const rawData = sheetsMap[sheetName] || SALES_SHEET_DATA;
       const baseColCount = rawData[0].length;
       const baseRowCount = rawData.length;
 
       const totalCols = Math.max(baseColCount, targetCell ? targetCell.col + 1 : 0);
       const totalRows = Math.max(baseRowCount, targetCell ? targetCell.row + 1 : 0);
 
-      const colLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+      const colLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
       const colHeaders = [];
       for (let c = 0; c < totalCols; c++) {
         colHeaders.push(colLetters[c] || String.fromCharCode(65 + c));
@@ -3170,9 +3416,13 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
 
       const titleBar = document.getElementById('lesson-sheet-title-bar');
       if (titleBar) {
-        titleBar.textContent = (lessonSheet === '顧客')
-          ? '👥 練習シート「顧客」（名前・地域・メールアドレス）'
-          : '📊 練習シート「売上」（まるもちのスタンプ売上）';
+        const sheetTitles = {
+          '売上': '📊 練習シート「売上」（まるもちのスタンプ売上）',
+          '顧客': '👥 練習シート「顧客」（名前・地域・メール・顧客ID）',
+          '商品': '📦 練習シート「商品」（商品ID・商品名・カテゴリ・価格）',
+          '注文': '🛒 練習シート「注文」（注文ID・顧客ID・商品ID・個数・日付）'
+        };
+        titleBar.textContent = sheetTitles[lessonSheet] || `📊 練習シート「${lessonSheet}」`;
       }
 
       // UI切り替え (選択肢 vs 数式入力)
@@ -3436,6 +3686,8 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
         mochiMsg = 'Stage 1 制覇！SUMやAVERAGEなど、実務で最頻出の集計関数をマスターしたね！';
       } else if (stage.id === 'stage-2') {
         mochiMsg = 'Stage 2 制覇！IF・IFSやCOUNTIF・SUMIFなど、条件に応じた計算を完全マスターしたね！';
+      } else if (stage.id === 'stage-3') {
+        mochiMsg = 'Stage 3 制覇！VLOOKUPやXLOOKUP、INDEX+MATCHまで表の検索と名寄せを完全マスターしたね！';
       }
 
       if (badgeEl) badgeEl.textContent = '🎉 STAGE CLEAR!';
@@ -3567,23 +3819,19 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
     function switchPlaygroundSheet(sheetName) {
       currentPlaygroundSheet = sheetName;
 
-      const btnSales = document.getElementById('btn-tab-sheet-sales');
-      const btnCustomers = document.getElementById('btn-tab-sheet-customers');
-      if (btnSales && btnCustomers) {
-        if (sheetName === '顧客') {
-          btnSales.classList.remove('active');
-          btnCustomers.classList.add('active');
-        } else {
-          btnSales.classList.add('active');
-          btnCustomers.classList.remove('active');
-        }
-      }
+      document.querySelectorAll('.btn-sheet-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-sheet') === sheetName);
+      });
 
       const titleBar = document.getElementById('playground-sheet-title-bar');
       if (titleBar) {
-        titleBar.textContent = (sheetName === '顧客')
-          ? '👥 練習シート「顧客」（名前・地域・メールアドレス）'
-          : '📊 練習シート「売上」（日付・スタンプ名・個数・金額）';
+        const sheetTitles = {
+          '売上': '📊 練習シート「売上」（日付・スタンプ名・個数・金額）',
+          '顧客': '👥 練習シート「顧客」（名前・地域・メール・顧客ID）',
+          '商品': '📦 練習シート「商品」（商品ID・商品名・カテゴリ・価格）',
+          '注文': '🛒 練習シート「注文」（注文ID・顧客ID・商品ID・個数・日付）'
+        };
+        titleBar.textContent = sheetTitles[sheetName] || `📊 練習シート「${sheetName}」`;
       }
 
       const sheetArea = document.getElementById('playground-sheet-render-area');
@@ -3596,17 +3844,15 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
     function initPlayground() {
       switchPlaygroundSheet(currentPlaygroundSheet || '売上');
 
-      setMarumochi('自由練習モードへようこそ！練習シート「売上」「顧客」を使って、どんな数式でも試してみてね！🍡', 'normal');
+      setMarumochi('自由練習モードへようこそ！全4シート（売上・顧客・商品・注文）を使って、どんな数式でも試してみてね！🍡', 'normal');
 
       // タブ切り替えボタン
-      const btnSales = document.getElementById('btn-tab-sheet-sales');
-      const btnCustomers = document.getElementById('btn-tab-sheet-customers');
-      if (btnSales) {
-        btnSales.onclick = () => switchPlaygroundSheet('売上');
-      }
-      if (btnCustomers) {
-        btnCustomers.onclick = () => switchPlaygroundSheet('顧客');
-      }
+      document.querySelectorAll('.btn-sheet-tab').forEach(btn => {
+        btn.onclick = () => {
+          const s = btn.getAttribute('data-sheet');
+          if (s) switchPlaygroundSheet(s);
+        };
+      });
 
       // サンプルボタン
       document.querySelectorAll('.btn-sample').forEach(btn => {
@@ -3628,10 +3874,17 @@ SUMIFの合計範囲が平均範囲に変わっただけなので、考え方は
       const formula = input.value.trim();
       const sheet = currentPlaygroundSheet || '売上';
 
-      // ターゲットセルの設定（売上はD7、顧客はB8）
-      const targetCol = (sheet === '顧客') ? 1 : 3;
-      const targetRow = (sheet === '顧客') ? 7 : 6;
-      const targetLabel = (sheet === '顧客') ? 'B8' : 'D7';
+      // ターゲットセルの設定（売上: D7, 顧客: B8, 商品: E5, 注文: F9）
+      let targetCol = 3;
+      let targetRow = 6;
+      let targetLabel = 'D7';
+      if (sheet === '顧客') {
+        targetCol = 1; targetRow = 7; targetLabel = 'B8';
+      } else if (sheet === '商品') {
+        targetCol = 4; targetRow = 4; targetLabel = 'E5';
+      } else if (sheet === '注文') {
+        targetCol = 5; targetRow = 8; targetLabel = 'F9';
+      }
 
       const result = runHyperFormula(formula, targetCol, targetRow, sheet);
 
