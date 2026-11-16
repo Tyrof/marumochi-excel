@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>まるもちと学ぶ！Excel関数ドリル</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- HyperFormula CDN (Latest stable Excel-compatible formula engine) -->
+  <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.5.0/dist/hyperformula.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #fbfdfb;
+      --bg-card: #ffffff;
+      --bg-sub: #E6F4EA;
+      --border-color: #cce4d4;
+      --text-main: #1f2923;
+      --text-sub: #0B5C2E;
+      --text-muted: #4d7358;
+      --primary-green: #107C41;
+      --primary-green-hover: #0c6334;
+      --primary-green-dark: #0B5C2E;
+      --primary-green-light: #E6F4EA;
+      --accent-warm: #d3ebd9;
+      --accent-highlight: #107C41;
+      --accent-highlight-bg: #E6F4EA;
+      --success-green: #107C41;
+      --success-green-bg: #E6F4EA;
+      --error-red: #c62828;
+      --error-red-bg: #ffebee;
+      --excel-header-bg: #E6F4EA;
+      --excel-grid: #c5dfce;
+      --font-body: 'Zen Maru Gothic', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 6px rgba(16, 124, 65, 0.06);
+      --shadow-md: 0 6px 18px rgba(16, 124, 65, 0.09);
+      --shadow-lg: 0 12px 28px rgba(16, 124, 65, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Container */
+    .app-container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 16px;
+      border-bottom: 2px dashed var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      color: var(--primary-green);
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-nav:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .btn-nav.active {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      background: #f4faf5;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Marumochi Character & Speech Bubble */
+    .marumochi-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marumochi-character {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* CSS Drawn Marumochi */
+    .marumochi-avatar {
+      width: 60px;
+      height: 52px;
+      background: #ffffff;
+      border: 3px solid var(--primary-green-dark);
+      border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(16, 124, 65, 0.12);
+      animation: floatMochi 3s ease-in-out infinite;
+      transition: transform 0.2s ease;
+    }
+
+    @keyframes floatMochi {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Face Elements */
+    .mochi-eyes {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .mochi-eye {
+      width: 5px;
+      height: 5px;
+      background: var(--primary-green-dark);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .mochi-cheeks {
+      position: absolute;
+      top: 22px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .mochi-cheek {
+      width: 7px;
+      height: 4px;
+      background: #ffab91;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+
+    .mochi-mouth {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 3px;
+      border-bottom: 2px solid var(--primary-green-dark);
+      border-radius: 0 0 5px 5px;
+    }
+
+    .mochi-leaf {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    /* Expressions */
+    .marumochi-avatar.happy .mochi-eyes {
+      top: 16px;
+      gap: 14px;
+    }
+    .marumochi-avatar.happy .mochi-eye {
+      width: 8px;
+      height: 4px;
+      border-top: 2px solid var(--primary-green-dark);
+      border-radius: 50% 50% 0 0;
+      background: transparent;
+    }
+    .marumochi-avatar.happy .mochi-mouth {
+      width: 8px;
+      height: 6px;
+      background: #e57373;
+      border: 1.5px solid var(--primary-green-dark);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .marumochi-avatar.thinking .mochi-eyes {
+      transform: rotate(-10deg);
+    }
+    .marumochi-avatar.sad .mochi-eyes {
+      top: 20px;
+    }
+    .marumochi-avatar.sad .mochi-mouth {
+      border-top: 2px solid var(--primary-green-dark);
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .marumochi-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      background: var(--bg-sub);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Speech Bubble */
+    .speech-bubble {
+      flex: 1;
+      background: var(--bg-sub);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 16px;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 9px solid var(--primary-green);
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 17px;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-right: 7px solid var(--bg-sub);
+    }
+
+    .bubble-text {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-main);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Home View Elements */
+    .progress-banner {
+      background: linear-gradient(135deg, #E6F4EA 0%, #d5edd9 100%);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--primary-green-dark);
+    }
+
+    .progress-count {
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--primary-green);
+      font-family: var(--font-code);
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: var(--radius-full);
+      height: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #107C41 0%, #0B5C2E 100%);
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+
+    /* Stage Roadmap */
+    .stage-section {
+      margin-bottom: 24px;
+    }
+
+    .stage-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stage-header {
+      padding: 14px 18px;
+      background: #E6F4EA;
+      border-bottom: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stage-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-available {
+      background: #ffffff;
+      color: var(--primary-green-dark);
+      border: 1.5px solid var(--primary-green);
+    }
+
+    .badge-locked {
+      background: #eeeeee;
+      color: #9e9e9e;
+      border: 1px solid #e0e0e0;
+    }
+
+    .stage-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-top: 2px;
+    }
+
+    .stage-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .stage-lessons {
+      list-style: none;
+      padding: 6px 10px;
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 10px;
+      border-radius: var(--radius-md);
+      margin: 4px 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .lesson-item:hover {
+      background: var(--bg-sub);
+      transform: translateX(3px);
+    }
+
+    .lesson-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .lesson-status-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border-color);
+      background: #fff;
+    }
+
+    .lesson-item.completed .lesson-status-icon {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    .lesson-title-text {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .lesson-sub-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .lesson-arrow {
+      color: var(--primary-green);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Locked Stage */
+    .stage-card.locked {
+      opacity: 0.75;
+      background: #fbfbfb;
+    }
+    .stage-card.locked .stage-header {
+      background: #f5f5f5;
+    }
+
+    /* Spreadsheet Table Design */
+    .sheet-container {
+      margin: 16px 0;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sheet-title-bar {
+      background: var(--excel-header-bg);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      border-bottom: 1.5px solid var(--excel-grid);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .excel-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: var(--font-code);
+      min-width: 440px;
+    }
+
+    .excel-table th,
+    .excel-table td {
+      border: 1px solid var(--excel-grid);
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .excel-table th {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      font-weight: 700;
+      text-align: center;
+      user-select: none;
+    }
+
+    .excel-table th.col-head {
+      font-size: 11px;
+      height: 24px;
+    }
+
+    .excel-table td.row-num {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      font-weight: 700;
+      text-align: center;
+      width: 32px;
+      user-select: none;
+      font-size: 11px;
+    }
+
+    .excel-table td.num-cell {
+      text-align: right;
+    }
+
+    /* Target Answer Cell Highlight */
+    .excel-table td.cell-target {
+      background: var(--accent-highlight-bg) !important;
+      border: 2.5px solid var(--accent-highlight) !important;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      position: relative;
+      animation: pulseCell 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseCell {
+      0%, 100% { box-shadow: inset 0 0 0 1px var(--primary-green); }
+      50% { box-shadow: inset 0 0 0 3px var(--primary-green-dark); }
+    }
+
+    .cell-target-label {
+      font-size: 10px;
+      color: var(--primary-green-dark);
+      display: block;
+      line-height: 1;
+      margin-bottom: 2px;
+      font-weight: 800;
+    }
+
+    /* Lesson Detail View */
+    .lesson-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--primary-green);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-back:hover {
+      background: var(--bg-sub);
+    }
+
+    .lesson-badge-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .lesson-title-main {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+      margin-bottom: 4px;
+    }
+
+    .lesson-subtitle-main {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Formula Input & Action Group */
+    .formula-input-card {
+      background: var(--bg-card);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .formula-bar-container {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s ease;
+    }
+
+    .formula-bar-container:focus-within {
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 3px rgba(16, 124, 65, 0.12);
+    }
+
+    .fx-symbol {
+      font-family: var(--font-code);
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--primary-green);
+      padding-right: 8px;
+      border-right: 1.5px solid var(--border-color);
+      margin-right: 8px;
+      user-select: none;
+    }
+
+    .formula-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font-code);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      background: transparent;
+      width: 100%;
+    }
+
+    .formula-input::placeholder {
+      color: #9cb8a5;
+      font-weight: 400;
+    }
+
+    /* Function Quick Insert Buttons */
+    .fn-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .fn-chip {
+      background: var(--bg-sub);
+      border: 1px solid var(--border-color);
+      color: var(--primary-green-dark);
+      font-family: var(--font-code);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .fn-chip:hover {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    /* Run & Action Buttons */
+    .btn-primary {
+      width: 100%;
+      background: var(--primary-green);
+      color: #ffffff;
+      border: none;
+      padding: 13px 20px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-green-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    /* Feedback & Error Box */
+    .feedback-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .feedback-box.error {
+      display: block;
+      background: var(--error-red-bg);
+      border: 1.5px solid #ef9a9a;
+      color: var(--error-red);
+    }
+
+    .feedback-box.success {
+      display: block;
+      background: var(--success-green-bg);
+      border: 1.5px solid #a5d6a7;
+      color: var(--primary-green-dark);
+    }
+
+    .feedback-box.info {
+      display: block;
+      background: #e3f2fd;
+      border: 1.5px solid #90caf9;
+      color: #1565c0;
+    }
+
+    .feedback-header {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feedback-desc {
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* Hints Accordion */
+    .hints-section {
+      margin-top: 16px;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 14px;
+    }
+
+    .btn-hint-toggle {
+      background: transparent;
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-green-dark);
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-hint-toggle:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .hints-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hint-bubble {
+      background: #f6fbf7;
+      border-left: 3.5px solid var(--primary-green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .hint-step-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 2px;
+    }
+
+    /* Example Box */
+    .example-card {
+      background: var(--bg-sub);
+      border: 1.5px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin: 12px 0 16px;
+    }
+
+    .example-header {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .example-formula-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-formula-code {
+      font-family: var(--font-code);
+      font-size: 14px;
+      font-weight: 700;
+      background: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      color: var(--primary-green-dark);
+    }
+
+    .btn-calc-example {
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .example-calc-result {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      font-family: var(--font-code);
+      display: none;
+    }
+
+    /* Multiple Choice Questions (Prologue) */
+    .choices-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .choice-btn {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .choice-btn:hover {
+      border-color: var(--primary-green);
+      background: var(--bg-sub);
+    }
+
+    .choice-btn.correct {
+      border-color: var(--primary-green);
+      background: var(--success-green-bg);
+      color: var(--primary-green-dark);
+    }
+
+    .choice-btn.incorrect {
+      border-color: var(--error-red);
+      background: var(--error-red-bg);
+      color: var(--error-red);
+    }
+
+    .choice-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .choice-btn.correct .choice-indicator {
+      background: var(--primary-green);
+      border-color: var(--primary-green);
+      color: #fff;
+    }
+
+    .choice-btn.incorrect .choice-indicator {
+      background: var(--error-red);
+      border-color: var(--error-red);
+      color: #fff;
+    }
+
+    /* Solved Overlay Card */
+    .solved-modal {
+      background: linear-gradient(135deg, #E6F4EA 0%, #d2ebd8 100%);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 18px;
+      box-shadow: var(--shadow-md);
+      display: none;
+      animation: bounceIn 0.3s ease-out;
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .solved-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .model-formula-box {
+      background: #ffffff;
+      border: 1.5px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: var(--font-code);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+    }
+
+    .after-note-text {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--primary-green-dark);
+      margin-bottom: 16px;
+    }
+
+    .btn-next-lesson {
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(16, 124, 65, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-next-lesson:hover {
+      background: var(--primary-green-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Free Playground View */
+    .playground-badge {
+      background: var(--primary-green);
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .quick-samples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 16px;
+    }
+
+    .btn-sample {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-green-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sample:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+    }
+
+    .playground-result-box {
+      margin-top: 14px;
+      background: #fff;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .result-val {
+      font-family: var(--font-code);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Confetti Canvas for celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+
+    <!-- Top Header -->
+    <header>
+      <div class="brand" id="brand-home-btn" title="ステージ地図へ戻る">
+        <span class="brand-icon">🍡</span>
+        <div>
+          <h1 class="brand-title">まるもちのExcel教室</h1>
+          <p class="brand-subtitle">初心者のための数式ドリル</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-nav" id="nav-btn-home">🗺️ 地図</button>
+        <button class="btn-nav" id="nav-btn-playground">🧪 自由練習</button>
+      </div>
+    </header>
+
+    <!-- Marumochi Character Guide Section -->
+    <div class="marumochi-wrapper">
+      <div class="marumochi-character">
+        <div class="marumochi-avatar" id="global-marumochi">
+          <span class="mochi-leaf">🍃</span>
+          <div class="mochi-eyes">
+            <span class="mochi-eye"></span>
+            <span class="mochi-eye"></span>
+          </div>
+          <div class="mochi-cheeks">
+            <span class="mochi-cheek"></span>
+            <span class="mochi-cheek"></span>
+          </div>
+          <div class="mochi-mouth"></div>
+        </div>
+        <span class="marumochi-name">まるもち</span>
+      </div>
+      <div class="speech-bubble">
+        <p class="bubble-text" id="global-bubble-text">
+          こんにちは！まるもちだよ。いっしょに楽しくExcelの数式をマスターしようね！🍡
+        </p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME (Roadmap & Stage List)        -->
+    <!-- ========================================== -->
+    <section id="view-home" class="view-section active">
+
+      <!-- Overall Progress Banner -->
+      <div class="progress-banner">
+        <div class="progress-header">
+          <span class="progress-title">全体のクリア状況</span>
+          <span class="progress-count" id="progress-summary-count">0 / 15 レッスン</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-summary-bar"></div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+          <button id="btn-reset-progress" style="background: none; border: none; font-size: 11px; color: var(--text-muted); cursor: pointer; text-decoration: underline;">
+            進捗をリセット
+          </button>
+        </div>
+      </div>
+
+      <!-- Stages Roadmap Container -->
+      <div id="stages-roadmap-container">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: LESSON DETAIL                      -->
+    <!-- ========================================== -->
+    <section id="view-lesson" class="view-section">
+
+      <!-- Top Back Nav -->
+      <div class="lesson-nav-bar">
+        <button class="btn-back" id="btn-lesson-back">
+          ← ステージ地図にもどる
+        </button>
+        <span class="lesson-badge-info" id="lesson-stage-badge">Stage 0</span>
+      </div>
+
+      <!-- Lesson Title Header -->
+      <h2 class="lesson-title-main" id="lesson-detail-title">四則演算</h2>
+      <p class="lesson-subtitle-main" id="lesson-detail-subtitle">+ - * / と カッコのルール</p>
+
+      <!-- Lesson Explanation Card -->
+      <div class="card" id="lesson-explain-card">
+        <div class="card-title">📖 まるもちのワンポイント解説</div>
+        <div id="lesson-explain-body" style="font-size: 14.5px; line-height: 1.7;"></div>
+      </div>
+
+      <!-- Lesson Example Card (if applicable) -->
+      <div class="example-card" id="lesson-example-card" style="display: none;">
+        <div class="example-header">
+          <span>💡 まずは例題で動きを見てみよう</span>
+        </div>
+        <p id="example-desc-text" style="font-size: 13.5px; margin-bottom: 8px; color: var(--text-sub);"></p>
+        <div class="example-formula-row">
+          <span class="example-formula-code" id="example-formula-text">=SUM(C2:C4)</span>
+          <button class="btn-calc-example" id="btn-run-example">計算してみる</button>
+          <span class="example-calc-result" id="example-calc-result">結果: 4</span>
+        </div>
+      </div>
+
+      <!-- Sales Spreadsheet Table Preview -->
+      <div class="sheet-container">
+        <div class="sheet-title-bar">
+          📊 練習シート「売上」（まるもちのスタンプ売上）
+        </div>
+        <div id="lesson-sheet-render-area">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="card" style="border: 2px solid var(--primary-green);">
+        <div class="card-title" style="color: var(--primary-green-dark);">
+          🎯 もんだい
+        </div>
+        <p id="lesson-question-text" style="font-size: 15px; font-weight: 700; line-height: 1.6; margin-bottom: 12px;"></p>
+
+        <!-- Prologue Choice UI (if type == 'choice') -->
+        <div id="lesson-choice-ui" style="display: none;">
+          <div class="choices-container" id="choices-container-list"></div>
+        </div>
+
+        <!-- Formula Input UI (if type == 'formula' or 'interactive_demo') -->
+        <div id="lesson-formula-ui" style="display: none;">
+
+          <div class="formula-bar-container">
+            <span class="fx-symbol">fx</span>
+            <input type="text" class="formula-input" id="lesson-formula-input" placeholder="=から始まる数式を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">
+          </div>
+
+          <!-- Function Quick Insert Chips -->
+          <div class="fn-btn-group">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">ワンタップ入力:</span>
+            <button class="fn-chip" data-fn="SUM">SUM</button>
+            <button class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+            <button class="fn-chip" data-fn="COUNT">COUNT</button>
+            <button class="fn-chip" data-fn="IF">IF</button>
+            <button class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+          </div>
+
+          <!-- Run Formula Button -->
+          <button class="btn-primary" id="btn-run-formula">
+            🚀 数式を実行して判定する
+          </button>
+        </div>
+
+        <!-- Feedback & Error Message Box -->
+        <div class="feedback-box" id="lesson-feedback-box">
+          <div class="feedback-header" id="feedback-header-title"></div>
+          <div class="feedback-desc" id="feedback-desc-text"></div>
+        </div>
+
+        <!-- Hints Accordion -->
+        <div class="hints-section" id="lesson-hints-section">
+          <button class="btn-hint-toggle" id="btn-toggle-hint">
+            💡 ヒントを見る (<span id="hint-step-count">1</span>/3)
+          </button>
+          <div class="hints-list" id="hints-list-container"></div>
+        </div>
+
+      </div>
+
+      <!-- Solved Success Modal Card -->
+      <div class="solved-modal" id="lesson-solved-modal">
+        <h3 class="solved-title">🎉 正解！おみごと！</h3>
+        <p style="font-size: 13px; font-weight: 700; color: #0B5C2E; margin-bottom: 4px;">模範の数式：</p>
+        <div class="model-formula-box" id="solved-model-formula">=SUM(D2:D6)</div>
+        <p class="after-note-text" id="solved-after-note"></p>
+        <button class="btn-next-lesson" id="btn-next-lesson-action">
+          次のレッスンへ進む ➔
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: FREE PLAYGROUND                    -->
+    <!-- ========================================== -->
+    <section id="view-playground" class="view-section">
+      <span class="playground-badge">🧪 自由練習モード</span>
+      <h2 class="lesson-title-main">数式を自由に試してみよう！</h2>
+      <p class="lesson-subtitle-main">
+        練習シート「売上」のデータを使って、好きな数式を打ち込んで計算結果を確かめられるよ。
+      </p>
+
+      <!-- Sales Sheet Preview -->
+      <div class="sheet-container">
+        <div class="sheet-title-bar">
+          📊 練習シート「売上」
+        </div>
+        <div id="playground-sheet-render-area"></div>
+      </div>
+
+      <!-- Quick Formula Samples -->
+      <div style="margin-top: 10px;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">試してみるサンプル：</span>
+        <div class="quick-samples">
+          <button class="btn-sample" data-sample="=SUM(D2:D6)">売上合計 =SUM(D2:D6)</button>
+          <button class="btn-sample" data-sample="=AVERAGE(D2:D6)">平均売上 =AVERAGE(D2:D6)</button>
+          <button class="btn-sample" data-sample="=COUNT(D2:D6)">数値カウント =COUNT(D2:D6)</button>
+          <button class="btn-sample" data-sample="=COUNTA(B2:B6)">スタンプ数 =COUNTA(B2:B6)</button>
+          <button class="btn-sample" data-sample="=MAX(D2:D6)">最高売上 =MAX(D2:D6)</button>
+          <button class="btn-sample" data-sample="=IF(C2>1, &quot;大人気&quot;, &quot;通常&quot;)">条件分岐 IF</button>
+        </div>
+      </div>
+
+      <!-- Playground Input Box -->
+      <div class="formula-input-card">
+        <div class="formula-bar-container">
+          <span class="fx-symbol">fx</span>
+          <input type="text" class="formula-input" id="playground-formula-input" placeholder="例: =SUM(D2:D6)" autocomplete="off">
+        </div>
+
+        <div class="fn-btn-group">
+          <button class="fn-chip" data-fn="SUM">SUM</button>
+          <button class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+          <button class="fn-chip" data-fn="COUNT">COUNT</button>
+          <button class="fn-chip" data-fn="IF">IF</button>
+          <button class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+        </div>
+
+        <button class="btn-primary" id="btn-run-playground">
+          ⚡ 計算を実行する
+        </button>
+
+        <div class="playground-result-box" id="playground-result-display" style="display: none;">
+          <span class="result-label">計算結果：</span>
+          <span class="result-val" id="playground-result-text">-</span>
+        </div>
+
+        <div class="feedback-box" id="playground-feedback-box">
+          <div class="feedback-header" id="playground-feedback-title"></div>
+          <div class="feedback-desc" id="playground-feedback-desc"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer with required copyright -->
+  <footer>
+    <p>© RYO YOKOTA</p>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: DATA & LOGIC                   -->
+  <!-- ========================================== -->
+  <script>
+    /* ====================================================
+       1. DATA DEFINITIONS
+       ==================================================== */
+
+    // 練習シート「売上」の初期データ
+    const SALES_SHEET_DATA = [
+      ['日付', 'スタンプ名', '個数', '金額'],
+      ['2026-11-06', '癒しのまるもち', 1, 190],
+      ['2026-11-08', '癒しのまるもち', 2, 380],
+      ['2026-11-10', '動く！癒しのまるもち', 1, 250],
+      ['2026-11-10', '癒しのまるもち', 3, 570],
+      ['2026-11-12', 'あけおめ！まるもち2027', 0, 0]
+    ];
+
+    // ステージ一覧定義
+    const STAGES = [
+      {
+        id: 'stage-prologue',
+        num: 'P',
+        title: 'プロローグ：Excel超入門',
+        desc: '専門用語なし！身近な例えと観察でExcelのきほんを体感しよう',
+        locked: false
+      },
+      {
+        id: 'stage-0',
+        num: '0',
+        title: 'Stage 0：基本操作と数式',
+        desc: '四則演算・セル参照・相対参照と絶対参照のしくみ',
+        locked: false
+      },
+      {
+        id: 'stage-1',
+        num: '1',
+        title: 'Stage 1：集計の基本',
+        desc: 'SUM・AVERAGE・COUNT・MAX・MINと範囲指定の極意',
+        locked: false
+      },
+      {
+        id: 'stage-2',
+        num: '2',
+        title: 'Stage 2：条件分岐（IF / IFS）',
+        desc: 'もし〜なら…条件にあわせて表示を変える魔法',
+        locked: true
+      },
+      {
+        id: 'stage-3',
+        num: '3',
+        title: 'Stage 3：検索と照合（VLOOKUP / XLOOKUP）',
+        desc: '別の表から目当てのデータを探して持ってくる神ワザ',
+        locked: true
+      },
+      {
+        id: 'stage-4',
+        num: '4',
+        title: 'Stage 4：文字列の操作',
+        desc: '文字をくっつけたり、左から取り出したり自由自在',
+        locked: true
+      },
+      {
+        id: 'stage-5',
+        num: '5',
+        title: 'Stage 5：日付と時刻',
+        desc: '今日の日付、あと何日？期限や勤続年数を自動計算',
+        locked: true
+      },
+      {
+        id: 'stage-6',
+        num: '6',
+        title: 'Stage 6：実践総合ドリル',
+        desc: '現場でそのまま役立つ！関数を組み合わせた実践チャレンジ',
+        locked: true
+      }
+    ];
+
+    // レッスンデータ（拡張しやすい単一配列）
+    const LESSONS = [
+      // --- プロローグ (5レッスン) ---
+      {
+        id: 'p-01',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 1/5',
+        title: 'Excelってなに？',
+        subtitle: '計算と表が1枚にまとまったノートの例え',
+        type: 'choice',
+        explain: `まるもちのExcel教室へようこそ！🍡<br><br>
+Excel（エクセル）って、パソコンの中に最初から入っているけど何に使うの？って思いますよね。<br>
+身近なもので例えると、Excelは**「巨大な方眼紙の計算ノート」**なんです！<br><br>
+メモ帳と電卓が1つに合体したようなもので、マス目に文字や数字を並べておくと、あとで自動的にぜ〜んぶ計算してくれます。<br>
+計算間違いもゼロ！まるもちのスタンプ売上もパッと計算してくれる頼もしい相棒なんだよ！`,
+        question: 'Q. Excelってどんなもの？まるもちに教えてあげてね！',
+        choices: [
+          { text: '文字や数字を並べて、自動で計算してくれる便利なノート', correct: true, feedback: 'その通り！計算も整理もこれ1つでぜんぶ解決できるノートだよ！' },
+          { text: 'ゲームで遊ぶためだけの専用アプリ', correct: false, feedback: 'ふふっ、ゲームも作れるかもだけど、本職は計算と表整理のノートだよ！' },
+          { text: '一度書いたら二度と修正できない紙のノート', correct: false, feedback: '数字を書き換えたら、計算結果も自動でやり直してくれるのがデジタルの強みだよ！' }
+        ],
+        hints: [
+          '電卓と方眼紙が合体したようなイメージだよ。',
+          '「自動で計算」してくれるのが一番の特徴なんだ！',
+          '「文字や数字を並べて、自動で計算してくれる便利なノート」を選んでみてね！'
+        ],
+        modelFormula: null,
+        afterNote: '大正解！まずは「自動で計算してくれる頼れるノート」と覚えておけばバッチリだよ！'
+      },
+      {
+        id: 'p-02',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 2/5',
+        title: 'セル・行・列',
+        subtitle: 'マス目に住所をつける感覚',
+        type: 'choice',
+        explain: `Excelの方眼紙のマス目のことを**「セル」**と呼びます。<br>
+まるもちのお部屋の住所みたいに、マス目には全部名前がついています！<br><br>
+・**横の並び**を**「行（ぎょう）」**と呼び、数字（1, 2, 3...）がつきます。<br>
+・**縦の並び**を**「列（れつ）」**と呼び、アルファベット（A, B, C...）がつきます。<br><br>
+例えば、縦の「B列」と横の「3行」がぶつかるマスは、**「B3（ビーサン）」**と呼びます！必ず**【列（アルファベット）→ 行（数字）】**の順番で読むよ。`,
+        question: 'Q. スタンプ名が並んでいる「B列」の、上から2番目のデータ（3行目）にあるセルの名前はどれかな？',
+        targetCell: { col: 1, row: 2, label: 'B3' },
+        choices: [
+          { text: 'B3', correct: true, feedback: '大正解！横のB列と縦の3行目が合わさって「B3」だよ！' },
+          { text: '3B', correct: false, feedback: 'おしい！アルファベットを先に言って「B3」と呼ぶのがルールだよ！' },
+          { text: 'C2', correct: false, feedback: 'スタンプ名はB列、3行目の場所を見てみてね！' }
+        ],
+        hints: [
+          'アルファベットが先、数字が後だよ。',
+          'B列の3行目を探してみてね。',
+          '「B3」を選ぼう！'
+        ],
+        modelFormula: null,
+        afterNote: 'セル住所の読み方はもう完璧！「B3」のようにアルファベット＋数字で指定する感覚を覚えておいてね！'
+      },
+      {
+        id: 'p-03',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 3/5',
+        title: '数式は「=」から始まるお願い文',
+        subtitle: 'Excelへの魔法の合言葉',
+        type: 'choice',
+        explain: `マス目に「1+1」とだけ書くと、Excelは「いちたすいち、という文字が書いてあるな〜」と思って計算してくれません。<br><br>
+Excelに「ねえねえ、これ計算して！」とお願いするときは、先頭に半角の**「=（イコール）」**をつけるのが世界共通のルール！<br><br>
+**「=1+1」**と書くと、Excelが「よし、計算するぞ！」と動き出して、パッと「2」と表示してくれます。<br>
+「=」は、Excelの計算エンジンを起動する魔法のスイッチなんだよ！`,
+        question: 'Q. Excelに「2足す3を計算して！」とお願いするときの正しい書き方はどれかな？',
+        choices: [
+          { text: '=2+3', correct: true, feedback: '大正解！頭に「=」をつけるのが計算の合言葉だよ！' },
+          { text: '2+3', correct: false, feedback: '「=」がないと、文字の「2+3」のまま計算されないよ！' },
+          { text: '計算して: 2+3', correct: false, feedback: '気持ちはすごく伝わるけど、Excelには記号の「=」を使って教えてあげよう！' }
+        ],
+        hints: [
+          '計算をお願いする合言葉は「=」だよ。',
+          '一番最初に「=」を書くのがポイント！',
+          '「=2+3」を選んでね！'
+        ],
+        modelFormula: null,
+        afterNote: '「=（イコール）」は魔法の合言葉！これから書くすべての数式は「=」からスタートするよ！'
+      },
+      {
+        id: 'p-04',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 4/5',
+        title: '表を眺めてみよう',
+        subtitle: '見出しとデータの関係を観察',
+        type: 'choice',
+        explain: `下に、まるもちのLINEスタンプの**「売上表」**を用意したよ！🍡<br><br>
+表の一番上（1行目）には、「日付」「スタンプ名」「個数」「金額」という**見出し（ラベル）**が並んでいるね。<br>
+そして2行目から下に、1件ずつの売上データが記録されているよ。<br><br>
+表をじっくり観察してみよう！`,
+        question: 'Q. この表には、スタンプ売上のデータ（見出し行をのぞく、データの行）は何行あるかな？',
+        choices: [
+          { text: '5行（2行目〜6行目）', correct: true, feedback: 'ビンゴ！11月6日〜12日までの5つのデータが並んでいるね！' },
+          { text: '4行', correct: false, feedback: '10日のデータが2件あるよ。カレンダーの日付をよく数えてみてね！' },
+          { text: '6行', correct: false, feedback: '1行目は見出し（タイトル）だから、データの中身は2行目からだよ！' }
+        ],
+        hints: [
+          '1行目は「見出し」だから数えないよ。',
+          '2行目から6行目までを数えよう。',
+          '2, 3, 4, 5, 6 で合計5行あるよ！「5行（2行目〜6行目）」を選んでね。'
+        ],
+        modelFormula: null,
+        afterNote: '観察バッチリ！Excelでは「1行目が見出し、2行目以降がデータ」という形が基本の型だよ！'
+      },
+      {
+        id: 'p-05',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 5/5',
+        title: '初めての計算',
+        subtitle: '用意した数式を実行ボタンで体験',
+        type: 'interactive_demo',
+        explain: `さあ、プロローグの締めくくり！Excelの計算パワーを実際に体験してみよう！<br><br>
+入力欄に**「=190*2」**（190円のスタンプ2個分）と用意してあるよ。<br>
+（掛け算の記号は「×」ではなく、半角のアスタリスク「*」を使うよ！）<br><br>
+下のボタンを押して、HyperFormulaが一瞬で計算してくれる気持ちよさを体験してみてね。数字を変えて再計算もできるよ！`,
+        question: '下の「数式を実行して判定する」ボタンを押して計算してみよう！好きな数値に変えてもOKだよ。',
+        defaultFormula: '=190*2',
+        expectedValue: 380,
+        allowAnyValidCalculation: true,
+        hints: [
+          'まずはそのままボタンを押してみてね！',
+          '「*」は掛け算の記号だよ。',
+          '計算結果が出たらクリアだよ！'
+        ],
+        modelFormula: '=190*2',
+        afterNote: 'お見事！ボタンひとつで瞬時に計算されたね。これが数式の力だよ！Stage 0へ進もう！'
+      },
+
+      // --- Stage 0 (4レッスン) ---
+      {
+        id: 's0-01',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 1/4',
+        title: '四則演算',
+        subtitle: '+ - * / と カッコのルール',
+        type: 'formula',
+        explain: `Excelで使える基本の計算記号（四則演算）を覚えよう！<br>
+・足し算：**+**（プラス）<br>
+・引き算：**-**（マイナス）<br>
+・掛け算：*****（アスタリスク）<br>
+・割り算：**/**（スラッシュ）<br><br>
+算数と同じで、**掛け算・割り算が先**に計算されます。<br>
+足し算や引き算を先にしたいときは、**( )（カッコ）**で囲んであげよう！`,
+        example: {
+          formula: '=(100+50)*2',
+          desc: '100+50（150）を先に足してから2倍にするよ',
+          result: 300
+        },
+        question: '190円のスタンプを3個買って、100円引きクーポンを使うよ。計算する数式を書いてみよう！（答えは 470）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 470,
+        modelFormula: '=190*3-100',
+        hints: [
+          '190かける3をしてから、100を引くよ。',
+          '掛け算は「*」、引き算は「-」を使うよ。',
+          '「=190*3-100」と入力してみてね！'
+        ],
+        afterNote: '正解！「=190*3-100」で470円！パソコンならではの「*」と「/」に慣れていこう！'
+      },
+      {
+        id: 's0-02',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 2/4',
+        title: 'セル参照',
+        subtitle: 'A1・B2のようにマスの名前を使う',
+        type: 'formula',
+        explain: `数字を直接「=190*2」と書くかわりに、**「=C3*190」**のようにセルの住所を書くことを**「セル参照」**と言います！<br><br>
+セル参照を使うと、**「元のセルの数値を書き換えたら、計算結果も自動でやり直される」**という魔法が起きます！<br>
+修正に強い表を作るための、Excelで一番大事な考え方だよ。`,
+        example: {
+          formula: '=C2*190',
+          desc: 'C2セル（個数:1）に単価190円を掛けるよ',
+          result: 190
+        },
+        question: '3行目のデータを見てね。C3セル（個数:2）に、単価「190」を掛ける数式を書いてみよう！（答えは 380）',
+        targetCell: { col: 3, row: 2, label: 'D3' },
+        expectedValue: 380,
+        modelFormula: '=C3*190',
+        hints: [
+          '直接「2」と書かずに、セル名「C3」を使おう！',
+          '掛け算は「*」だよ。',
+          '「=C3*190」と入力してみてね！'
+        ],
+        afterNote: '大正解！セル参照を使うと、元のデータが変わっても式を直さなくていいんだよ！'
+      },
+      {
+        id: 's0-03',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 3/4',
+        title: '相対参照と絶対参照',
+        subtitle: 'ズレないようにピン留めする「$」',
+        type: 'formula',
+        explain: `数式をコピーしたとき、参照先が一緒に移動してくれるのを**「相対参照」**と言います。<br>
+でも、「このセルだけは絶対にズラしたくない！」という時もあります。<br><br>
+そんな時に使うのが**「$（ドルマーク）」**！<br>
+**「$D$2」**のように列と行の前に「$」をつけると、どこへコピーしてもD2の場所から動かない**「絶対参照」**になります。画鋲でピン留めする感覚だよ！`,
+        example: {
+          formula: '=$D$2',
+          desc: 'D2セル（190）を絶対参照でピン留め',
+          result: 190
+        },
+        question: 'D2セルの金額（190）を、行も列も絶対にズレないように絶対参照で引っ張ってくる数式を書いてみよう！（答えは 190）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 190,
+        modelFormula: '=$D$2',
+        hints: [
+          'セルの前後に「$」をつけると絶対参照になるよ。',
+          'Dの前と2の前に「$」をつけてみよう。',
+          '「=$D$2」と入力してみてね！'
+        ],
+        afterNote: 'ピン留めの「$」！これで数式を他のマスにコピーしても、絶対に動かないよ！'
+      },
+      {
+        id: 's0-04',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 4/4',
+        title: '参照をコピーする感覚',
+        subtitle: '1行分の式を下に伸ばす考え方',
+        type: 'formula',
+        explain: `Excelで一番爽快な瞬間、それは**「1行目に作った数式を、下の行へ一気にコピーする」**こと！<br>
+相対参照のおかげで、1行下にコピーした式は勝手に次の行のセルを見てくれるんだよ。<br><br>
+それぞれの行が、自分の行のセルをちゃんと参照する感覚を身につけよう！`,
+        example: {
+          formula: '=C4*250',
+          desc: '4行目の個数(C4: 1) × 単価250円',
+          result: 250
+        },
+        question: '4行目（動く！癒しのまるもち）の売上金額を出すため、4行目の個数「C4」に単価「250」を掛ける数式を入力してみよう！（答えは 250）',
+        targetCell: { col: 3, row: 3, label: 'D4' },
+        expectedValue: 250,
+        modelFormula: '=C4*250',
+        hints: [
+          '4行目の個数は「C4」に入っているよ。',
+          '単価は250円だよ。',
+          '「=C4*250」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！行の番号に合わせたセル参照がしっかり身についたね！Stage 0制覇おめでとう！🎉'
+      },
+
+      // --- Stage 1 (6レッスン) ---
+      {
+        id: 's1-01',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 1/6',
+        title: '合計する（SUM）',
+        subtitle: '大量の足し算を一瞬で終わらせる呪文',
+        type: 'formula',
+        explain: `たくさんのセルを足すとき、「=D2+D3+D4+D5+D6」と書くのは大変！<br>
+そこで登場するのが、Excelで一番使われる関数**「SUM（サム）」**！<br><br>
+**「=SUM(開始セル : 終了セル)」**と書くだけで、その範囲の数字をぜ〜んぶ合算してくれます！<br>
+コロン「:」は「〜から〜まで」という意味だよ。`,
+        example: {
+          formula: '=SUM(C2:C4)',
+          desc: 'C2からC4までの個数の合計（1+2+1）',
+          result: 4
+        },
+        question: '売上金額（D2からD6まで）のすべての合計を、SUM関数を使って計算してみよう！（答えは 1390）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 1390,
+        modelFormula: '=SUM(D2:D6)',
+        hints: [
+          '合計を出す関数は「SUM」だよ。下のSUMボタンも使ってみてね！',
+          '範囲はD2からD6までだから「D2:D6」と書くよ。',
+          '「=SUM(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: 'すごい！合計1390円がパッと出たね！Excelで最も愛されている王道の関数だよ！'
+      },
+      {
+        id: 's1-02',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 2/6',
+        title: '平均を求める（AVERAGE）',
+        subtitle: '合計して個数で割る計算を一瞬で',
+        type: 'formula',
+        explain: `「1回あたり平均何個売れたかな？」という平均を出したいときは**「AVERAGE（アベレージ）」**！<br><br>
+**「=AVERAGE(範囲)」**と書けば、自動で合計してデータの件数で割ってくれます。<br>
+0個の日（12日）もちゃんと計算に含めて正確な平均を出してくれるよ！`,
+        example: {
+          formula: '=AVERAGE(C2:C6)',
+          desc: 'スタンプ売上個数の平均（(1+2+1+3+0)/5）',
+          result: 1.4
+        },
+        question: 'スタンプ売上個数（C2からC6まで）の平均を、AVERAGE関数を使って計算してみよう！（答えは 1.4）',
+        targetCell: { col: 2, row: 6, label: 'C7' },
+        expectedValue: 1.4,
+        modelFormula: '=AVERAGE(C2:C6)',
+        hints: [
+          '平均を求める関数は「AVERAGE」だよ。',
+          '個数の範囲は「C2:C6」だよ。',
+          '「=AVERAGE(C2:C6)」と入力してみてね！'
+        ],
+        afterNote: '正解！平均1.4個！スペルが少し長いけど、下のボタンを使えば一発で入力できるよ！'
+      },
+      {
+        id: 's1-03',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 3/6',
+        title: '数える（COUNT / COUNTA）',
+        subtitle: '数値のマスだけをカウントする',
+        type: 'formula',
+        explain: `データの件数を数えるのが**「COUNT（カウント）」**！<br>
+ただし大事なお約束があります。<br>
+**「COUNT」は【数値が入っているマス】だけを数えます！**<br><br>
+文字が入っているマスは数えてくれないので、金額や個数など「数字の列」の件数を数えるときに使おう！`,
+        example: {
+          formula: '=COUNT(D2:D6)',
+          desc: '金額列（数値）にデータが何件あるか数える',
+          result: 5
+        },
+        question: '売上金額（D2からD6まで）に、数値のデータが何件あるか「COUNT」関数で数えてみよう！（答えは 5）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 5,
+        modelFormula: '=COUNT(D2:D6)',
+        hints: [
+          '件数を数える関数は「COUNT」だよ。',
+          '金額の範囲は「D2:D6」だよ。',
+          '「=COUNT(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: '完璧！数値が入っているセルが5件あることが確認できたね！伝票の件数確認などに重宝するよ！'
+      },
+      {
+        id: 's1-04',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 4/6',
+        title: '一番大きい・小さい値（MAX / MIN）',
+        subtitle: '最高記録と最低記録を見つける',
+        type: 'formula',
+        explain: `たくさんのデータから、一番大きな値を見つけるのが**「MAX（マックス）」**、<br>
+一番小さな値を見つけるのが**「MIN（ミン）」**です！<br><br>
+何百行もデータがあっても、一瞬で「一番売れた日はいくら？」「最低売上は？」を見つけ出してくれるよ！`,
+        example: {
+          formula: '=MIN(D2:D6)',
+          desc: '売上金額の最低値（あけおめの0円）',
+          result: 0
+        },
+        question: 'スタンプの売上金額（D2からD6まで）の中で、一番大きい金額（最高額）をMAX関数で求めてみよう！（答えは 570）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 570,
+        modelFormula: '=MAX(D2:D6)',
+        hints: [
+          '最大値を求める関数は「MAX」だよ。',
+          '金額の範囲は「D2:D6」だよ。',
+          '「=MAX(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: '最高売上は570円！ちなみに一番小さい値を探したいときは「=MIN(D2:D6)」で0円が見つかるよ！'
+      },
+      {
+        id: 's1-05',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 5/6',
+        title: '範囲の指定（A2:A10の書き方）',
+        subtitle: 'コロン「:」とカンマ「,」の使い分け',
+        type: 'formula',
+        explain: `範囲を指定する記号**「:（コロン）」**は、**「〜から〜まで」**という連続したひとかたまりを表します。<br><br>
+一方、離れたセルだけを足したいときは**「,（カンマ）」**を使うよ！<br>
+・連続した範囲：\`=SUM(D2:D4)\`（D2からD4までの3つ）<br>
+・離れたセル：\`=SUM(D2, D4)\`（D2とD4の2つだけ）<br>
+この2つを使いこなせるとExcel上級者の仲間入りだよ！`,
+        example: {
+          formula: '=SUM(D2, D4)',
+          desc: 'D2（190）とD4（250）の2つだけを足す',
+          result: 440
+        },
+        question: '2行目（190）と3行目（380）の金額だけを合計してみよう！「:」でも「,」でもどちらでもOKだよ！（答えは 570）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 570,
+        modelFormula: '=SUM(D2:D3)',
+        hints: [
+          'D2とD3をSUMで合計するよ。',
+          '「=SUM(D2:D3)」または「=SUM(D2, D3)」と書けるよ。',
+          '「=SUM(D2:D3)」と入力してみてね！'
+        ],
+        afterNote: '大正解！コロン（:）で範囲、カンマ（,）で個別選択。この2つの使い分けができると完璧だよ！'
+      },
+      {
+        id: 's1-06',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 6/6',
+        title: '集計の落とし穴',
+        subtitle: 'COUNTとCOUNTAの違い・文字の数え方',
+        type: 'formula',
+        explain: `ここで仕事でよくあるトラップ！<br>
+「COUNT」は数値しか数えないので、スタンプ名のような文字の列に「=COUNT(B2:B6)」と書くと、結果はなんと**「0」**になってしまいます！😱<br><br>
+文字が入っているマスも数えたいときは、**「COUNTA（カウント・エー）」**を使います！<br>
+「A」は「All（すべて）」のAと覚えておくと忘れないよ！`,
+        example: {
+          formula: '=COUNT(B2:B6)',
+          desc: '文字の列にCOUNTを使うと...0件になっちゃう！',
+          result: 0
+        },
+        question: 'スタンプ名（B2からB6まで）に何件のスタンプが登録されているか、文字も数えられる「COUNTA」で数えてみよう！（答えは 5）',
+        targetCell: { col: 1, row: 6, label: 'B7' },
+        expectedValue: 5,
+        modelFormula: '=COUNTA(B2:B6)',
+        hints: [
+          '文字も数えられる関数は「COUNTA」だよ。',
+          'スタンプ名の範囲は「B2:B6」だよ。',
+          '「=COUNTA(B2:B6)」と入力してみてね！'
+        ],
+        afterNote: 'お見事！文字を数えるならCOUNTA！この違いを知っているだけで、実務の集計トラブルを回避できるよ！Stage 1制覇おめでとう！🎉'
+      }
+    ];
+
+    /* ====================================================
+       2. APP STATE & STORAGE
+       ==================================================== */
+    const STORAGE_KEY = 'excel_marumochi_progress_v1';
+
+    let appState = {
+      currentView: 'home', // 'home' | 'lesson' | 'playground'
+      currentLessonId: null,
+      hintLevel: 0,
+      completedLessons: []
+    };
+
+    // Load progress from localStorage
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedLessons)) {
+            appState.completedLessons = parsed.completedLessons;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load progress from localStorage', e);
+      }
+    }
+
+    // Save progress to localStorage
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          completedLessons: appState.completedLessons,
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('Failed to save progress', e);
+      }
+    }
+
+    /* ====================================================
+       3. HYPERFORMULA HELPER & ERROR TRANSLATION
+       ==================================================== */
+
+    // エラー種別を親しみやすい日本語に変換するマップ
+    function getFriendlyErrorInfo(errorType, rawMessage) {
+      const typeStr = String(errorType || '').toUpperCase().replace(/[#!?]/g, '');
+      const map = {
+        'VALUE': {
+          code: '#VALUE!',
+          title: 'データの種類が合っていないよ',
+          desc: '文字と数字を掛け算しようとしたり、関数の引き出し方が違っているかも。足し算や範囲を見直してみてね！'
+        },
+        'NOT_AVAILABLE': {
+          code: '#N/A',
+          title: '探している値が見つからなかったよ',
+          desc: '指定した言葉が表の中に存在しないかも。探すキーワードのスペルを確認してみてね。'
+        },
+        'N/A': {
+          code: '#N/A',
+          title: '探している値が見つからなかったよ',
+          desc: '指定した言葉が表の中に存在しないかも。探すキーワードのスペルを確認してみてね。'
+        },
+        'NAME': {
+          code: '#NAME?',
+          title: '関数の名前やつづりが違うかも',
+          desc: '関数のスペル（SUM, AVERAGEなど）や、セルの記号（A1など）の打ち間違いがないか確かめてみてね！'
+        },
+        'DIV_BY_ZERO': {
+          code: '#DIV/0!',
+          title: '0で割り算しようとしているよ',
+          desc: '0や、何もない空っぽのマスで割ろうとしていないか確認してね。'
+        },
+        'DIV/0': {
+          code: '#DIV/0!',
+          title: '0で割り算しようとしているよ',
+          desc: '0や、何もない空っぽのマスで割ろうとしていないか確認してね。'
+        },
+        'REF': {
+          code: '#REF!',
+          title: '参照先のセルが見つからないよ',
+          desc: 'セルの番号が消えてしまったか、存在しない場所を指しているよ。'
+        },
+        'NUM': {
+          code: '#NUM!',
+          title: '数値の範囲に問題があるよ',
+          desc: '計算できる数字の大きさを超えているか、関数に渡した数字が正しくないよ。'
+        },
+        'CYCLE': {
+          code: '#CYCLE!',
+          title: '数式が無限ループになっているよ',
+          desc: '自分自身のセルを計算式の中で使ってしまっているよ。自分以外のセルを指定してね。'
+        },
+        'PARSE_ERROR': {
+          code: '#ERROR!',
+          title: '数式の書き方にミスがあるよ',
+          desc: 'カッコ「( )」の閉じ忘れや、カンマ「,」の抜けがないかもう一度見直してみてね。'
+        }
+      };
+
+      return map[typeStr] || {
+        code: '#ERROR!',
+        title: '計算エラーが発生したよ',
+        desc: '数式の書き方に誤りがあるみたい。もう一度ゆっくり見直してみよう！（' + (rawMessage || errorType || '構文エラー') + '）'
+      };
+    }
+
+    // HyperFormula を使って指定セルで数式を評価する
+    function runHyperFormula(formula, targetCol = 3, targetRow = 6) {
+      const trimmed = String(formula || '').trim();
+
+      // 先頭が「=」で始まっているかチェック
+      if (!trimmed.startsWith('=')) {
+        return {
+          success: false,
+          isEqualMissing: true,
+          errorInfo: {
+            code: '「=」がないよ！',
+            title: '数式は「=」から始まるよ！',
+            desc: 'Excelにお願いするときは、先頭に半角の「=（イコール）」をつけるのが合言葉だよ！'
+          }
+        };
+      }
+
+      try {
+        // 練習シートデータをクローン
+        const sheetData = SALES_SHEET_DATA.map(row => [...row]);
+
+        // ターゲットセルが入るように配列を行・列方向に拡張
+        while (sheetData.length <= targetRow) {
+          sheetData.push(new Array(sheetData[0].length).fill(''));
+        }
+        for (let r = 0; r < sheetData.length; r++) {
+          while (sheetData[r].length <= targetCol) {
+            sheetData[r].push('');
+          }
+        }
+
+        // HyperFormula インスタンス生成 (GPL-v3 ライセンスキー指定)
+        const hf = HyperFormula.buildFromArray(sheetData, {
+          licenseKey: 'gpl-v3'
+        });
+
+        const sheetId = hf.getSheetId('Sheet1') || 0;
+
+        // ターゲットセルに数式をセット
+        hf.setCellContents({ col: targetCol, row: targetRow, sheet: sheetId }, [[ trimmed ]]);
+
+        // 計算結果を取得
+        const rawVal = hf.getCellValue({ col: targetCol, row: targetRow, sheet: sheetId });
+
+        // エラーチェック
+        if (rawVal && typeof rawVal === 'object' && rawVal.type) {
+          return {
+            success: false,
+            errorInfo: getFriendlyErrorInfo(rawVal.type, rawVal.message),
+            raw: rawVal
+          };
+        }
+
+        if (typeof rawVal === 'string' && rawVal.startsWith('#')) {
+          return {
+            success: false,
+            errorInfo: getFriendlyErrorInfo(rawVal, rawVal),
+            raw: rawVal
+          };
+        }
+
+        return {
+          success: true,
+          value: rawVal
+        };
+
+      } catch (err) {
+        return {
+          success: false,
+          errorInfo: {
+            code: '#ERROR!',
+            title: '数式の書き方にミスがあるよ',
+            desc: 'カッコの対応やスペルを確かめてみてね。（' + err.message + '）'
+          }
+        };
+      }
+    }
+
+    /* ====================================================
+       4. UI RENDERING & INTERACTIONS
+       ==================================================== */
+
+    // まるもちの表情とセリフを更新する関数
+    function setMarumochi(text, mood = 'normal') {
+      const bubble = document.getElementById('global-bubble-text');
+      const avatar = document.getElementById('global-marumochi');
+      if (bubble) bubble.innerHTML = text;
+      if (avatar) {
+        avatar.className = 'marumochi-avatar';
+        if (mood === 'happy') avatar.classList.add('happy');
+        if (mood === 'thinking') avatar.classList.add('thinking');
+        if (mood === 'sad') avatar.classList.add('sad');
+      }
+    }
+
+    // スプレッドシートHTMLを生成する関数
+    function renderSpreadsheet(targetCell = null, targetValue = null) {
+      const colHeaders = ['A', 'B', 'C', 'D'];
+      let html = '<table class="excel-table">';
+      
+      // 列見出し行
+      html += '<thead><tr><th class="col-head"></th>';
+      colHeaders.forEach(col => {
+        html += `<th class="col-head">${col}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+
+      // 1行目〜6行目（通常データ）
+      SALES_SHEET_DATA.forEach((row, rIdx) => {
+        const rowNum = rIdx + 1;
+        html += `<tr><td class="row-num">${rowNum}</td>`;
+        row.forEach((cellVal, cIdx) => {
+          const isHeader = (rIdx === 0);
+          const isNum = typeof cellVal === 'number';
+          const isTarget = targetCell && targetCell.row === rIdx && targetCell.col === cIdx;
+          
+          let tdClass = '';
+          if (isHeader) tdClass = 'header-cell';
+          else if (isNum) tdClass = 'num-cell';
+          if (isTarget) tdClass += ' cell-target';
+
+          let displayVal = cellVal;
+          if (isTarget && targetValue !== null && targetValue !== undefined) {
+            displayVal = targetValue;
+          }
+
+          html += `<td class="${tdClass}">${displayVal}</td>`;
+        });
+        html += '</tr>';
+      });
+
+      // もしターゲットセルが7行目（rIdx = 6）にある場合、7行目を追加表示
+      if (targetCell && targetCell.row === 6) {
+        html += `<tr><td class="row-num">7</td>`;
+        for (let c = 0; c < 4; c++) {
+          if (c === targetCell.col) {
+            const displayVal = (targetValue !== null && targetValue !== undefined) ? targetValue : '（答え）';
+            html += `<td class="cell-target num-cell"><span class="cell-target-label">${targetCell.label}</span>${displayVal}</td>`;
+          } else {
+            html += `<td style="background:#faf8f5;"></td>`;
+          }
+        }
+        html += '</tr>';
+      }
+
+      html += '</tbody></table>';
+      return html;
+    }
+
+    // ホーム画面（ステージ地図）のレンダリング
+    function renderHomeView() {
+      // 進捗サマリーの計算
+      const totalLessons = LESSONS.length;
+      const completedCount = appState.completedLessons.length;
+      const pct = Math.round((completedCount / totalLessons) * 100);
+
+      document.getElementById('progress-summary-count').textContent = `${completedCount} / ${totalLessons} レッスン (${pct}%)`;
+      document.getElementById('progress-summary-bar').style.width = `${pct}%`;
+
+      const container = document.getElementById('stages-roadmap-container');
+      container.innerHTML = '';
+
+      STAGES.forEach(stage => {
+        const stageLessons = LESSONS.filter(l => l.stageId === stage.id);
+        const stageCompleted = stageLessons.filter(l => appState.completedLessons.includes(l.id)).length;
+
+        const card = document.createElement('div');
+        card.className = `stage-card ${stage.locked ? 'locked' : ''}`;
+
+        let lessonsHtml = '';
+        if (stage.locked) {
+          lessonsHtml = `
+            <div style="padding: 18px 16px; text-align: center; color: var(--text-muted); font-size: 13.5px;">
+              🔒 準備中・近日公開予定！
+            </div>
+          `;
+        } else {
+          lessonsHtml = '<ul class="stage-lessons">';
+          stageLessons.forEach(lesson => {
+            const isDone = appState.completedLessons.includes(lesson.id);
+            lessonsHtml += `
+              <li class="lesson-item ${isDone ? 'completed' : ''}" data-lesson-id="${lesson.id}">
+                <div class="lesson-left">
+                  <span class="lesson-status-icon">${isDone ? '✓' : '○'}</span>
+                  <div>
+                    <div class="lesson-title-text">${lesson.title}</div>
+                    <div class="lesson-sub-text">${lesson.subtitle}</div>
+                  </div>
+                </div>
+                <span class="lesson-arrow">➔</span>
+              </li>
+            `;
+          });
+          lessonsHtml += '</ul>';
+        }
+
+        card.innerHTML = `
+          <div class="stage-header">
+            <div>
+              <span class="stage-badge ${stage.locked ? 'badge-locked' : 'badge-available'}">
+                ${stage.locked ? '近日公開' : (stageCompleted === stageLessons.length ? '🌟 クリア！' : `${stageCompleted}/${stageLessons.length} 完了`)}
+              </span>
+              <h3 class="stage-name">${stage.title}</h3>
+              <p class="stage-desc">${stage.desc}</p>
+            </div>
+          </div>
+          ${lessonsHtml}
+        `;
+
+        container.appendChild(card);
+      });
+
+      // レッスンクリックイベント設定
+      document.querySelectorAll('.lesson-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const lId = item.getAttribute('data-lesson-id');
+          if (lId) openLesson(lId);
+        });
+      });
+
+      // まるもちのメッセージ
+      if (completedCount === totalLessons) {
+        setMarumochi('全レッスン制覇おめでとう！！もう立派なExcelマスターだよ！🍡🎉', 'happy');
+      } else if (completedCount > 0) {
+        setMarumochi(`現在 ${completedCount} レッスンクリア中！この調子でどんどん進もうね！🍡`, 'happy');
+      } else {
+        setMarumochi('こんにちは！まるもちだよ。まずは「プロローグ」から気軽に始めてみてね！🍡', 'normal');
+      }
+    }
+
+    // レッスン詳細画面を開く
+    function openLesson(lessonId) {
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      appState.currentLessonId = lessonId;
+      appState.hintLevel = 0;
+
+      // ヘッダー情報
+      document.getElementById('lesson-stage-badge').textContent = lesson.stageBadge;
+      document.getElementById('lesson-detail-title').textContent = lesson.title;
+      document.getElementById('lesson-detail-subtitle').textContent = lesson.subtitle;
+      document.getElementById('lesson-explain-body').innerHTML = lesson.explain;
+      document.getElementById('lesson-question-text').innerHTML = lesson.question;
+
+      // 例題エリアの表示制御
+      const exampleCard = document.getElementById('lesson-example-card');
+      if (lesson.example) {
+        exampleCard.style.display = 'block';
+        document.getElementById('example-desc-text').textContent = lesson.example.desc;
+        document.getElementById('example-formula-text').textContent = lesson.example.formula;
+        document.getElementById('example-calc-result').style.display = 'none';
+        document.getElementById('btn-run-example').onclick = () => {
+          const res = runHyperFormula(lesson.example.formula);
+          const resEl = document.getElementById('example-calc-result');
+          resEl.textContent = `計算結果: ${res.success ? res.value : 'エラー'}`;
+          resEl.style.display = 'inline';
+        };
+      } else {
+        exampleCard.style.display = 'none';
+      }
+
+      // シート描画
+      const sheetArea = document.getElementById('lesson-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(lesson.targetCell || null);
+
+      // UI切り替え (選択肢 vs 数式入力)
+      const choiceUi = document.getElementById('lesson-choice-ui');
+      const formulaUi = document.getElementById('lesson-formula-ui');
+      const feedbackBox = document.getElementById('lesson-feedback-box');
+      const solvedModal = document.getElementById('lesson-solved-modal');
+
+      feedbackBox.style.display = 'none';
+      solvedModal.style.display = 'none';
+
+      if (lesson.type === 'choice') {
+        choiceUi.style.display = 'block';
+        formulaUi.style.display = 'none';
+        renderChoices(lesson);
+      } else {
+        choiceUi.style.display = 'none';
+        formulaUi.style.display = 'block';
+
+        const inputEl = document.getElementById('lesson-formula-input');
+        inputEl.value = lesson.defaultFormula || '=';
+        setTimeout(() => inputEl.focus(), 150);
+      }
+
+      // ヒントのリセット
+      renderHints(lesson);
+
+      // まるもちの案内
+      setMarumochi(`「${lesson.title}」へようこそ！解説を読んだら問題にチャレンジしてみてね！🍡`, 'normal');
+
+      // 画面切り替え
+      switchView('lesson');
+    }
+
+    // 選択肢問題のレンダリング (プロローグ)
+    function renderChoices(lesson) {
+      const container = document.getElementById('choices-container-list');
+      container.innerHTML = '';
+
+      lesson.choices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = `
+          <span class="choice-indicator">${String.fromCharCode(65 + idx)}</span>
+          <span>${choice.text}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          // すべてのボタンのスタイルを更新
+          const allBtns = container.querySelectorAll('.choice-btn');
+          allBtns.forEach(b => b.classList.remove('correct', 'incorrect'));
+
+          if (choice.correct) {
+            btn.classList.add('correct');
+            showFeedback('success', '🎉 大正解！', choice.feedback);
+            setMarumochi('大正解！すばらしい！よく見て選べたね！🍡🎉', 'happy');
+            triggerConfetti();
+            markLessonCompleted(lesson.id);
+            showSolvedCard(lesson);
+          } else {
+            btn.classList.add('incorrect');
+            showFeedback('error', 'おしい！もう一度考えてみよう', choice.feedback);
+            setMarumochi('うーん、おしい！もう1つの選択肢もよく読んでみてね！🍡', 'thinking');
+          }
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    // ヒントアコーディオンのレンダリング
+    function renderHints(lesson) {
+      const hintsList = document.getElementById('hints-list-container');
+      const toggleBtn = document.getElementById('btn-toggle-hint');
+      const stepCount = document.getElementById('hint-step-count');
+
+      hintsList.innerHTML = '';
+      appState.hintLevel = 0;
+      stepCount.textContent = '1';
+      toggleBtn.style.display = (lesson.hints && lesson.hints.length > 0) ? 'inline-flex' : 'none';
+
+      toggleBtn.onclick = () => {
+        if (!lesson.hints || appState.hintLevel >= lesson.hints.length) return;
+        
+        appState.hintLevel++;
+        const hintText = lesson.hints[appState.hintLevel - 1];
+
+        const bubble = document.createElement('div');
+        bubble.className = 'hint-bubble';
+        bubble.innerHTML = `
+          <div class="hint-step-tag">💡 ヒント ${appState.hintLevel}</div>
+          <div>${hintText}</div>
+        `;
+        hintsList.appendChild(bubble);
+
+        setMarumochi(`ヒント${appState.hintLevel}を出したよ！参考にしてみてね。🍡`, 'thinking');
+
+        if (appState.hintLevel < lesson.hints.length) {
+          stepCount.textContent = (appState.hintLevel + 1);
+        } else {
+          toggleBtn.style.display = 'none';
+        }
+      };
+    }
+
+    // フィードバック表示ヘルパー
+    function showFeedback(type, title, message) {
+      const box = document.getElementById('lesson-feedback-box');
+      const titleEl = document.getElementById('feedback-header-title');
+      const descEl = document.getElementById('feedback-desc-text');
+
+      box.className = `feedback-box ${type}`;
+      titleEl.innerHTML = title;
+      descEl.innerHTML = message;
+      box.style.display = 'block';
+    }
+
+    // 正解カードの表示
+    function showSolvedCard(lesson) {
+      const modal = document.getElementById('lesson-solved-modal');
+      const modelBox = document.getElementById('solved-model-formula');
+      const noteBox = document.getElementById('solved-after-note');
+
+      if (lesson.modelFormula) {
+        modelBox.textContent = lesson.modelFormula;
+        modelBox.style.display = 'block';
+      } else {
+        modelBox.style.display = 'none';
+      }
+
+      noteBox.innerHTML = lesson.afterNote || 'このレッスンのポイントをしっかり身につけたね！';
+      modal.style.display = 'block';
+
+      // 次のレッスンへ進むボタン
+      document.getElementById('btn-next-lesson-action').onclick = () => {
+        const curIdx = LESSONS.findIndex(l => l.id === lesson.id);
+        if (curIdx >= 0 && curIdx < LESSONS.length - 1) {
+          openLesson(LESSONS[curIdx + 1].id);
+        } else {
+          switchView('home');
+        }
+      };
+    }
+
+    // レッスン完了マーク
+    function markLessonCompleted(lessonId) {
+      if (!appState.completedLessons.includes(lessonId)) {
+        appState.completedLessons.push(lessonId);
+        saveProgress();
+      }
+    }
+
+    // 数式判定ロジック (Stage 0, 1, p-05)
+    function checkFormulaAnswer() {
+      const lesson = LESSONS.find(l => l.id === appState.currentLessonId);
+      if (!lesson) return;
+
+      const input = document.getElementById('lesson-formula-input');
+      const formula = input.value.trim();
+
+      // ターゲットセルの取得
+      const targetCol = lesson.targetCell ? lesson.targetCell.col : 3;
+      const targetRow = lesson.targetCell ? lesson.targetCell.row : 6;
+
+      // HyperFormulaで計算
+      const result = runHyperFormula(formula, targetCol, targetRow);
+
+      // 計算結果をシートに反映して再描画
+      const sheetArea = document.getElementById('lesson-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(
+        lesson.targetCell || null,
+        result.success ? result.value : 'エラー'
+      );
+
+      // エラー時のハンドリング
+      if (!result.success) {
+        setMarumochi('おっと！エラーが出ちゃったよ。メッセージを読んでみてね！🍡', 'sad');
+        showFeedback('error', `⚠️ ${result.errorInfo.code} ${result.errorInfo.title}`, result.errorInfo.desc);
+        return;
+      }
+
+      // プロローグ p-05 のような体験レッスンの場合（計算が成功すればOK）
+      if (lesson.allowAnyValidCalculation) {
+        showFeedback('success', '🎉 計算成功！', `計算結果は <strong>${result.value}</strong> だよ！バッチリ計算できたね！`);
+        setMarumochi('やったね！一瞬で計算結果が出たね！これがExcelの気持ちよさだよ！🍡🎉', 'happy');
+        triggerConfetti();
+        markLessonCompleted(lesson.id);
+        showSolvedCard(lesson);
+        return;
+      }
+
+      // 期待値比較
+      const expected = lesson.expectedValue;
+      let isCorrect = false;
+
+      if (typeof expected === 'number') {
+        const numVal = Number(result.value);
+        if (!isNaN(numVal) && Math.abs(numVal - expected) < 0.01) {
+          isCorrect = true;
+        }
+      } else {
+        isCorrect = (String(result.value).trim() === String(expected).trim());
+      }
+
+      if (isCorrect) {
+        showFeedback('success', '🎉 大正解！', `計算結果は見事に <strong>${result.value}</strong>！目標値とピッタリ一致したよ！`);
+        setMarumochi('大正解！すばらしい！数式が完璧に機能したね！🍡🎉', 'happy');
+        triggerConfetti();
+        markLessonCompleted(lesson.id);
+        showSolvedCard(lesson);
+      } else {
+        setMarumochi('計算はできたけど、目標の数値と違うみたい。もう一度確認してみよう！🍡', 'thinking');
+        showFeedback(
+          'info',
+          'おしい！計算結果が目標と違うよ',
+          `今回の計算結果は <strong>${result.value}</strong> だったよ。（目標の答えは <strong>${expected}</strong>）<br>参照するセルの番号や掛け算の数字を見直してみてね！`
+        );
+      }
+    }
+
+    // 自由練習モードの初期化
+    function initPlayground() {
+      const sheetArea = document.getElementById('playground-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet();
+
+      setMarumochi('自由練習モードへようこそ！練習シート「売上」を使って、どんな数式でも試してみてね！🍡', 'normal');
+
+      // サンプルボタン
+      document.querySelectorAll('.btn-sample').forEach(btn => {
+        btn.onclick = () => {
+          const sample = btn.getAttribute('data-sample');
+          document.getElementById('playground-formula-input').value = sample;
+          runPlaygroundFormula();
+        };
+      });
+    }
+
+    // 自由練習モードでの数式実行
+    function runPlaygroundFormula() {
+      const input = document.getElementById('playground-formula-input');
+      const formula = input.value.trim();
+
+      const result = runHyperFormula(formula, 3, 6);
+
+      const resultBox = document.getElementById('playground-result-display');
+      const resultText = document.getElementById('playground-result-text');
+      const feedbackBox = document.getElementById('playground-feedback-box');
+      const feedbackTitle = document.getElementById('playground-feedback-title');
+      const feedbackDesc = document.getElementById('playground-feedback-desc');
+
+      // シートを反映
+      const sheetArea = document.getElementById('playground-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(
+        { col: 3, row: 6, label: 'D7' },
+        result.success ? result.value : 'エラー'
+      );
+
+      if (result.success) {
+        resultBox.style.display = 'flex';
+        resultText.textContent = result.value;
+        feedbackBox.style.display = 'none';
+        setMarumochi(`計算できたよ！結果は「${result.value}」だよ！🍡`, 'happy');
+      } else {
+        resultBox.style.display = 'none';
+        feedbackBox.className = 'feedback-box error';
+        feedbackTitle.innerHTML = `⚠️ ${result.errorInfo.code} ${result.errorInfo.title}`;
+        feedbackDesc.innerHTML = result.errorInfo.desc;
+        feedbackBox.style.display = 'block';
+        setMarumochi('エラーが出たよ。数式のつづりやイコール「=」を確認してみてね！🍡', 'sad');
+      }
+    }
+
+    // 関数チップボタンの挿入処理
+    function setupFunctionChips() {
+      document.querySelectorAll('.fn-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const fnName = chip.getAttribute('data-fn');
+          const isPlayground = (appState.currentView === 'playground');
+          const input = isPlayground
+            ? document.getElementById('playground-formula-input')
+            : document.getElementById('lesson-formula-input');
+
+          if (!input) return;
+
+          let val = input.value;
+          if (!val || val === '=') {
+            input.value = `=${fnName}()`;
+            input.focus();
+            input.setSelectionRange(fnName.length + 2, fnName.length + 2);
+          } else {
+            // カーソル位置に挿入
+            const start = input.selectionStart || val.length;
+            const end = input.selectionEnd || val.length;
+            const textToInsert = `${fnName}()`;
+            input.value = val.substring(0, start) + textToInsert + val.substring(end);
+            input.focus();
+            input.setSelectionRange(start + fnName.length + 1, start + fnName.length + 1);
+          }
+        });
+      });
+    }
+
+    // 画面切り替え
+    function switchView(viewName) {
+      appState.currentView = viewName;
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) target.classList.add('active');
+
+      // ナビゲーションボタンのアクティブ状態
+      document.getElementById('nav-btn-home').classList.toggle('active', viewName === 'home');
+      document.getElementById('nav-btn-playground').classList.toggle('active', viewName === 'playground');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewName === 'home') {
+        renderHomeView();
+      } else if (viewName === 'playground') {
+        initPlayground();
+      }
+    }
+
+    /* ====================================================
+       5. CONFETTI ANIMATION (Celebration)
+       ==================================================== */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#107C41', '#0B5C2E', '#E6F4EA', '#34a853', '#81c784', '#ffd54f'];
+
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: canvas.width * 0.5,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.8) * 14,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let activeCount = 0;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // 重力
+          p.rotation += p.vRot;
+          p.opacity -= 0.015;
+
+          if (p.opacity > 0) {
+            activeCount++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        frames++;
+        if (activeCount > 0 && frames < 120) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    /* ====================================================
+       6. INITIALIZATION & EVENT LISTENERS
+       ==================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      setupFunctionChips();
+
+      // ナビゲーションイベント
+      document.getElementById('brand-home-btn').onclick = () => switchView('home');
+      document.getElementById('nav-btn-home').onclick = () => switchView('home');
+      document.getElementById('nav-btn-playground').onclick = () => switchView('playground');
+      document.getElementById('btn-lesson-back').onclick = () => switchView('home');
+
+      // 数式実行ボタン
+      document.getElementById('btn-run-formula').onclick = checkFormulaAnswer;
+      document.getElementById('lesson-formula-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          checkFormulaAnswer();
+        }
+      });
+
+      // 自由練習ボタン
+      document.getElementById('btn-run-playground').onclick = runPlaygroundFormula;
+      document.getElementById('playground-formula-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runPlaygroundFormula();
+        }
+      });
+
+      // 進捗リセット
+      document.getElementById('btn-reset-progress').onclick = () => {
+        if (confirm('これまでの学習進捗をすべてリセットしますか？')) {
+          appState.completedLessons = [];
+          saveProgress();
+          renderHomeView();
+        }
+      };
+
+      // 初期ビュー
+      renderHomeView();
+    });
+  </script>
+</body>
+</html>
