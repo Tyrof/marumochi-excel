@@ -1552,7 +1552,7 @@
       <div class="progress-banner">
         <div class="progress-header">
           <span class="progress-title">全体のクリア状況</span>
-          <span class="progress-count" id="progress-summary-count">0 / 39 レッスン</span>
+          <span class="progress-count" id="progress-summary-count">0 / 43 レッスン</span>
         </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progress-summary-bar"></div>
@@ -1864,7 +1864,7 @@
       </div>
       <div class="modal-badge" id="modal-clear-badge">🎉 STAGE CLEAR!</div>
       <h2 class="modal-title" id="modal-stage-title">プロローグ クリア！</h2>
-      <div class="modal-stats" id="modal-stage-stats">全39レッスン中 5レッスン クリア</div>
+      <div class="modal-stats" id="modal-stage-stats">全43レッスン中 5レッスン クリア</div>
       <div class="modal-message" id="modal-stage-message">
         まるもち：「お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！」
       </div>
@@ -1992,9 +1992,9 @@
       {
         id: 'stage-6',
         num: '6',
-        title: 'Stage 6：実践総合ドリル',
-        desc: '現場でそのまま役立つ！関数を組み合わせた実践チャレンジ',
-        locked: true
+        title: 'Stage 6：卒業編（実務再現）',
+        desc: '仕様書だけを頼りに複数シートと関数を組み合わせて挑む最終課題',
+        locked: false
       }
     ];
 
@@ -3158,6 +3158,129 @@ SUMIFSと同じく、**「平均したい数値の範囲」を先頭**に書き�
           '「=AVERAGEIFS(D2:D6, C2:C6, ">=1")」と入力してみてね！'
         ],
         afterNote: 'お見事！個数0の行を除外して正確な平均値「347.5」を算出できたね！複数条件のCOUNTIFS・SUMIFS・MAXIFS・AVERAGEIFS、そして配列計算のSUMPRODUCTまでマスターすれば、実務の集計業務はもうプロ級だよ！Stage 5完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 6：卒業編（実務再現） (4レッスン) ---
+      {
+        id: 'g-01',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 1/4',
+        title: '総合課題1：売上レポート',
+        subtitle: '【実務仕様】カテゴリ別売上金額の算出',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの集計担当さんへ。<br>
+商品カテゴリが<strong>『アニメ』</strong>の商品の、<strong>売上金額の合計</strong>を算出してください。」<br><br>
+※ここからは実務と同じ総合課題です！商品シートと注文シートを連携させて数式を組み立ててみましょう。`,
+        example: {
+          label: '【参考】商品ID=1の注文個数合計を出す',
+          formula: '=SUMIF(C2:C9, 1, D2:D9)',
+          desc: '注文シートから商品IDが1の個数を合計するよ',
+          result: 4
+        },
+        question: '【仕様書】商品シートと注文シートを照合し、カテゴリが「アニメ」の商品の売上金額の合計を計算してみよう！（答えは 1250）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 1250,
+        modelFormula: '=SUMIF(C2:C9, 2, D2:D9)*250',
+        hints: [
+          'まずは「商品シート」を確認しよう。カテゴリが「アニメ」の商品は商品ID「2」、価格は「250」円だよ。',
+          '次に「注文シート」で商品IDが2の個数をSUMIFで集計し、単価250円を掛け算しよう。SUMIFの範囲は商品ID（C2:C9）、合計範囲は個数（D2:D9）だよ。',
+          '「=SUMIF(C2:C9, 2, D2:D9)*250」または「=SUMIF(C2:C9, 2, D2:D9)*VLOOKUP(2, 商品!A2:D5, 4, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '見事クリア！商品シートでIDと価格を特定し、注文シートの個数と掛け合わせて「1,250円」を正確に導き出せたね！複数表を読み解く実務力がついてきたよ！'
+      },
+      {
+        id: 'g-02',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 2/4',
+        title: '総合課題2：顧客レポート',
+        subtitle: '【実務仕様】特定地域の注文個数集計',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの分析担当さんへ。<br>
+地域が<strong>『関西』</strong>の顧客からの注文について、<strong>合計注文個数</strong>を算出してください。」<br><br>
+顧客シートで対象の顧客IDを洗い出し、注文シートで該当する注文の個数を合計してみましょう！`,
+        example: {
+          label: '【参考】顧客ID=1からの注文個数合計',
+          formula: '=SUMIF(B2:B9, 1, D2:D9)',
+          desc: '注文シートから顧客IDが1の個数を集計するよ',
+          result: 3
+        },
+        question: '【仕様書】顧客シートで地域が「関西」の顧客ID（3・4・6）を特定し、注文シートで該当する顧客の合計注文個数を計算してみよう！（答えは 4）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 4,
+        modelFormula: '=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 4, D2:D9)+SUMIF(B2:B9, 6, D2:D9)',
+        hints: [
+          'まずは顧客シートを確認！地域が「関西」なのは、顧客ID 3（はなこ）、4（じろう）、6（さくら）の3名だよ。',
+          '注文シートの顧客ID列（B2:B9）と個数列（D2:D9）を使って、ID 3・4・6 の注文個数をそれぞれ SUMIF で足し合わせよう。',
+          '「=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 4, D2:D9)+SUMIF(B2:B9, 6, D2:D9)」または「=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 6, D2:D9)」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！関西の顧客（3, 4, 6）を洗い出し、注文シートで合計4個の注文を見事に集計できたね！条件を満たすグループを名寄せして集計する実務スキルの証明だよ！'
+      },
+      {
+        id: 'g-03',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 3/4',
+        title: '総合課題3：請求データ作成',
+        subtitle: '【実務仕様】検索・計算・文字列結合の連携',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの経理担当さんへ。<br>
+<strong>注文ID=5</strong> の請求書送信用に、<strong>『（顧客名）様：（金額）円』</strong>という文字列形式の請求データを作成してください。」<br><br>
+顧客シートから名前を引き、商品シートから単価を引いて金額（個数×単価）を計算し、「&」で美しく結合しましょう！`,
+        example: {
+          label: '【参考】注文ID=1（顧客1・商品1・2個）の請求データ',
+          formula: '="さくら様："&(2*190)&"円"',
+          desc: '顧客名と金額を「様：」と「円」でつないで請求文面を作るよ',
+          result: 'さくら様：380円'
+        },
+        question: '【仕様書】注文ID=5（6行目のセル）のデータから顧客名と請求金額を求め、「（顧客名）様：（金額）円」の文字列を作成してみよう！（答えは「みき様：750円」）',
+        targetCell: { col: 5, row: 5, label: 'F6' },
+        answerCell: 'F6',
+        expectedValue: 'みき様：750円',
+        modelFormula: '=XLOOKUP(B6, 顧客!D2:D7, 顧客!A2:A7)&"様："&(D6*XLOOKUP(C6, 商品!A2:A5, 商品!D2:D5))&"円"',
+        hints: [
+          '注文5（6行目）は、顧客IDが「B6」（5）、商品IDが「C6」（2）、個数が「D6」（3）だよ。',
+          '顧客シートから顧客ID 5 の名前（みき）を引き、商品シートから商品ID 2 の単価（250）を引いて、個数 D6 と掛け算しよう。',
+          '「=XLOOKUP(B6, 顧客!D2:D7, 顧客!A2:A7)&"様："&(D6*XLOOKUP(C6, 商品!A2:A5, 商品!D2:D5))&"円"」または「="みき様："&(D6*250)&"円"」と入力してみてね！'
+        ],
+        afterNote: 'パーフェクト！名前の検索、単価の検索、掛け算、そして文字列の結合まで、複数の関数と演算子を見事に統合して「みき様：750円」を完成させたね！実務の自動化システムそのものだよ！'
+      },
+      {
+        id: 'g-boss',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 4/4',
+        title: '卒業試験：全売上高の総決算',
+        subtitle: '【最終仕様】全注文の売上金額総計を算出せよ',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>🎓 卒業最終試験 📋 実務仕様書</strong><br>
+「まるもちショップ店長より。<br>
+これが最後の課題です！解説はありません。<br>
+仕様書：<strong>全注文（注文ID 1〜8）の売上金額の総計</strong>を算出してください。」<br><br>
+商品シートの各単価と、注文シートの各商品の注文個数を総合して、全体の売上総計を導き出しましょう！`,
+        example: {
+          label: '【参考】商品ID=1と商品ID=2の売上小計',
+          formula: '=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250',
+          desc: '商品1（4個×190）と商品2（5個×250）の売上を足すよ',
+          result: 2010
+        },
+        question: '【卒業仕様書】商品ごとに注文シートの個数を合計し、商品シートの単価を掛けて足し合わせ、全注文の売上総計を計算してみよう！（答えは 2760）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 2760,
+        modelFormula: '=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250 + SUMIF(C2:C9, 3, D2:D9)*250',
+        hints: [
+          '各商品の単価を確認しよう：商品1は190円、商品2は250円、商品3は250円、商品4は480円だよ。',
+          '注文シートで各商品の注文個数をSUMIFで合計しよう：商品1は4個、商品2は5個、商品3は3個（商品4は0個）だよ。',
+          '「=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250 + SUMIF(C2:C9, 3, D2:D9)*250」と入力してみてね！'
+        ],
+        afterNote: '🎊 おめでとうございます！！全注文の売上総計「2,760円」を見事に導き出し、卒業試験を完全制覇しました！プロローグの四則演算から始まり、集計・条件分岐・検索・文字列・日付・複数条件・実務連携まで、Excelの全スキルをマスターしました！これにてまるもちExcel関数ドリル堂々の修了です！🎉🍡'
       }
     ];
 
@@ -4192,6 +4315,8 @@ SUMIFSと同じく、**「平均したい数値の範囲」を先頭**に書き�
         mochiMsg = 'Stage 4 制覇！文字列の操作や日付の計算までExcelの実務スキルを完全マスターしたね！';
       } else if (stage.id === 'stage-5') {
         mochiMsg = 'Stage 5 制覇！複数条件の集計やSUMPRODUCT、重複チェックまで高度な実務ワザを完全マスターしたね！';
+      } else if (stage.id === 'stage-6') {
+        mochiMsg = 'Stage 6 卒業編クリア！仕様書から自分で数式を組み立てる実務力を完全に証明したね！';
       }
 
       if (badgeEl) badgeEl.textContent = '🎉 STAGE CLEAR!';
