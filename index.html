@@ -1,0 +1,4765 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>まるもちと学ぶ！Excel関数ドリル</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- HyperFormula CDN (Latest stable Excel-compatible formula engine) -->
+  <script src="https://cdn.jsdelivr.net/npm/hyperformula@3.5.0/dist/hyperformula.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #fbfdfb;
+      --bg-card: #ffffff;
+      --bg-sub: #E6F4EA;
+      --border-color: #cce4d4;
+      --text-main: #1f2923;
+      --text-sub: #0B5C2E;
+      --text-muted: #4d7358;
+      --primary-green: #107C41;
+      --primary-green-hover: #0c6334;
+      --primary-green-dark: #0B5C2E;
+      --primary-green-light: #E6F4EA;
+      --accent-warm: #d3ebd9;
+      --accent-highlight: #107C41;
+      --accent-highlight-bg: #E6F4EA;
+      --success-green: #107C41;
+      --success-green-bg: #E6F4EA;
+      --error-red: #c62828;
+      --error-red-bg: #ffebee;
+      --excel-header-bg: #E6F4EA;
+      --excel-grid: #c5dfce;
+      --font-body: 'Zen Maru Gothic', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 6px rgba(16, 124, 65, 0.06);
+      --shadow-md: 0 6px 18px rgba(16, 124, 65, 0.09);
+      --shadow-lg: 0 12px 28px rgba(16, 124, 65, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Container */
+    .app-container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 16px;
+      border-bottom: 2px dashed var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      color: var(--primary-green);
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-nav:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .btn-nav.active {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      background: #f4faf5;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Marumochi Character & Speech Bubble */
+    .marumochi-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marumochi-character {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* CSS Drawn Marumochi */
+    .marumochi-avatar {
+      width: 60px;
+      height: 52px;
+      background: #ffffff;
+      border: 3px solid var(--primary-green-dark);
+      border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(16, 124, 65, 0.12);
+      animation: floatMochi 3s ease-in-out infinite;
+      transition: transform 0.2s ease;
+    }
+
+    @keyframes floatMochi {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Face Elements */
+    .mochi-eyes {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .mochi-eye {
+      width: 5px;
+      height: 5px;
+      background: var(--primary-green-dark);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .mochi-cheeks {
+      position: absolute;
+      top: 22px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .mochi-cheek {
+      width: 7px;
+      height: 4px;
+      background: #ffab91;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+
+    .mochi-mouth {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 3px;
+      border-bottom: 2px solid var(--primary-green-dark);
+      border-radius: 0 0 5px 5px;
+    }
+
+    .mochi-leaf {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    /* Expressions */
+    .marumochi-avatar.happy .mochi-eyes {
+      top: 16px;
+      gap: 14px;
+    }
+    .marumochi-avatar.happy .mochi-eye {
+      width: 8px;
+      height: 4px;
+      border-top: 2px solid var(--primary-green-dark);
+      border-radius: 50% 50% 0 0;
+      background: transparent;
+    }
+    .marumochi-avatar.happy .mochi-mouth {
+      width: 8px;
+      height: 6px;
+      background: #e57373;
+      border: 1.5px solid var(--primary-green-dark);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .marumochi-avatar.thinking .mochi-eyes {
+      transform: rotate(-10deg);
+    }
+    .marumochi-avatar.sad .mochi-eyes {
+      top: 20px;
+    }
+    .marumochi-avatar.sad .mochi-mouth {
+      border-top: 2px solid var(--primary-green-dark);
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .marumochi-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      background: var(--bg-sub);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Speech Bubble */
+    .speech-bubble {
+      flex: 1;
+      background: var(--bg-sub);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 16px;
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 9px solid var(--primary-green);
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 17px;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-right: 7px solid var(--bg-sub);
+    }
+
+    .bubble-text {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-main);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Home View Elements */
+    .progress-banner {
+      background: linear-gradient(135deg, #E6F4EA 0%, #d5edd9 100%);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--primary-green-dark);
+    }
+
+    .progress-count {
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--primary-green);
+      font-family: var(--font-code);
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: var(--radius-full);
+      height: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #107C41 0%, #0B5C2E 100%);
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+
+    /* Stage Roadmap */
+    .stage-section {
+      margin-bottom: 24px;
+    }
+
+    .stage-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stage-header {
+      padding: 14px 18px;
+      background: #E6F4EA;
+      border-bottom: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stage-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-available {
+      background: #ffffff;
+      color: var(--primary-green-dark);
+      border: 1.5px solid var(--primary-green);
+    }
+
+    .badge-locked {
+      background: #eeeeee;
+      color: #9e9e9e;
+      border: 1px solid #e0e0e0;
+    }
+
+    .stage-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-top: 2px;
+    }
+
+    .stage-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .stage-lessons {
+      list-style: none;
+      padding: 6px 10px;
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 10px;
+      border-radius: var(--radius-md);
+      margin: 4px 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .lesson-item:hover {
+      background: var(--bg-sub);
+      transform: translateX(3px);
+    }
+
+    .lesson-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .lesson-status-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border-color);
+      background: #fff;
+    }
+
+    .lesson-item.completed .lesson-status-icon {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    .lesson-title-text {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .lesson-sub-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .lesson-arrow {
+      color: var(--primary-green);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Locked Stage */
+    .stage-card.locked {
+      opacity: 0.75;
+      background: #fbfbfb;
+    }
+    .stage-card.locked .stage-header {
+      background: #f5f5f5;
+    }
+
+    /* Spreadsheet Table Design */
+    .sheet-container {
+      margin: 16px 0;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sheet-title-bar {
+      background: var(--excel-header-bg);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      border-bottom: 1.5px solid var(--excel-grid);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .excel-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-family: var(--font-code);
+      min-width: 440px;
+    }
+
+    .excel-table th,
+    .excel-table td {
+      border: 1px solid var(--excel-grid);
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .excel-table th {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      font-weight: 700;
+      text-align: center;
+      user-select: none;
+    }
+
+    .excel-table th.col-head {
+      font-size: 11px;
+      height: 24px;
+    }
+
+    .excel-table td.row-num {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      font-weight: 700;
+      text-align: center;
+      width: 32px;
+      user-select: none;
+      font-size: 11px;
+    }
+
+    .excel-table td.num-cell {
+      text-align: right;
+    }
+
+    /* Target Answer Cell Highlight */
+    .excel-table td.cell-target {
+      background: var(--accent-highlight-bg) !important;
+      border: 2.5px solid var(--accent-highlight) !important;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      position: relative;
+      animation: pulseCell 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseCell {
+      0%, 100% { box-shadow: inset 0 0 0 1px var(--primary-green); }
+      50% { box-shadow: inset 0 0 0 3px var(--primary-green-dark); }
+    }
+
+    .cell-target-label {
+      font-size: 10px;
+      color: var(--primary-green-dark);
+      display: block;
+      line-height: 1;
+      margin-bottom: 2px;
+      font-weight: 800;
+    }
+
+    /* Lesson Detail View */
+    .lesson-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--primary-green);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-back:hover {
+      background: var(--bg-sub);
+    }
+
+    .lesson-badge-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .lesson-title-main {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+      margin-bottom: 4px;
+    }
+
+    .lesson-subtitle-main {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Formula Input & Action Group */
+    .formula-input-card {
+      background: var(--bg-card);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .formula-bar-container {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s ease;
+    }
+
+    .formula-bar-container:focus-within {
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 3px rgba(16, 124, 65, 0.12);
+    }
+
+    .fx-symbol {
+      font-family: var(--font-code);
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--primary-green);
+      padding-right: 8px;
+      border-right: 1.5px solid var(--border-color);
+      margin-right: 8px;
+      user-select: none;
+    }
+
+    .formula-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font-code);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+      background: transparent;
+      width: 100%;
+    }
+
+    .formula-input::placeholder {
+      color: #9cb8a5;
+      font-weight: 400;
+    }
+
+    /* Function Quick Insert Buttons */
+    .fn-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .fn-chip {
+      background: var(--bg-sub);
+      border: 1px solid var(--border-color);
+      color: var(--primary-green-dark);
+      font-family: var(--font-code);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .fn-chip.fn-symbol {
+      font-size: 14px;
+      font-weight: 800;
+      min-width: 32px;
+      text-align: center;
+      padding: 4px 8px;
+    }
+
+    .fn-chip:hover {
+      background: var(--primary-green);
+      color: #fff;
+      border-color: var(--primary-green);
+    }
+
+    /* Run & Action Buttons */
+    .btn-primary {
+      width: 100%;
+      background: var(--primary-green);
+      color: #ffffff;
+      border: none;
+      padding: 13px 20px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-green-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    /* Feedback & Error Box */
+    .feedback-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .feedback-box.error {
+      display: block;
+      background: var(--error-red-bg);
+      border: 1.5px solid #ef9a9a;
+      color: var(--error-red);
+    }
+
+    .feedback-box.success {
+      display: block;
+      background: var(--success-green-bg);
+      border: 1.5px solid #a5d6a7;
+      color: var(--primary-green-dark);
+    }
+
+    .feedback-box.info {
+      display: block;
+      background: #e3f2fd;
+      border: 1.5px solid #90caf9;
+      color: #1565c0;
+    }
+
+    .feedback-header {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feedback-desc {
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* Hints Accordion */
+    .hints-section {
+      margin-top: 16px;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 14px;
+    }
+
+    .btn-hint-toggle {
+      background: transparent;
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-green-dark);
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-hint-toggle:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .hints-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hint-bubble {
+      background: #f6fbf7;
+      border-left: 3.5px solid var(--primary-green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .hint-step-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 2px;
+    }
+
+    /* Example Box */
+    .example-card {
+      background: var(--bg-sub);
+      border: 1.5px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin: 12px 0 16px;
+    }
+
+    .example-header {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .example-formula-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-formula-code {
+      font-family: var(--font-code);
+      font-size: 14px;
+      font-weight: 700;
+      background: #fff;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      color: var(--primary-green-dark);
+    }
+
+    .btn-calc-example {
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+
+    .example-calc-result {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary-green-dark);
+      font-family: var(--font-code);
+      display: none;
+    }
+
+    /* Multiple Choice Questions (Prologue) */
+    .choices-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .choice-btn {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: left;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .choice-btn:hover {
+      border-color: var(--primary-green);
+      background: var(--bg-sub);
+    }
+
+    .choice-btn.correct {
+      border-color: var(--primary-green);
+      background: var(--success-green-bg);
+      color: var(--primary-green-dark);
+    }
+
+    .choice-btn.incorrect {
+      border-color: var(--error-red);
+      background: var(--error-red-bg);
+      color: var(--error-red);
+    }
+
+    .choice-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .choice-btn.correct .choice-indicator {
+      background: var(--primary-green);
+      border-color: var(--primary-green);
+      color: #fff;
+    }
+
+    .choice-btn.incorrect .choice-indicator {
+      background: var(--error-red);
+      border-color: var(--error-red);
+      color: #fff;
+    }
+
+    /* Solved Overlay Card */
+    .solved-modal {
+      background: linear-gradient(135deg, #E6F4EA 0%, #d2ebd8 100%);
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 18px;
+      box-shadow: var(--shadow-md);
+      display: none;
+      animation: bounceIn 0.3s ease-out;
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .solved-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .model-formula-box {
+      background: #ffffff;
+      border: 1.5px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: var(--font-code);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-green-dark);
+    }
+
+    .after-note-text {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--primary-green-dark);
+      margin-bottom: 16px;
+    }
+
+    .btn-next-lesson {
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(16, 124, 65, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-next-lesson:hover {
+      background: var(--primary-green-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Free Playground View */
+    .playground-badge {
+      background: var(--primary-green);
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .quick-samples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 16px;
+    }
+
+    .btn-sheet-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-sheet-tab:hover {
+      background: var(--bg-sub);
+      color: var(--primary-green-dark);
+      border-color: var(--primary-green);
+    }
+    .btn-sheet-tab.active {
+      background: var(--primary-green);
+      color: #ffffff;
+      border-color: var(--primary-green);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-sample {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-green-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sample:hover {
+      background: var(--bg-sub);
+      border-color: var(--primary-green);
+    }
+
+    .playground-result-box {
+      margin-top: 14px;
+      background: #fff;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .result-val {
+      font-family: var(--font-code);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* S0-04 Copy Demo Styles */
+    .demo-card {
+      background: #ffffff;
+      border: 2px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .demo-header-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      background: var(--bg-sub);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+    .demo-tab-btn {
+      flex: 1;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--primary-green-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .demo-tab-btn.active {
+      background: var(--primary-green);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25);
+    }
+    .demo-info-banner {
+      background: #f4faf5;
+      border-left: 3.5px solid var(--primary-green);
+      padding: 8px 12px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 13px;
+      color: var(--primary-green-dark);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .demo-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+    .demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-code);
+      font-size: 13px;
+    }
+    .demo-table th {
+      background: var(--excel-header-bg);
+      color: var(--primary-green-dark);
+      padding: 6px 8px;
+      border: 1px solid var(--excel-grid);
+      font-weight: 700;
+      text-align: center;
+    }
+    .demo-table td {
+      border: 1px solid var(--excel-grid);
+      padding: 6px 10px;
+    }
+    .demo-cell-source {
+      background: #e8f5e9 !important;
+      border: 2px dashed var(--primary-green) !important;
+      position: relative;
+    }
+    .demo-cell-target-active {
+      background: #fff9c4 !important;
+      border: 2.5px solid #fbc02d !important;
+      animation: pulseDemo 1.5s infinite alternate;
+    }
+    .demo-cell-ref-highlight {
+      background: #e1f5fe !important;
+      border: 2px solid #0288d1 !important;
+      font-weight: 800;
+    }
+    @keyframes pulseDemo {
+      from { box-shadow: 0 0 0 1px #fbc02d; }
+      to { box-shadow: 0 0 0 3px #f57f17; }
+    }
+    .formula-tag {
+      display: inline-block;
+      background: #ffffff;
+      border: 1px solid var(--primary-green);
+      color: var(--primary-green-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12.5px;
+      margin-right: 6px;
+    }
+    .result-tag {
+      font-weight: 900;
+      color: var(--primary-green);
+      font-size: 13px;
+    }
+    .demo-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-demo-action {
+      flex: 1;
+      min-width: 140px;
+      background: var(--primary-green);
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-demo-action:hover {
+      background: var(--primary-green-hover);
+    }
+    .btn-demo-action:disabled {
+      background: #cfd8dc;
+      color: #78909c;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-demo-reset {
+      background: var(--bg-sub);
+      color: var(--primary-green-dark);
+      border: 1.5px solid var(--border-color);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+    }
+    .btn-demo-reset:hover {
+      background: #ffffff;
+      border-color: var(--primary-green);
+    }
+
+    /* Clear Celebration Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 41, 35, 0.62);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: modalFadeIn 0.25s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 440px;
+      width: 100%;
+      padding: 28px 22px 24px 22px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(16, 124, 65, 0.25);
+      border: 2.5px solid var(--primary-green);
+      position: relative;
+      overflow: hidden;
+      animation: modalScaleUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalScaleUp {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .modal-confetti {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      user-select: none;
+      opacity: 0.85;
+      animation: confettiFloat 3s infinite ease-in-out;
+    }
+    .modal-confetti.c1 { top: 14px; left: 18px; animation-delay: 0s; font-size: 1.2rem; }
+    .modal-confetti.c2 { top: 18px; right: 20px; animation-delay: 0.5s; font-size: 1.1rem; }
+    .modal-confetti.c3 { top: 75px; left: 20px; animation-delay: 1.1s; font-size: 0.95rem; }
+    .modal-confetti.c4 { top: 80px; right: 22px; animation-delay: 1.6s; font-size: 1rem; }
+    .modal-confetti.c5 { bottom: 85px; left: 16px; animation-delay: 0.8s; font-size: 0.9rem; }
+    .modal-confetti.c6 { bottom: 90px; right: 18px; animation-delay: 1.3s; font-size: 0.95rem; }
+    @keyframes confettiFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(12deg); }
+    }
+    .modal-marumochi-area {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .modal-marumochi-bounce {
+      transform: scale(1.25);
+      animation: bounceMochiModal 1.8s infinite ease-in-out;
+    }
+    @keyframes bounceMochiModal {
+      0%, 100% { transform: scale(1.25) translateY(0); }
+      50% { transform: scale(1.25) translateY(-8px); }
+    }
+    .modal-badge {
+      display: inline-block;
+      background: var(--bg-sub);
+      color: var(--primary-green-dark);
+      border: 1px solid var(--border-color);
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .modal-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--primary-green-dark);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .modal-stats {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--primary-green);
+      background: var(--bg-sub);
+      border: 1.5px solid var(--border-color);
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: var(--radius-full);
+      margin-bottom: 14px;
+      font-family: var(--font-code);
+    }
+    .modal-message {
+      font-size: 14.5px;
+      color: var(--text-main);
+      line-height: 1.65;
+      background: #fbfdfb;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-modal-primary {
+      width: 100%;
+      min-height: 48px;
+      background: var(--primary-green);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 124, 65, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .btn-modal-primary:hover {
+      background: var(--primary-green-hover);
+      transform: translateY(-1px);
+    }
+    .btn-modal-secondary {
+      width: 100%;
+      min-height: 44px;
+      background: var(--bg-sub);
+      color: var(--primary-green-dark);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .btn-modal-secondary:hover {
+      background: #ffffff;
+      border-color: var(--primary-green);
+    }
+    /* 全レッスンクリア用の特別感のあるスタイル */
+    .modal-card.all-cleared {
+      border: 3px solid #f59e0b;
+      box-shadow: 0 16px 44px rgba(245, 158, 11, 0.3);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+    }
+    .modal-card.all-cleared .modal-badge {
+      background: #fef3c7;
+      color: #b45309;
+      border-color: #fcd34d;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Confetti Canvas for celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+
+    <!-- Top Header -->
+    <header>
+      <div class="brand" id="brand-home-btn" title="ステージ地図へ戻る">
+        <span class="brand-icon">🍡</span>
+        <div>
+          <h1 class="brand-title">まるもちのExcel教室</h1>
+          <p class="brand-subtitle">初心者のための数式ドリル</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-nav" id="nav-btn-home">🗺️ 地図</button>
+        <button class="btn-nav" id="nav-btn-playground">🧪 自由練習</button>
+      </div>
+    </header>
+
+    <!-- Marumochi Character Guide Section -->
+    <div class="marumochi-wrapper">
+      <div class="marumochi-character">
+        <div class="marumochi-avatar" id="global-marumochi">
+          <span class="mochi-leaf">🍃</span>
+          <div class="mochi-eyes">
+            <span class="mochi-eye"></span>
+            <span class="mochi-eye"></span>
+          </div>
+          <div class="mochi-cheeks">
+            <span class="mochi-cheek"></span>
+            <span class="mochi-cheek"></span>
+          </div>
+          <div class="mochi-mouth"></div>
+        </div>
+        <span class="marumochi-name">まるもち</span>
+      </div>
+      <div class="speech-bubble">
+        <p class="bubble-text" id="global-bubble-text">
+          こんにちは！まるもちだよ。いっしょに楽しくExcelの数式をマスターしようね！🍡
+        </p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME (Roadmap & Stage List)        -->
+    <!-- ========================================== -->
+    <section id="view-home" class="view-section active">
+
+      <!-- Overall Progress Banner -->
+      <div class="progress-banner">
+        <div class="progress-header">
+          <span class="progress-title">全体のクリア状況</span>
+          <span class="progress-count" id="progress-summary-count">0 / 43 レッスン</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-summary-bar"></div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+          <button id="btn-reset-progress" style="background: none; border: none; font-size: 11px; color: var(--text-muted); cursor: pointer; text-decoration: underline;">
+            進捗をリセット
+          </button>
+        </div>
+      </div>
+
+      <!-- Stages Roadmap Container -->
+      <div id="stages-roadmap-container">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: LESSON DETAIL                      -->
+    <!-- ========================================== -->
+    <section id="view-lesson" class="view-section">
+
+      <!-- Top Back Nav -->
+      <div class="lesson-nav-bar">
+        <button class="btn-back" id="btn-lesson-back">
+          ← ステージ地図にもどる
+        </button>
+        <span class="lesson-badge-info" id="lesson-stage-badge">Stage 0</span>
+      </div>
+
+      <!-- Lesson Title Header -->
+      <h2 class="lesson-title-main" id="lesson-detail-title">四則演算</h2>
+      <p class="lesson-subtitle-main" id="lesson-detail-subtitle">+ - * / と カッコのルール</p>
+
+      <!-- Lesson Explanation Card -->
+      <div class="card" id="lesson-explain-card">
+        <div class="card-title">📖 まるもちのワンポイント解説</div>
+        <div id="lesson-explain-body" style="font-size: 14.5px; line-height: 1.7;"></div>
+      </div>
+
+      <!-- Lesson Example Card (if applicable) -->
+      <div class="example-card" id="lesson-example-card" style="display: none;">
+        <div class="example-header">
+          <span>💡 まずは例題で動きを見てみよう</span>
+        </div>
+        <p id="example-desc-text" style="font-size: 13.5px; margin-bottom: 8px; color: var(--text-sub);"></p>
+        <div class="example-formula-row">
+          <span class="example-formula-code" id="example-formula-text">=SUM(C2:C4)</span>
+          <button class="btn-calc-example" id="btn-run-example">計算してみる</button>
+          <span class="example-calc-result" id="example-calc-result">結果: 4</span>
+        </div>
+      </div>
+
+      <!-- S0-04 Interactive Demo Card (参照をコピーする感覚) -->
+      <div id="s004-demo-card" class="demo-card" style="display: none;">
+        <div class="card-title">
+          🎬 体験デモ：数式を下にコピーするとどうなる？
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
+          下のボタンを押して、数式が1行ずつコピーされていく動きを目で確かめてみよう！
+        </p>
+
+        <!-- Mode Toggle Tabs -->
+        <div class="demo-header-tabs">
+          <button type="button" class="demo-tab-btn active" id="demo-tab-relative">
+            相対参照（=A2*2）
+          </button>
+          <button type="button" class="demo-tab-btn" id="demo-tab-absolute">
+            絶対参照（=$A$2*2）
+          </button>
+        </div>
+
+        <div class="demo-info-banner" id="demo-info-banner-text">
+          <strong>【相対参照モード】</strong> 1行下にコピーするたびに、参照先のセル（A2 ➔ A3 ➔ A4...）も一緒に1行ズレていきます！
+        </div>
+
+        <!-- Mini Table -->
+        <div class="demo-table-wrapper" id="demo-table-container">
+          <!-- Dynamically populated via HyperFormula -->
+        </div>
+
+        <!-- Controls -->
+        <div class="demo-controls">
+          <button type="button" class="btn-demo-action" id="btn-demo-step-copy">
+            ⬇️ 1行下にコピーする（<span id="demo-step-label">1/3</span>）
+          </button>
+          <button type="button" class="btn-demo-reset" id="btn-demo-reset">
+            🔄 最初に戻す
+          </button>
+        </div>
+      </div>
+
+      <!-- Sales Spreadsheet Table Preview -->
+      <div class="sheet-container">
+        <div class="sheet-title-bar" id="lesson-sheet-title-bar">
+          📊 練習シート「売上」（まるもちのスタンプ売上）
+        </div>
+        <div id="lesson-sheet-render-area">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="card" style="border: 2px solid var(--primary-green);">
+        <div class="card-title" style="color: var(--primary-green-dark);">
+          🎯 もんだい
+        </div>
+        <p id="lesson-question-text" style="font-size: 15px; font-weight: 700; line-height: 1.6; margin-bottom: 12px;"></p>
+
+        <!-- Prologue Choice UI (if type == 'choice') -->
+        <div id="lesson-choice-ui" style="display: none;">
+          <div class="choices-container" id="choices-container-list"></div>
+        </div>
+
+        <!-- Formula Input UI (if type == 'formula' or 'interactive_demo') -->
+        <div id="lesson-formula-ui" style="display: none;">
+
+          <div class="formula-bar-container">
+            <span class="fx-symbol">fx</span>
+            <input type="text" class="formula-input" id="lesson-formula-input" placeholder="=から始まる数式を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">
+          </div>
+
+          <!-- Quick Insert Chips -->
+          <div class="fn-btn-group">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">記号:</span>
+            <button type="button" class="fn-chip fn-symbol" data-insert="=">=</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="+">+</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="-">−</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="*">*</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="/">/</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert="$">$</button>
+            <button type="button" class="fn-chip fn-symbol" data-insert=":">:</button>
+          </div>
+          <div class="fn-btn-group" style="margin-top: -6px;">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
+            <button type="button" class="fn-chip" data-fn="SUM">SUM</button>
+            <button type="button" class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+            <button type="button" class="fn-chip" data-fn="COUNT">COUNT</button>
+            <button type="button" class="fn-chip" data-fn="IF">IF</button>
+            <button type="button" class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+          </div>
+
+          <!-- Run Formula Button -->
+          <button class="btn-primary" id="btn-run-formula">
+            🚀 数式を実行して判定する
+          </button>
+        </div>
+
+        <!-- Feedback & Error Message Box -->
+        <div class="feedback-box" id="lesson-feedback-box">
+          <div class="feedback-header" id="feedback-header-title"></div>
+          <div class="feedback-desc" id="feedback-desc-text"></div>
+        </div>
+
+        <!-- Hints Accordion -->
+        <div class="hints-section" id="lesson-hints-section">
+          <button class="btn-hint-toggle" id="btn-toggle-hint">
+            💡 ヒントを見る (<span id="hint-step-count">1</span>/3)
+          </button>
+          <div class="hints-list" id="hints-list-container"></div>
+        </div>
+
+      </div>
+
+      <!-- Solved Success Modal Card -->
+      <div class="solved-modal" id="lesson-solved-modal">
+        <h3 class="solved-title">🎉 正解！おみごと！</h3>
+        <p style="font-size: 13px; font-weight: 700; color: #0B5C2E; margin-bottom: 4px;">模範の数式：</p>
+        <div class="model-formula-box" id="solved-model-formula">=SUM(D2:D6)</div>
+        <p class="after-note-text" id="solved-after-note"></p>
+        <button class="btn-next-lesson" id="btn-next-lesson-action">
+          次のレッスンへ進む ➔
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: FREE PLAYGROUND                    -->
+    <!-- ========================================== -->
+    <section id="view-playground" class="view-section">
+      <span class="playground-badge">🧪 自由練習モード</span>
+      <h2 class="lesson-title-main">数式を自由に試してみよう！</h2>
+      <p class="lesson-subtitle-main">
+        全4シート（売上・顧客・商品・注文）のデータを使って、好きな数式を打ち込んで計算結果を確かめられるよ。
+      </p>
+
+      <!-- Sheet Switcher Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+        <button type="button" class="btn-sheet-tab active" id="btn-tab-sheet-sales" data-sheet="売上">
+          📊 練習シート「売上」
+        </button>
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-customers" data-sheet="顧客">
+          👥 練習シート「顧客」
+        </button>
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-products" data-sheet="商品">
+          📦 練習シート「商品」
+        </button>
+        <button type="button" class="btn-sheet-tab" id="btn-tab-sheet-orders" data-sheet="注文">
+          🛒 練習シート「注文」
+        </button>
+      </div>
+
+      <!-- Sheet Preview -->
+      <div class="sheet-container">
+        <div class="sheet-title-bar" id="playground-sheet-title-bar">
+          📊 練習シート「売上」
+        </div>
+        <div id="playground-sheet-render-area"></div>
+      </div>
+
+      <!-- Quick Formula Samples -->
+      <div style="margin-top: 10px;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">試してみるサンプル：</span>
+        <div class="quick-samples">
+          <button type="button" class="btn-sample" data-sample="=SUM(D2:D6)" data-sheet="売上">売上合計 =SUM(D2:D6)</button>
+          <button type="button" class="btn-sample" data-sample='=IF(C2>=2, "まとめ買い", "通常")' data-sheet="売上">条件分岐 IF</button>
+          <button type="button" class="btn-sample" data-sample='=COUNTIF(B2:B7, "関東")' data-sheet="顧客">関東の人数 COUNTIF</button>
+          <button type="button" class="btn-sample" data-sample="=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)" data-sheet="注文">商品名 VLOOKUP</button>
+          <button type="button" class="btn-sample" data-sample="=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)" data-sheet="注文">商品名 XLOOKUP</button>
+          <button type="button" class="btn-sample" data-sample='=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))' data-sheet="商品">ID検索 INDEX+MATCH</button>
+          <button type="button" class="btn-sample" data-sample='=A2&"さん（"&B2&"）"' data-sheet="顧客">文字結合 &</button>
+          <button type="button" class="btn-sample" data-sample='=TEXT(SUM(D2:D6), "#,##0")&"円"' data-sheet="売上">表示形式 TEXT</button>
+          <button type="button" class="btn-sample" data-sample='=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")' data-sheet="売上">複数条件 COUNTIFS</button>
+          <button type="button" class="btn-sample" data-sample='=AVERAGEIFS(D2:D6, C2:C6, ">=1")' data-sheet="売上">売上平均 AVERAGEIFS</button>
+        </div>
+      </div>
+
+      <!-- Playground Input Box -->
+      <div class="formula-input-card">
+        <div class="formula-bar-container">
+          <span class="fx-symbol">fx</span>
+          <input type="text" class="formula-input" id="playground-formula-input" placeholder="例: =SUM(D2:D6)" autocomplete="off">
+        </div>
+
+        <div class="fn-btn-group">
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">記号:</span>
+          <button type="button" class="fn-chip fn-symbol" data-insert="=">=</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="+">+</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="-">−</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="*">*</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="/">/</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="(">(</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert=")">)</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert=",">,</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert="$">$</button>
+          <button type="button" class="fn-chip fn-symbol" data-insert=":">:</button>
+        </div>
+        <div class="fn-btn-group" style="margin-top: -6px;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 2px;">関数:</span>
+          <button type="button" class="fn-chip" data-fn="SUM">SUM</button>
+          <button type="button" class="fn-chip" data-fn="AVERAGE">AVERAGE</button>
+          <button type="button" class="fn-chip" data-fn="COUNT">COUNT</button>
+          <button type="button" class="fn-chip" data-fn="IF">IF</button>
+          <button type="button" class="fn-chip" data-fn="VLOOKUP">VLOOKUP</button>
+        </div>
+
+        <button class="btn-primary" id="btn-run-playground">
+          ⚡ 計算を実行する
+        </button>
+
+        <div class="playground-result-box" id="playground-result-display" style="display: none;">
+          <span class="result-label">計算結果：</span>
+          <span class="result-val" id="playground-result-text">-</span>
+        </div>
+
+        <div class="feedback-box" id="playground-feedback-box">
+          <div class="feedback-header" id="playground-feedback-title"></div>
+          <div class="feedback-desc" id="playground-feedback-desc"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer with required copyright -->
+  <footer>
+    <p>© RYO YOKOTA</p>
+  </footer>
+
+  <!-- ステージクリア / 全レッスンクリアお祝いモーダル -->
+  <div id="stage-clear-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card" id="modal-card-container">
+      <!-- 星・紙吹雪デコレーション -->
+      <span class="modal-confetti c1">✨</span>
+      <span class="modal-confetti c2">🎉</span>
+      <span class="modal-confetti c3">⭐</span>
+      <span class="modal-confetti c4">✨</span>
+      <span class="modal-confetti c5">🎊</span>
+      <span class="modal-confetti c6">⭐</span>
+
+      <div class="modal-marumochi-area">
+        <div class="marumochi-avatar happy modal-marumochi-bounce">
+          <span class="mochi-leaf">🍃</span>
+          <div class="mochi-eyes">
+            <span class="mochi-eye"></span>
+            <span class="mochi-eye"></span>
+          </div>
+          <div class="mochi-cheeks">
+            <span class="mochi-cheek"></span>
+            <span class="mochi-cheek"></span>
+          </div>
+          <div class="mochi-mouth"></div>
+        </div>
+      </div>
+      <div class="modal-badge" id="modal-clear-badge">🎉 STAGE CLEAR!</div>
+      <h2 class="modal-title" id="modal-stage-title">プロローグ クリア！</h2>
+      <div class="modal-stats" id="modal-stage-stats">全43レッスン中 5レッスン クリア</div>
+      <div class="modal-message" id="modal-stage-message">
+        まるもち：「お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！」
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-primary" id="btn-modal-home">
+          <span>🗺️ ステージ地図で確認する</span>
+        </button>
+        <button type="button" class="btn-modal-secondary" id="btn-modal-close">
+          <span>閉じる</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: DATA & LOGIC                   -->
+  <!-- ========================================== -->
+  <script>
+    /* ====================================================
+       1. DATA DEFINITIONS
+       ==================================================== */
+
+    // 練習シート「売上」の初期データ
+    const SALES_SHEET_DATA = [
+      ['日付', 'スタンプ名', '個数', '金額'],
+      ['2026-11-06', '癒しのまるもち', 1, 190],
+      ['2026-11-08', '癒しのまるもち', 2, 380],
+      ['2026-11-10', '動く！癒しのまるもち', 1, 250],
+      ['2026-11-10', '癒しのまるもち', 3, 570],
+      ['2026-11-12', 'あけおめ！まるもち2027', 0, 0]
+    ];
+
+    // 練習シート「顧客」の初期データ
+    const CUSTOMERS_SHEET_DATA = [
+      ['名前', '地域', 'メールアドレス', '顧客ID'],
+      ['さくら', '関東', 'sakura@example.com', 1],
+      ['たろう', '関東', '', 2],
+      ['はなこ', '関西', 'hanako@example.com', 3],
+      ['じろう', '関西', '', 4],
+      ['みき', '関東', 'miki@example.com', 5],
+      ['さくら', '関西', 'sakura2@example.com', 6]
+    ];
+
+    // 練習シート「商品」の初期データ
+    const PRODUCTS_SHEET_DATA = [
+      ['商品ID', '商品名', 'カテゴリ', '価格'],
+      [1, '癒しのまるもち', '静止画', 190],
+      [2, '動く！癒しのまるもち', 'アニメ', 250],
+      [3, 'あけおめ！まるもち2027', '季節', 250],
+      [4, 'まるもち絵本', '絵本', 480]
+    ];
+
+    // 練習シート「注文」の初期データ
+    const ORDERS_SHEET_DATA = [
+      ['注文ID', '顧客ID', '商品ID', '個数', '日付'],
+      [1, 1, 1, 2, '2026-11-06'],
+      [2, 1, 2, 1, '2026-11-08'],
+      [3, 2, 1, 1, '2026-11-09'],
+      [4, 3, 3, 2, '2026-11-10'],
+      [5, 5, 2, 3, '2026-11-11'],
+      [6, 6, 3, 1, '2026-11-12'],
+      [7, 3, 1, 1, '2026-11-13'],
+      [8, 2, 2, 1, '2026-11-14']
+    ];
+
+    // 全シート参照マップ
+    const SHEETS_DATA = {
+      '売上': SALES_SHEET_DATA,
+      '顧客': CUSTOMERS_SHEET_DATA,
+      '商品': PRODUCTS_SHEET_DATA,
+      '注文': ORDERS_SHEET_DATA
+    };
+
+    // ステージ一覧定義
+    const STAGES = [
+      {
+        id: 'stage-prologue',
+        num: 'P',
+        title: 'プロローグ：Excel超入門',
+        desc: '専門用語なし！身近な例えと観察でExcelのきほんを体感しよう',
+        locked: false
+      },
+      {
+        id: 'stage-0',
+        num: '0',
+        title: 'Stage 0：基本操作と数式',
+        desc: '四則演算・セル参照・相対参照と絶対参照のしくみ',
+        locked: false
+      },
+      {
+        id: 'stage-1',
+        num: '1',
+        title: 'Stage 1：集計の基本',
+        desc: 'SUM・AVERAGE・COUNT・MAX・MINと範囲指定の極意',
+        locked: false
+      },
+      {
+        id: 'stage-2',
+        num: '2',
+        title: 'Stage 2：条件で分ける',
+        desc: 'IF・IFS・AND/OR・COUNTIF・SUMIF・AVERAGEIFを使いこなそう',
+        locked: false
+      },
+      {
+        id: 'stage-3',
+        num: '3',
+        title: 'Stage 3：検索と照合（VLOOKUP / XLOOKUP）',
+        desc: 'VLOOKUP・XLOOKUP・INDEX+MATCHで別の表から自由自在にデータを引こう',
+        locked: false
+      },
+      {
+        id: 'stage-4',
+        num: '4',
+        title: 'Stage 4：文字列と日付',
+        desc: '文字の結合・切り出し・TEXT関数・日付の計算をマスターしよう',
+        locked: false
+      },
+      {
+        id: 'stage-5',
+        num: '5',
+        title: 'Stage 5：複数条件と実務集計',
+        desc: 'COUNTIFS・SUMIFS・SUMPRODUCT・MAXIFS・AVERAGEIFSで高度な実務集計',
+        locked: false
+      },
+      {
+        id: 'stage-6',
+        num: '6',
+        title: 'Stage 6：卒業編（実務再現）',
+        desc: '仕様書だけを頼りに複数シートと関数を組み合わせて挑む最終課題',
+        locked: false
+      }
+    ];
+
+    // レッスンデータ（拡張しやすい単一配列）
+    const LESSONS = [
+      // --- プロローグ (5レッスン) ---
+      {
+        id: 'p-01',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 1/5',
+        title: 'Excelってなに？',
+        subtitle: '計算と表が1枚にまとまったノートの例え',
+        type: 'choice',
+        explain: `まるもちのExcel教室へようこそ！🍡<br><br>
+Excel（エクセル）って、パソコンの中に最初から入っているけど何に使うの？って思いますよね。<br>
+身近なもので例えると、Excelは**「巨大な方眼紙の計算ノート」**なんです！<br><br>
+メモ帳と電卓が1つに合体したようなもので、マス目に文字や数字を並べておくと、あとで自動的にぜ〜んぶ計算してくれます。<br>
+計算間違いもゼロ！まるもちのスタンプ売上もパッと計算してくれる頼もしい相棒なんだよ！`,
+        question: 'Q. Excelってどんなもの？まるもちに教えてあげてね！',
+        choices: [
+          { text: '文字や数字を並べて、自動で計算してくれる便利なノート', correct: true, feedback: 'その通り！計算も整理もこれ1つでぜんぶ解決できるノートだよ！' },
+          { text: 'ゲームで遊ぶためだけの専用アプリ', correct: false, feedback: 'ふふっ、ゲームも作れるかもだけど、本職は計算と表整理のノートだよ！' },
+          { text: '一度書いたら二度と修正できない紙のノート', correct: false, feedback: '数字を書き換えたら、計算結果も自動でやり直してくれるのがデジタルの強みだよ！' }
+        ],
+        hints: [
+          '電卓と方眼紙が合体したようなイメージだよ。',
+          '「自動で計算」してくれるのが一番の特徴なんだ！',
+          '「文字や数字を並べて、自動で計算してくれる便利なノート」を選んでみてね！'
+        ],
+        modelFormula: null,
+        afterNote: '大正解！まずは「自動で計算してくれる頼れるノート」と覚えておけばバッチリだよ！'
+      },
+      {
+        id: 'p-02',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 2/5',
+        title: 'セル・行・列',
+        subtitle: 'マス目に住所をつける感覚',
+        type: 'choice',
+        explain: `Excelの方眼紙のマス目のことを**「セル」**と呼びます。<br>
+まるもちのお部屋の住所みたいに、マス目には全部名前がついています！<br><br>
+・**横の並び**を**「行（ぎょう）」**と呼び、数字（1, 2, 3...）がつきます。<br>
+・**縦の並び**を**「列（れつ）」**と呼び、アルファベット（A, B, C...）がつきます。<br><br>
+例えば、縦の「B列」と横の「3行」がぶつかるマスは、**「B3（ビーサン）」**と呼びます！必ず**【列（アルファベット）→ 行（数字）】**の順番で読むよ。`,
+        question: 'Q. スタンプ名が並んでいる「B列」の、上から2番目のデータ（3行目）にあるセルの名前はどれかな？',
+        targetCell: { col: 1, row: 2, label: 'B3' },
+        choices: [
+          { text: 'B3', correct: true, feedback: '大正解！横のB列と縦の3行目が合わさって「B3」だよ！' },
+          { text: '3B', correct: false, feedback: 'おしい！アルファベットを先に言って「B3」と呼ぶのがルールだよ！' },
+          { text: 'C2', correct: false, feedback: 'スタンプ名はB列、3行目の場所を見てみてね！' }
+        ],
+        hints: [
+          'アルファベットが先、数字が後だよ。',
+          'B列の3行目を探してみてね。',
+          '「B3」を選ぼう！'
+        ],
+        modelFormula: null,
+        afterNote: 'セル住所の読み方はもう完璧！「B3」のようにアルファベット＋数字で指定する感覚を覚えておいてね！'
+      },
+      {
+        id: 'p-03',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 3/5',
+        title: '数式は「=」から始まるお願い文',
+        subtitle: 'Excelへの魔法の合言葉',
+        type: 'choice',
+        explain: `マス目に「1+1」とだけ書くと、Excelは「いちたすいち、という文字が書いてあるな〜」と思って計算してくれません。<br><br>
+Excelに「ねえねえ、これ計算して！」とお願いするときは、先頭に半角の**「=（イコール）」**をつけるのが世界共通のルール！<br><br>
+**「=1+1」**と書くと、Excelが「よし、計算するぞ！」と動き出して、パッと「2」と表示してくれます。<br>
+「=」は、Excelの計算エンジンを起動する魔法のスイッチなんだよ！`,
+        question: 'Q. Excelに「2足す3を計算して！」とお願いするときの正しい書き方はどれかな？',
+        choices: [
+          { text: '=2+3', correct: true, feedback: '大正解！頭に「=」をつけるのが計算の合言葉だよ！' },
+          { text: '2+3', correct: false, feedback: '「=」がないと、文字の「2+3」のまま計算されないよ！' },
+          { text: '計算して: 2+3', correct: false, feedback: '気持ちはすごく伝わるけど、Excelには記号の「=」を使って教えてあげよう！' }
+        ],
+        hints: [
+          '計算をお願いする合言葉は「=」だよ。',
+          '一番最初に「=」を書くのがポイント！',
+          '「=2+3」を選んでね！'
+        ],
+        modelFormula: null,
+        afterNote: '「=（イコール）」は魔法の合言葉！これから書くすべての数式は「=」からスタートするよ！'
+      },
+      {
+        id: 'p-04',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 4/5',
+        title: '表を眺めてみよう',
+        subtitle: '見出しとデータの関係を観察',
+        type: 'choice',
+        explain: `下に、まるもちのLINEスタンプの**「売上表」**を用意したよ！🍡<br><br>
+表の一番上（1行目）には、「日付」「スタンプ名」「個数」「金額」という**見出し（ラベル）**が並んでいるね。<br>
+そして2行目から下に、1件ずつの売上データが記録されているよ。<br><br>
+表をじっくり観察してみよう！`,
+        question: 'Q. この表には、スタンプ売上のデータ（見出し行をのぞく、データの行）は何行あるかな？',
+        choices: [
+          { text: '5行（2行目〜6行目）', correct: true, feedback: 'ビンゴ！11月6日〜12日までの5つのデータが並んでいるね！' },
+          { text: '4行', correct: false, feedback: '10日のデータが2件あるよ。カレンダーの日付をよく数えてみてね！' },
+          { text: '6行', correct: false, feedback: '1行目は見出し（タイトル）だから、データの中身は2行目からだよ！' }
+        ],
+        hints: [
+          '1行目は「見出し」だから数えないよ。',
+          '2行目から6行目までを数えよう。',
+          '2, 3, 4, 5, 6 で合計5行あるよ！「5行（2行目〜6行目）」を選んでね。'
+        ],
+        modelFormula: null,
+        afterNote: '観察バッチリ！Excelでは「1行目が見出し、2行目以降がデータ」という形が基本の型だよ！'
+      },
+      {
+        id: 'p-05',
+        stageId: 'stage-prologue',
+        stageBadge: 'プロローグ 5/5',
+        title: '初めての計算',
+        subtitle: '用意した数式を実行ボタンで体験',
+        type: 'interactive_demo',
+        explain: `さあ、プロローグの締めくくり！Excelの計算パワーを実際に体験してみよう！<br><br>
+入力欄に**「=190*2」**（190円のスタンプ2個分）と用意してあるよ。<br>
+（掛け算の記号は「×」ではなく、半角のアスタリスク「*」を使うよ！）<br><br>
+下のボタンを押して、HyperFormulaが一瞬で計算してくれる気持ちよさを体験してみてね。数字を変えて再計算もできるよ！`,
+        question: '下の「数式を実行して判定する」ボタンを押して計算してみよう！好きな数値に変えてもOKだよ。',
+        defaultFormula: '=190*2',
+        expectedValue: 380,
+        allowAnyValidCalculation: true,
+        hints: [
+          'まずはそのままボタンを押してみてね！',
+          '「*」は掛け算の記号だよ。',
+          '計算結果が出たらクリアだよ！'
+        ],
+        modelFormula: '=190*2',
+        afterNote: 'お見事！ボタンひとつで瞬時に計算されたね。これが数式の力だよ！Stage 0へ進もう！'
+      },
+
+      // --- Stage 0 (4レッスン) ---
+      {
+        id: 's0-01',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 1/4',
+        title: '四則演算',
+        subtitle: '+ - * / と カッコのルール',
+        type: 'formula',
+        explain: `Excelで使える基本の計算記号（四則演算）を覚えよう！<br>
+・足し算：**+**（プラス）<br>
+・引き算：**-**（マイナス）<br>
+・掛け算：*****（アスタリスク）<br>
+・割り算：**/**（スラッシュ）<br><br>
+算数と同じで、**掛け算・割り算が先**に計算されます。<br>
+足し算や引き算を先にしたいときは、**( )（カッコ）**で囲んであげよう！`,
+        example: {
+          formula: '=(100+50)*2',
+          desc: '100+50（150）を先に足してから2倍にするよ',
+          result: 300
+        },
+        question: '190円のスタンプを3個買って、100円引きクーポンを使うよ。計算する数式を書いてみよう！（答えは 470）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 470,
+        modelFormula: '=190*3-100',
+        hints: [
+          '190かける3をしてから、100を引くよ。',
+          '掛け算は「*」、引き算は「-」を使うよ。',
+          '「=190*3-100」と入力してみてね！'
+        ],
+        afterNote: '正解！「=190*3-100」で470円！パソコンならではの「*」と「/」に慣れていこう！'
+      },
+      {
+        id: 's0-02',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 2/4',
+        title: 'セル参照',
+        subtitle: 'A1・B2のようにマスの名前を使う',
+        type: 'formula',
+        explain: `数字を直接「=190*2」と書くかわりに、**「=C3*190」**のようにセルの住所を書くことを**「セル参照」**と言います！<br><br>
+セル参照を使うと、**「元のセルの数値を書き換えたら、計算結果も自動でやり直される」**という魔法が起きます！<br>
+修正に強い表を作るための、Excelで一番大事な考え方だよ。`,
+        example: {
+          formula: '=C2*190',
+          desc: 'C2セル（個数:1）に単価190円を掛けるよ',
+          result: 190
+        },
+        question: '3行目のデータを見てね。C3セル（個数:2）に、単価「190」を掛ける数式を書いてみよう！（答えは 380）',
+        targetCell: { col: 3, row: 2, label: 'D3' },
+        expectedValue: 380,
+        modelFormula: '=C3*190',
+        hints: [
+          '直接「2」と書かずに、セル名「C3」を使おう！',
+          '掛け算は「*」だよ。',
+          '「=C3*190」と入力してみてね！'
+        ],
+        afterNote: '大正解！セル参照を使うと、元のデータが変わっても式を直さなくていいんだよ！'
+      },
+      {
+        id: 's0-03',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 3/4',
+        title: '相対参照と絶対参照',
+        subtitle: 'ズレないようにピン留めする「$」',
+        type: 'formula',
+        explain: `数式をコピーしたとき、参照先が一緒に移動してくれるのを**「相対参照」**と言います。<br>
+でも、「このセルだけは絶対にズラしたくない！」という時もあります。<br><br>
+そんな時に使うのが**「$（ドルマーク）」**！<br>
+**「$D$2」**のように列と行の前に「$」をつけると、どこへコピーしてもD2の場所から動かない**「絶対参照」**になります。画鋲でピン留めする感覚だよ！`,
+        example: {
+          formula: '=$D$2',
+          desc: 'D2セル（190）を絶対参照でピン留め',
+          result: 190
+        },
+        question: 'D2セルの金額（190）を、行も列も絶対にズレないように絶対参照で引っ張ってくる数式を書いてみよう！（答えは 190）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 190,
+        modelFormula: '=$D$2',
+        hints: [
+          'セルの前後に「$」をつけると絶対参照になるよ。',
+          'Dの前と2の前に「$」をつけてみよう。',
+          '「=$D$2」と入力してみてね！'
+        ],
+        afterNote: 'ピン留めの「$」！これで数式を他のマスにコピーしても、絶対に動かないよ！'
+      },
+      {
+        id: 's0-04',
+        stageId: 'stage-0',
+        stageBadge: 'Stage 0 - 4/4',
+        title: '参照をコピーする感覚',
+        subtitle: '1行分の式を下に伸ばす考え方',
+        type: 'formula',
+        explain: `Excelで一番爽快な瞬間、それは**「1行目に作った数式を、下の行へ一気にコピーする」**こと！<br>
+相対参照のおかげで、1行下にコピーした式は勝手に次の行のセルを見てくれるんだよ。<br><br>
+それぞれの行が、自分の行のセルをちゃんと参照する感覚を身につけよう！`,
+        example: {
+          formula: '=C4*250',
+          desc: '4行目の個数(C4: 1) × 単価250円',
+          result: 250
+        },
+        question: '4行目（動く！癒しのまるもち）の売上金額を出すため、4行目の個数「C4」に単価「250」を掛ける数式を入力してみよう！（答えは 250）',
+        targetCell: { col: 3, row: 3, label: 'D4' },
+        expectedValue: 250,
+        modelFormula: '=C4*250',
+        hints: [
+          '4行目の個数は「C4」に入っているよ。',
+          '単価は250円だよ。',
+          '「=C4*250」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！行の番号に合わせたセル参照がしっかり身についたね！Stage 0制覇おめでとう！🎉'
+      },
+
+      // --- Stage 1 (6レッスン) ---
+      {
+        id: 's1-01',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 1/6',
+        title: '合計する（SUM）',
+        subtitle: '大量の足し算を一瞬で終わらせる呪文',
+        type: 'formula',
+        explain: `たくさんのセルを足すとき、「=D2+D3+D4+D5+D6」と書くのは大変！<br>
+そこで登場するのが、Excelで一番使われる関数**「SUM（サム）」**！<br><br>
+**「=SUM(開始セル : 終了セル)」**と書くだけで、その範囲の数字をぜ〜んぶ合算してくれます！<br>
+コロン「:」は「〜から〜まで」という意味だよ。`,
+        example: {
+          formula: '=SUM(C2:C4)',
+          desc: 'C2からC4までの個数の合計（1+2+1）',
+          result: 4
+        },
+        question: '売上金額（D2からD6まで）のすべての合計を、SUM関数を使って計算してみよう！（答えは 1390）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 1390,
+        modelFormula: '=SUM(D2:D6)',
+        hints: [
+          '合計を出す関数は「SUM」だよ。下のSUMボタンも使ってみてね！',
+          '範囲はD2からD6までだから「D2:D6」と書くよ。',
+          '「=SUM(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: 'すごい！合計1390円がパッと出たね！Excelで最も愛されている王道の関数だよ！'
+      },
+      {
+        id: 's1-02',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 2/6',
+        title: '平均を求める（AVERAGE）',
+        subtitle: '合計して個数で割る計算を一瞬で',
+        type: 'formula',
+        explain: `「1回あたり平均何個売れたかな？」という平均を出したいときは**「AVERAGE（アベレージ）」**！<br><br>
+**「=AVERAGE(範囲)」**と書けば、自動で合計してデータの件数で割ってくれます。<br>
+0個の日（12日）もちゃんと計算に含めて正確な平均を出してくれるよ！`,
+        example: {
+          formula: '=AVERAGE(C2:C6)',
+          desc: 'スタンプ売上個数の平均（(1+2+1+3+0)/5）',
+          result: 1.4
+        },
+        question: 'スタンプ売上個数（C2からC6まで）の平均を、AVERAGE関数を使って計算してみよう！（答えは 1.4）',
+        targetCell: { col: 2, row: 6, label: 'C7' },
+        expectedValue: 1.4,
+        modelFormula: '=AVERAGE(C2:C6)',
+        hints: [
+          '平均を求める関数は「AVERAGE」だよ。',
+          '個数の範囲は「C2:C6」だよ。',
+          '「=AVERAGE(C2:C6)」と入力してみてね！'
+        ],
+        afterNote: '正解！平均1.4個！スペルが少し長いけど、下のボタンを使えば一発で入力できるよ！'
+      },
+      {
+        id: 's1-03',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 3/6',
+        title: '数える（COUNT / COUNTA）',
+        subtitle: '数値のマスだけをカウントする',
+        type: 'formula',
+        explain: `データの件数を数えるのが**「COUNT（カウント）」**！<br>
+ただし大事なお約束があります。<br>
+**「COUNT」は【数値が入っているマス】だけを数えます！**<br><br>
+文字が入っているマスは数えてくれないので、金額や個数など「数字の列」の件数を数えるときに使おう！`,
+        example: {
+          formula: '=COUNT(D2:D6)',
+          desc: '金額列（数値）にデータが何件あるか数える',
+          result: 5
+        },
+        question: '売上金額（D2からD6まで）に、数値のデータが何件あるか「COUNT」関数で数えてみよう！（答えは 5）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 5,
+        modelFormula: '=COUNT(D2:D6)',
+        hints: [
+          '件数を数える関数は「COUNT」だよ。',
+          '金額の範囲は「D2:D6」だよ。',
+          '「=COUNT(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: '完璧！数値が入っているセルが5件あることが確認できたね！伝票の件数確認などに重宝するよ！'
+      },
+      {
+        id: 's1-04',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 4/6',
+        title: '一番大きい・小さい値（MAX / MIN）',
+        subtitle: '最高記録と最低記録を見つける',
+        type: 'formula',
+        explain: `たくさんのデータから、一番大きな値を見つけるのが**「MAX（マックス）」**、<br>
+一番小さな値を見つけるのが**「MIN（ミン）」**です！<br><br>
+何百行もデータがあっても、一瞬で「一番売れた日はいくら？」「最低売上は？」を見つけ出してくれるよ！`,
+        example: {
+          formula: '=MIN(D2:D6)',
+          desc: '売上金額の最低値（あけおめの0円）',
+          result: 0
+        },
+        question: 'スタンプの売上金額（D2からD6まで）の中で、一番大きい金額（最高額）をMAX関数で求めてみよう！（答えは 570）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 570,
+        modelFormula: '=MAX(D2:D6)',
+        hints: [
+          '最大値を求める関数は「MAX」だよ。',
+          '金額の範囲は「D2:D6」だよ。',
+          '「=MAX(D2:D6)」と入力してみてね！'
+        ],
+        afterNote: '最高売上は570円！ちなみに一番小さい値を探したいときは「=MIN(D2:D6)」で0円が見つかるよ！'
+      },
+      {
+        id: 's1-05',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 5/6',
+        title: '範囲の指定（A2:A10の書き方）',
+        subtitle: 'コロン「:」とカンマ「,」の使い分け',
+        type: 'formula',
+        explain: `範囲を指定する記号**「:（コロン）」**は、**「〜から〜まで」**という連続したひとかたまりを表します。<br><br>
+一方、離れたセルだけを足したいときは**「,（カンマ）」**を使うよ！<br>
+・連続した範囲：\`=SUM(D2:D4)\`（D2からD4までの3つ）<br>
+・離れたセル：\`=SUM(D2, D4)\`（D2とD4の2つだけ）<br>
+この2つを使いこなせるとExcel上級者の仲間入りだよ！`,
+        example: {
+          formula: '=SUM(D2, D4)',
+          desc: 'D2（190）とD4（250）の2つだけを足す',
+          result: 440
+        },
+        question: '2行目（190）と3行目（380）の金額だけを合計してみよう！「:」でも「,」でもどちらでもOKだよ！（答えは 570）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        expectedValue: 570,
+        modelFormula: '=SUM(D2:D3)',
+        hints: [
+          'D2とD3をSUMで合計するよ。',
+          '「=SUM(D2:D3)」または「=SUM(D2, D3)」と書けるよ。',
+          '「=SUM(D2:D3)」と入力してみてね！'
+        ],
+        afterNote: '大正解！コロン（:）で範囲、カンマ（,）で個別選択。この2つの使い分けができると完璧だよ！'
+      },
+      {
+        id: 's1-06',
+        stageId: 'stage-1',
+        stageBadge: 'Stage 1 - 6/6',
+        title: '集計の落とし穴',
+        subtitle: 'COUNTとCOUNTAの違い・文字の数え方',
+        type: 'formula',
+        explain: `ここで仕事でよくあるトラップ！<br>
+「COUNT」は数値しか数えないので、スタンプ名のような文字の列に「=COUNT(B2:B6)」と書くと、結果はなんと**「0」**になってしまいます！😱<br><br>
+文字が入っているマスも数えたいときは、**「COUNTA（カウント・エー）」**を使います！<br>
+「A」は「All（すべて）」のAと覚えておくと忘れないよ！`,
+        example: {
+          formula: '=COUNT(B2:B6)',
+          desc: '文字の列にCOUNTを使うと...0件になっちゃう！',
+          result: 0
+        },
+        question: 'スタンプ名（B2からB6まで）に何件のスタンプが登録されているか、文字も数えられる「COUNTA」で数えてみよう！（答えは 5）',
+        targetCell: { col: 1, row: 6, label: 'B7' },
+        expectedValue: 5,
+        modelFormula: '=COUNTA(B2:B6)',
+        hints: [
+          '文字も数えられる関数は「COUNTA」だよ。',
+          'スタンプ名の範囲は「B2:B6」だよ。',
+          '「=COUNTA(B2:B6)」と入力してみてね！'
+        ],
+        afterNote: 'お見事！文字を数えるならCOUNTA！この違いを知っているだけで、実務の集計トラブルを回避できるよ！Stage 1制覇おめでとう！🎉'
+      },
+
+      // --- Stage 2 (6レッスン) ---
+      {
+        id: 's2-01',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 1/6',
+        title: 'IF（もし〜なら）',
+        subtitle: '条件に合わせて表示を切り替える',
+        type: 'formula',
+        sheet: '売上',
+        explain: `「もし〜ならA、そうでなければB」と結果を分けるのが**「IF（イフ）」**関数！<br><br>
+書き方は**「=IF(条件式, 当てはまるとき, そうでないとき)」**。<br>
+たとえば、個数が2個以上なら「まとめ買い」、そうでなければ「通常」と表示させることができます。<br>
+文字列（日本語）を返すときは、必ず**「" "（ダブルクォーテーション）」**で囲むのがExcelのルールだよ！`,
+        example: {
+          formula: '=IF(C3>=2, "まとめ買い", "通常")',
+          desc: '3行目の個数（2個）で判定すると、2以上なので「まとめ買い」になるよ',
+          result: 'まとめ買い'
+        },
+        question: '2行目のスタンプ販売（個数はC2）について、個数が2以上なら「まとめ買い」、そうでなければ「通常」と表示する数式をセルE2に入力してみよう！（個数は1なので答えは「通常」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: '通常',
+        modelFormula: '=IF(C2>=2, "まとめ買い", "通常")',
+        hints: [
+          '条件によって分ける関数は「IF」だよ。書き方は「=IF(条件, 当てはまるとき, そうでないとき)」だよ。',
+          '2行目の個数は「C2」だね。「2以上」は「>=2」と書くよ。',
+          '「=IF(C2>=2, "まとめ買い", "通常")」と入力してみてね！'
+        ],
+        afterNote: '大正解！C2の個数は1だから「通常」と表示されたね！もし個数を2に変えれば自動で「まとめ買い」に切り替わるよ！これがIFの力だよ！'
+      },
+      {
+        id: 's2-02',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 2/6',
+        title: 'IFのネストとIFS入門',
+        subtitle: '3段階以上の多段階条件判定',
+        type: 'formula',
+        sheet: '売上',
+        explain: `「2段階じゃなくて、3段階以上に分けたい！」というときに大活躍するのが**「IFS（イフス）」**関数！<br><br>
+書き方は**「=IFS(条件1, 結果1, 条件2, 結果2, ..., TRUE, それ以外)」**。<br>
+左から順にチェックして、最初に当てはまった結果を返してくれます。最後の「TRUE」は「どれにも当てはまらなかったら」という定番の書き方だよ。<br>
+（昔ながらの「=IF(条件1, 結果1, IF(条件2, 結果2, 結果3))」のようにIFを重ねる"ネスト"でも同じことができます！）`,
+        example: {
+          formula: '=IFS(D5>=500, "大口", D5>=200, "中口", TRUE, "小口")',
+          desc: '5行目の金額（570円）は500円以上なので「大口」と判定されるよ',
+          result: '大口'
+        },
+        question: '2行目の売上金額（D2: 190円）について、500以上なら「大口」、200以上なら「中口」、それ以外は「小口」と3段階で判定する数式をE2に入力してみよう！（答えは「小口」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: '小口',
+        modelFormula: '=IFS(D2>=500, "大口", D2>=200, "中口", TRUE, "小口")',
+        hints: [
+          '3段階以上の判定は「IFS」が便利だよ。IFのネスト（重ね合わせ）でも解けるよ。',
+          '2行目の金額は「D2」だよ。500以上は「D2>=500」、200以上は「D2>=200」と書くよ。',
+          '「=IFS(D2>=500, "大口", D2>=200, "中口", TRUE, "小口")」または「=IF(D2>=500, "大口", IF(D2>=200, "中口", "小口"))」と入力してみてね！'
+        ],
+        afterNote: '見事！金額190円は200未満だから「小口」になったね！IFSを使うと複雑な条件分岐もスッキリ読みやすく整理できるよ！'
+      },
+      {
+        id: 's2-03',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 3/6',
+        title: 'AND / OR',
+        subtitle: '「かつ」「または」で複数条件を組み合わせる',
+        type: 'formula',
+        sheet: '売上',
+        explain: `「スタンプ名が〇〇で、**しかも**個数が2個以上」のように複数の条件を調べたいときは**「AND（アンド）」**や**「OR（オア）」**を使います！<br><br>
+・**「=AND(条件1, 条件2)」**：両方とも満たしていれば **TRUE（真）**、そうでなければ **FALSE（偽）**<br>
+・**「=OR(条件1, 条件2)」**：どちらか一方でも満たしていれば **TRUE**<br><br>
+IF関数の条件部分と組み合わせることで、実務で強力な判定ができるようになります！`,
+        example: {
+          formula: '=AND(B2="癒しのまるもち", C2>=2)',
+          desc: '2行目はスタンプ名は合っていますが、個数が1なので FALSE になるよ',
+          result: false
+        },
+        question: '5行目のデータについて、「スタンプ名が『癒しのまるもち』であり、かつ個数が2以上」であるかを判定する数式をE5に入力してみよう！（スタンプ名は「癒しのまるもち」、個数は3なので答えは TRUE）',
+        targetCell: { col: 4, row: 4, label: 'E5' },
+        answerCell: 'E5',
+        expectedValue: true,
+        modelFormula: '=AND(B5="癒しのまるもち", C5>=2)',
+        hints: [
+          '「かつ（両方満たす）」を判定するには「AND」関数を使うよ。書き方は「=AND(条件1, 条件2)」だよ。',
+          '5行目のスタンプ名は「B5」、個数は「C5」だね。「B5="癒しのまるもち"」と「C5>=2」を組み合わせよう。',
+          '「=AND(B5="癒しのまるもち", C5>=2)」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！条件が両方成立したから「TRUE」が返ってきたね！OR関数を使えば「どちらか一方でも満たせばOK」という判定も自由自在だよ！'
+      },
+      {
+        id: 's2-04',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 4/6',
+        title: 'COUNTIF',
+        subtitle: '条件に合うセルの数だけをカウントする',
+        type: 'formula',
+        sheet: '顧客',
+        explain: `「特定の地域のお客さんは何人いる？」のように、条件に一致するセルだけを数えるのが**「COUNTIF（カウントイフ）」**！<br><br>
+書き方は**「=COUNTIF(範囲, 検索条件)」**。<br>
+今回のレッスンでは、新しく追加された**練習シート「顧客」**を使います！<br>
+B列の地域（B2:B7）の中から「"関東"」という文字を探して、何人いるかを瞬時に数えてみよう！`,
+        example: {
+          formula: '=COUNTIF(B2:B7, "関西")',
+          desc: '地域列（B2:B7）の中で「関西」のお客さんの数を数えるよ',
+          result: 3
+        },
+        question: '練習シート「顧客」の地域（B2からB7まで）の中で、地域が「関東」の人数を「COUNTIF」関数を使って数えてみよう！（答えは 3）',
+        targetCell: { col: 1, row: 7, label: 'B8' },
+        answerCell: 'B8',
+        expectedValue: 3,
+        modelFormula: '=COUNTIF(B2:B7, "関東")',
+        hints: [
+          '条件に合うセルを数える関数は「COUNTIF」だよ。',
+          '地域が入っている範囲は「B2:B7」だよ。',
+          '「=COUNTIF(B2:B7, "関東")」と入力してみてね！'
+        ],
+        afterNote: '正解！さくらさん、たろうさん、みきさんの3名が見つかったね！アンケートの集計や顧客属性の分析で最も重宝する定番関数だよ！'
+      },
+      {
+        id: 's2-05',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 5/6',
+        title: 'SUMIF',
+        subtitle: '条件に合う行の数値だけを合計する',
+        type: 'formula',
+        sheet: '売上',
+        explain: `「特定のスタンプだけの売上合計を知りたい！」というときに使うのが**「SUMIF（サムイフ）」**！<br><br>
+書き方は**「=SUMIF(条件範囲, 検索条件, 合計範囲)」**。<br>
+1. どこから探す？（スタンプ名の列：B2:B6）<br>
+2. 何を探す？（"癒しのまるもち"）<br>
+3. どこの数字を足す？（金額の列：D2:D6）<br>
+この3つを指定するだけで、当てはまる行の金額だけを自動で抜き出して合計してくれます！`,
+        example: {
+          formula: '=SUMIF(B2:B6, "動く！癒しのまるもち", D2:D6)',
+          desc: '「動く！癒しのまるもち」の行だけの売上金額合計（250円）',
+          result: 250
+        },
+        question: '練習シート「売上」で、スタンプ名が「癒しのまるもち」の行だけ金額（D列）を「SUMIF」関数で合計してみよう！（190 + 380 + 570 で答えは 1140）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        answerCell: 'D7',
+        expectedValue: 1140,
+        modelFormula: '=SUMIF(B2:B6, "癒しのまるもち", D2:D6)',
+        hints: [
+          '条件付き合計を出す関数は「SUMIF」だよ。書き方は「=SUMIF(条件範囲, 検索条件, 合計範囲)」だよ。',
+          '条件範囲はスタンプ名の「B2:B6」、条件は「"癒しのまるもち"」、合計範囲は金額の「D2:D6」だよ。',
+          '「=SUMIF(B2:B6, "癒しのまるもち", D2:D6)」と入力してみてね！'
+        ],
+        afterNote: '完璧！「癒しのまるもち」の3回分の売上（190円、380円、570円）だけが正確に足されて1140円になったね！商品別売上集計の必須テクニックだよ！'
+      },
+      {
+        id: 's2-06',
+        stageId: 'stage-2',
+        stageBadge: 'Stage 2 - 6/6',
+        title: 'AVERAGEIF',
+        subtitle: '条件に合う行の数値だけを平均する',
+        type: 'formula',
+        sheet: '売上',
+        explain: `SUMIFと同じ感覚で、条件に合う行だけ平均を計算してくれるのが**「AVERAGEIF（アベレージイフ）」**！<br><br>
+書き方は**「=AVERAGEIF(条件範囲, 検索条件, 平均範囲)」**。<br>
+SUMIFの合計範囲が平均範囲に変わっただけなので、考え方はまったく同じです！<br>
+「癒しのまるもち」が売れた回の平均購入個数を計算してみよう！`,
+        example: {
+          formula: '=AVERAGEIF(B2:B6, "動く！癒しのまるもち", C2:C6)',
+          desc: '「動く！癒しのまるもち」の平均購入個数（1個）',
+          result: 1
+        },
+        question: '練習シート「売上」で、スタンプ名が「癒しのまるもち」の行だけ個数（C列）を「AVERAGEIF」関数で平均してみよう！（(1 + 2 + 3) / 3 で答えは 2）',
+        targetCell: { col: 2, row: 6, label: 'C7' },
+        answerCell: 'C7',
+        expectedValue: 2,
+        modelFormula: '=AVERAGEIF(B2:B6, "癒しのまるもち", C2:C6)',
+        hints: [
+          '条件付き平均を計算する関数は「AVERAGEIF」だよ。書き方は「=AVERAGEIF(条件範囲, 検索条件, 平均範囲)」だよ。',
+          '条件範囲はスタンプ名の「B2:B6」、条件は「"癒しのまるもち"」、平均範囲は個数の「C2:C6」だよ。',
+          '「=AVERAGEIF(B2:B6, "癒しのまるもち", C2:C6)」と入力してみてね！'
+        ],
+        afterNote: 'お見事！平均2個と正確に算出できたね！IF・IFSからCOUNTIF・SUMIF・AVERAGEIFまで条件計算の武器が勢揃いしたよ！Stage 2完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 3 (6レッスン) ---
+      {
+        id: 's3-01',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 1/6',
+        title: 'VLOOKUPの基本',
+        subtitle: '商品IDから商品名を引き当てる',
+        type: 'formula',
+        sheet: '注文',
+        explain: `別の表から目当てのデータを探して持ってくるとき、Excelで最も使われる代表格が**「VLOOKUP（ブイルックアップ）」**関数！<br><br>
+書き方は**「=VLOOKUP(検索値, 範囲, 列番号, 検索の型)」**。<br>
+・**検索値**：探したい手がかり（注文シートのC2にある商品ID: 1）<br>
+・**範囲**：探す対象の表（商品シートのA2:D5。別のシートは \`商品!A2:D5\` と書くよ！）<br>
+・**列番号**：範囲の中で左から何列目の値が欲しいか（商品名は2列目なので \`2\`）<br>
+・**検索の型**：ぴったり一致を探すときは必ず **\`FALSE\`**！<br><br>
+※VLOOKUPの大事なルール：**探すキー（商品ID）は、範囲の一番左の列（A列）にある必要があります！**`,
+        example: {
+          formula: '=VLOOKUP(C3, 商品!A2:D5, 2, FALSE)',
+          desc: '注文3行目の商品ID（2）を商品シートから検索すると「動く！癒しのまるもち」が引けるよ',
+          result: '動く！癒しのまるもち'
+        },
+        question: '注文シート1行目（2行目のセルC2）の商品ID（1）を手がかりに、商品シート（商品!A2:D5）から「商品名（2列目）」をVLOOKUP関数で完全一致で引いてみよう！（答えは「癒しのまるもち」）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: '癒しのまるもち',
+        modelFormula: '=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)',
+        hints: [
+          '別の表から縦方向に検索する関数は「VLOOKUP」だよ。下のVLOOKUPボタンも使ってみてね！',
+          '検索値はC2、範囲は商品シートの「商品!A2:D5」、取り出したい列は2、完全一致は「FALSE」だよ。',
+          '「=VLOOKUP(C2, 商品!A2:D5, 2, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '大正解！注文シートの商品ID「1」から、商品シートの「癒しのまるもち」を見事に引っ張ってこれたね！実務で最も愛されている検索関数だよ！'
+      },
+      {
+        id: 's3-02',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 2/6',
+        title: 'VLOOKUPの落とし穴',
+        subtitle: '列番号の数え方とFALSE（完全一致）の超重要性',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPで初心者が一番ハマりやすい大事故ポイントが2つあります！<br><br>
+**① 列番号の数え間違い**<br>
+商品シートの列は、A列=1（商品ID）、B列=2（商品名）、C列=3（カテゴリ）、D列=4（価格）です。価格を取りたいなら列番号は「**4**」を指定します！<br><br>
+**② 最後の「FALSE」を省略すると大事故に！**<br>
+最後の引数を省略すると「TRUE（近似一致＝だいたい近い値）」になり、全然関係ない行の値を持ってきてしまいます！実務では必ず**「FALSE（完全一致）」**を書くのが鉄則だよ！`,
+        example: {
+          formula: '=VLOOKUP(C2, 商品!A2:D5, 4, FALSE)',
+          desc: '注文2行目の商品ID（1）から価格を引くと 190円になるよ',
+          result: 190
+        },
+        question: '注文シート2行目（3行目のセルC3）の商品ID（2）から、商品シート（商品!A2:D5）を検索して「価格（4列目）」を完全一致で引いてみよう！（答えは 250）',
+        targetCell: { col: 5, row: 2, label: 'F3' },
+        answerCell: 'F3',
+        expectedValue: 250,
+        modelFormula: '=VLOOKUP(C3, 商品!A2:D5, 4, FALSE)',
+        hints: [
+          '商品シートの価格はA列から数えて4列目（D列）だから、列番号は「4」だよ。',
+          '検索値はC3、範囲は「商品!A2:D5」、完全一致なので最後は「FALSE」だよ。',
+          '「=VLOOKUP(C3, 商品!A2:D5, 4, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '完璧！価格250円が正しく引けたね！列番号の正確な指定と末尾のFALSEを忘れないことで、実務の集計ミスをゼロに防げるよ！'
+      },
+      {
+        id: 's3-03',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 3/6',
+        title: 'XLOOKUP',
+        subtitle: '次世代の超進化系検索関数',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPの弱点をぜんぶ克服した最新の関数が**「XLOOKUP（エックスルックアップ）」**！<br><br>
+書き方は**「=XLOOKUP(検索値, 検索範囲, 戻り値範囲)」**。<br>
+・列番号（2とか4）を指折り数える必要なし！欲しい列を直接選べる！<br>
+・最初から「完全一致」なので、最後の「FALSE」を書かなくてOK！<br>
+・検索列より左側にある列も探せる！<br>
+「探す列」と「欲しい列」を2つ指定するだけの、これからのスタンダード関数です！`,
+        example: {
+          formula: '=XLOOKUP(C2, 商品!A2:A5, 商品!B2:B5)',
+          desc: '商品ID（C2: 1）から商品名「癒しのまるもち」をスマートに引けるよ',
+          result: '癒しのまるもち'
+        },
+        question: '注文シート4行目（5行目のセルC5）の商品ID（3）から、XLOOKUP関数を使って商品シートの「商品名」を引いてみよう！（答えは「あけおめ！まるもち2027」）',
+        targetCell: { col: 5, row: 4, label: 'F5' },
+        answerCell: 'F5',
+        expectedValue: 'あけおめ！まるもち2027',
+        modelFormula: '=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)',
+        hints: [
+          'XLOOKUPの書き方は「=XLOOKUP(検索値, 探す範囲, 欲しい結果の範囲)」だよ。',
+          '検索値はC5、探す範囲は商品ID列「商品!A2:A5」、欲しい範囲は商品名列「商品!B2:B5」だよ。',
+          '「=XLOOKUP(C5, 商品!A2:A5, 商品!B2:B5)」と入力してみてね！'
+        ],
+        afterNote: 'お見事！列番号を数える必要がなくなり、直感的に書けたね！新しいExcelではこのXLOOKUPが主役だよ！'
+      },
+      {
+        id: 's3-04',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 4/6',
+        title: 'INDEX + MATCH',
+        subtitle: '左方向の列を探す伝統の最強タッグ',
+        type: 'formula',
+        sheet: '商品',
+        explain: `VLOOKUPには**「検索する列より左側にあるデータは取ってこれない」**という大きな弱点があります。<br>
+たとえば商品シートで「商品名（B列）」から「商品ID（左のA列）」を引くことはVLOOKUPではできません！<br><br>
+そこでプロが愛用してきたのが**「INDEX + MATCH」**の組み合わせ！<br>
+・**MATCH("まるもち絵本", B2:B5, 0)** ➔ 「まるもち絵本」が範囲の何行目にあるか探す（4行目）<br>
+・**INDEX(A2:A5, 行番号)** ➔ A列の指定した行の値を取り出す！<br>
+これらを組み合わせることで、左向きの検索も自由自在になります！`,
+        example: {
+          formula: '=INDEX(A2:A5, MATCH("癒しのまるもち", B2:B5, 0))',
+          desc: '「癒しのまるもち」の商品ID（左のA列にある 1）を引くよ',
+          result: 1
+        },
+        question: '商品シートで、商品名が「まるもち絵本」である行の「商品ID（左のA列）」を、INDEXとMATCH関数を組み合わせて引いてみよう！（答えは 4）',
+        targetCell: { col: 4, row: 4, label: 'E5' },
+        answerCell: 'E5',
+        expectedValue: 4,
+        modelFormula: '=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))',
+        hints: [
+          '書き方は「=INDEX(取り出したい範囲, MATCH(探す言葉, 探す範囲, 0))」だよ。',
+          '取り出したいのは商品ID（A2:A5）、探す言葉は "まるもち絵本"、商品名の範囲は B2:B5 だよ。',
+          '「=INDEX(A2:A5, MATCH("まるもち絵本", B2:B5, 0))」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！VLOOKUPでは不可能だった「左側の列の取得」を見事に解決できたね！古いバージョンのExcelでも確実に動く実務必須のテクニックだよ！'
+      },
+      {
+        id: 's3-05',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 5/6',
+        title: 'IFERRORと #N/A の扱い',
+        subtitle: '見つからないエラーを優しく包み込む',
+        type: 'formula',
+        sheet: '注文',
+        explain: `VLOOKUPで表に存在しない商品ID（例: 99）を検索すると、Excelは**「#N/A（データが見つからない）」**エラーを出してしまいます！😱<br><br>
+書類に「#N/A」が並んでいると困ってしまいますよね。<br>
+そこで大活躍するのが**「IFERROR（イフエラー）」**関数！<br>
+**「=IFERROR(数式, エラー時の表示)」**<br>
+数式がエラーになったときだけ、代わりに指定した文字（「見つかりません」など）を表示してくれます！`,
+        example: {
+          formula: '=IFERROR(VLOOKUP(100, 商品!A2:D5, 2, FALSE), "未登録")',
+          desc: '存在しないID 100 を検索しても、エラーにならず「未登録」と表示されるよ',
+          result: '未登録'
+        },
+        question: '商品シートから存在しない商品ID「99」の商品名をVLOOKUPで検索し、#N/A エラーになったら「見つかりません」と表示する数式をIFERRORを使って書いてみよう！（答えは「見つかりません」）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: '見つかりません',
+        modelFormula: '=IFERROR(VLOOKUP(99, 商品!A2:D5, 2, FALSE), "見つかりません")',
+        hints: [
+          'エラーを包み込む関数は「IFERROR」だよ。書き方は「=IFERROR(数式, エラーのとき表示する文字)」だよ。',
+          '中の数式は「VLOOKUP(99, 商品!A2:D5, 2, FALSE)」、エラー時は「"見つかりません"」だよ。',
+          '「=IFERROR(VLOOKUP(99, 商品!A2:D5, 2, FALSE), "見つかりません")」と入力してみてね！'
+        ],
+        afterNote: '完璧！「#N/A」が親切なメッセージに変わったね！実務の帳票やダッシュボード作成で必ず使われる必須テクニックだよ！'
+      },
+      {
+        id: 's3-06',
+        stageId: 'stage-3',
+        stageBadge: 'Stage 3 - 6/6',
+        title: '検索で名寄せ',
+        subtitle: 'ID列が右にある表から名前を引く実践ワザ',
+        type: 'formula',
+        sheet: '注文',
+        explain: `実務でよくあるデータ構造：「顧客シート」では名前がA列、新しく追加された顧客IDが一番右のD列にあります！<br><br>
+注文シートの顧客ID（B列）を手がかりに顧客名を引こうとしても、顧客シートでは検索対象（顧客ID）が名前の右側にあるため、**VLOOKUPでは引けません**！<br>
+ここで学んだ**「INDEX + MATCH」**（または **XLOOKUP**）が大活躍します！<br>
+注文シート3行目（注文ID: 3、顧客ID: 2）のお客さんの名前を顧客シートから引き当ててみよう！`,
+        example: {
+          formula: '=INDEX(顧客!A2:A7, MATCH(B2, 顧客!D2:D7, 0))',
+          desc: '注文シート2行目の顧客ID（B2: 1）から、顧客シートのさくらさんを引けるよ',
+          result: 'さくら'
+        },
+        question: '注文シート3行目（4行目のセルB4）の顧客ID（2）を手がかりに、顧客シートから顧客名（A列）を引いてみよう！（顧客ID: 2 のお客さんなので答えは「たろう」）',
+        targetCell: { col: 5, row: 3, label: 'F4' },
+        answerCell: 'F4',
+        expectedValue: 'たろう',
+        modelFormula: '=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))',
+        hints: [
+          '顧客シートでは顧客IDがD列（右側）、名前がA列（左側）にあるので、INDEX+MATCHかXLOOKUPを使うよ。',
+          '注文3行目の顧客IDは「B4」だよ。INDEX+MATCHなら「=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))」、XLOOKUPなら「=XLOOKUP(B4, 顧客!D2:D7, 顧客!A2:A7)」と書けるよ。',
+          '「=INDEX(顧客!A2:A7, MATCH(B4, 顧客!D2:D7, 0))」と入力してみてね！'
+        ],
+        afterNote: 'お見事！ID列が右側にあっても見事に「たろう」さんを名寄せできたね！VLOOKUP・XLOOKUP・INDEX+MATCHを使い分けられれば、Excelの表照合は完全制覇だよ！Stage 3完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 4：文字列と日付 (6レッスン) ---
+      {
+        id: 's4-01',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 1/6',
+        title: '& で文字をつなぐ',
+        subtitle: '文字列の結合（アンパサンド）',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `文字と文字を合体させたいときは、半角の**「&（アンパサンド）」**を使うよ！<br><br>
+セルとセルをつなぐだけでなく、直接文字を挟むこともできるんだ。<br>
+数式の中で直接文字を書くときは、必ず**半角の「" "（ダブルクォーテーション）」**で囲むのがExcelのルールだよ！<br><br>
+・<code>=A2 & B2</code> ➔ 「さくら関東」<br>
+・<code>=A2 & "さん"</code> ➔ 「さくらさん」<br>
+・<code>=A2 & "さん（" & B2 & "）"</code> ➔ 「さくらさん（関東）」<br><br>
+顧客名簿から送信用ラベルを作ったり、敬称の「様」を付けたり、実務で毎日使う超基本ワザだよ！`,
+        example: {
+          label: '顧客名に「様」をつけてつなぐ',
+          formula: '=A2&"様"',
+          desc: 'A2セル（さくら）の後ろに「様」をつなげるよ',
+          result: 'さくら様'
+        },
+        question: '顧客シート2行目の名前（A2: さくら）と地域（B2: 関東）を「&」でつないで、「さくらさん（関東）」と表示してみよう！（答えは「さくらさん（関東）」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 'さくらさん（関東）',
+        modelFormula: '=A2&"さん（"&B2&"）"',
+        hints: [
+          'セルどうしをつなぐときは「&」を使うよ。',
+          '直接文字を挟むときは「"さん（"」のようにダブルクォーテーションで囲んで「&」で前後のセルとつなぐよ。',
+          '「=A2&"さん（"&B2&"）"」と入力してみてね！'
+        ],
+        afterNote: '大正解！「&」を使えば、別々の列のデータを組み合わせて見やすい表示が自由自在に作れるよ！'
+      },
+      {
+        id: 's4-02',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 2/6',
+        title: '文字を取り出す（LEFT / RIGHT / MID）',
+        subtitle: '左・右・途中から指定文字数を切り出す',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `長い文字列の中から「左から○文字」「右から○文字」「途中から○文字」を取り出す関数が3兄弟だよ！<br><br>
+・<strong>LEFT(セル, 文字数)</strong>：左（先頭）から取り出す（例: <code>=LEFT(C2, 6)</code> ➔ sakura）<br>
+・<strong>RIGHT(セル, 文字数)</strong>：右（末尾）から取り出す（例: <code>=RIGHT(C2, 11)</code> ➔ example.com）<br>
+・<strong>MID(セル, 開始位置, 文字数)</strong>：途中から取り出す（例: <code>=MID(C2, 8, 7)</code> ➔ example ※8文字目から7文字分）<br><br>
+郵便番号の先頭3桁だけ抜き出したり、メールのドメインを取り出すときに大活躍するよ！`,
+        example: {
+          label: 'メールアドレスからユーザー名（左6文字）を取り出す',
+          formula: '=LEFT(C2, 6)',
+          desc: 'C2セル（sakura@example.com）の左端から6文字を抜き出すよ',
+          result: 'sakura'
+        },
+        question: '顧客シート2行目のメールアドレス（C2: sakura@example.com）から、RIGHT関数を使って右側のドメイン部分「example.com」（11文字）を取り出してみよう！（答えは「example.com」）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 'example.com',
+        modelFormula: '=RIGHT(C2, 11)',
+        hints: [
+          '右端から文字を取り出すときは「RIGHT(セル, 文字数)」を使うよ。',
+          'セルは「C2」、取り出す文字数は「11」文字だよ。',
+          '「=RIGHT(C2, 11)」と入力してみてね！'
+        ],
+        afterNote: '完璧！RIGHT関数で右から11文字のドメイン部分をきれいに抜き出せたね！LEFTやMIDと合わせて覚えれば文字の切り出しは自由自在だよ！'
+      },
+      {
+        id: 's4-03',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 3/6',
+        title: '文字を整える（LEN / TRIM / SUBSTITUTE）',
+        subtitle: '文字数を数える・空白削除・文字列の置換',
+        type: 'calc',
+        sheet: '売上',
+        explain: `実務のデータ整理・お掃除（データクレンジング）で必須の3大関数だよ！<br><br>
+・<strong>LEN(セル)</strong>：文字数を数える（例: <code>=LEN(B6)</code> ➔ 13）<br>
+・<strong>TRIM(セル)</strong>：先頭や末尾の余計な半角空白（スペース）を削除（例: <code>=TRIM(" まるもち ")</code> ➔ 「まるもち」）<br>
+・<strong>SUBSTITUTE(セル, "検索文字", "置換文字")</strong>：文字を別の文字に置き換える（消したいときは <code>""</code> を指定）<br><br>
+表記ゆれの統一や不要な記号の除去に欠かせない頼れる関数たちだよ！`,
+        example: {
+          label: 'スタンプ名の文字数を数える',
+          formula: '=LEN(B6)',
+          desc: 'B6セル（あけおめ！まるもち2027）の文字数をカウントするよ',
+          result: 13
+        },
+        question: '売上シート6行目のスタンプ名（B6: あけおめ！まるもち2027）から、SUBSTITUTE関数を使って「！」を取り除いてみよう！（答えは「あけおめまるもち2027」）',
+        targetCell: { col: 4, row: 5, label: 'E6' },
+        answerCell: 'E6',
+        expectedValue: 'あけおめまるもち2027',
+        modelFormula: '=SUBSTITUTE(B6, "！", "")',
+        hints: [
+          '文字の置換は「SUBSTITUTE(対象セル, "古い文字", "新しい文字")」だよ。',
+          '文字を取り除く（消す）ときは、新しい文字に空文字「""」を指定するよ。古い文字は全角の「"！"」だよ。',
+          '「=SUBSTITUTE(B6, "！", "")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！「！」が消えてきれいな文字になったね！全角・半角スペースやハイフンの削除など、データ整備で一番よく使われる関数だよ！'
+      },
+      {
+        id: 's4-04',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 4/6',
+        title: '表示形式を整える（TEXT関数）',
+        subtitle: '数字や日付を好きな形式の文字列に変換',
+        type: 'calc',
+        sheet: '売上',
+        explain: `計算結果の数字をそのまま「&」で文字とつなぐと、「1390円」のようにカンマが消えてしまいます。<br>
+そんなときは**TEXT（テキスト）関数**の出番！数字に3桁カンマや日付フォーマットを適用して文字列にしてくれるよ！<br><br>
+**書き方：<code>=TEXT(値, "表示形式")</code>**<br>
+・3桁カンマ区切り：<code>=TEXT(SUM(D2:D6), "#,##0") & "円"</code> ➔ 「1,390円」<br>
+・日付を日本語形式にする：<code>=TEXT(A2, "yyyy年m月d日")</code> ➔ 「2026年11月6日」<br><br>
+報告書やメッセージ作成で、綺麗な書式を自動生成するときの定番テクニックだよ！`,
+        example: {
+          label: '売上合計を3桁カンマ区切りにする',
+          formula: '=TEXT(SUM(D2:D6), "#,##0")',
+          desc: 'SUMで合計した1390を3桁カンマ付きの「1,390」に変換するよ',
+          result: '1,390'
+        },
+        question: '売上シートの売上金額の合計（SUM(D2:D6)）を、TEXT関数を使って3桁区切りの「1,390円」の形で表示してみよう！（答えは「1,390円」）',
+        targetCell: { col: 3, row: 6, label: 'D7' },
+        answerCell: 'D7',
+        expectedValue: '1,390円',
+        modelFormula: '=TEXT(SUM(D2:D6), "#,##0")&"円"',
+        hints: [
+          '「TEXT(計算式, "#,##0")」で3桁カンマ区切りの文字列になるよ。',
+          '計算式には金額の合計「SUM(D2:D6)」を入れ、後ろに「&"円"」をつなげよう。',
+          '「=TEXT(SUM(D2:D6), "#,##0")&"円"」と入力してみてね！'
+        ],
+        afterNote: 'すばらしい！3桁カンマのついた「1,390円」が綺麗に作れたね！「#,##0」はExcelで一番よく使う表示形式の書き方だよ！'
+      },
+      {
+        id: 's4-05',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 5/6',
+        title: '日付から年月を取り出す（YEAR / MONTH / DAY）',
+        subtitle: '日付から年・月・日を個別に取り出す＆DATE関数',
+        type: 'calc',
+        sheet: '売上',
+        explain: `日付データから「年」「月」「日」を個別に取り出したいときは、この3つの関数を使うよ！<br><br>
+・<strong>YEAR(日付セル)</strong>：年を取り出す（例: <code>=YEAR(A2)</code> ➔ 2026）<br>
+・<strong>MONTH(日付セル)</strong>：月を取り出す（例: <code>=MONTH(A2)</code> ➔ 11）<br>
+・<strong>DAY(日付セル)</strong>：日を取り出す（例: <code>=DAY(A2)</code> ➔ 6）<br><br>
+逆に、年・月・日の数字から日付を作るときは <strong>DATE(年, 月, 日)</strong> を使うよ。<br>
+（例: <code>=DATE(2026, 11, 6)</code>）<br>
+月別の売上集計をしたいときに、MONTH関数で「月」の列を作っておくとSUMIFで簡単に集計できるようになるよ！`,
+        example: {
+          label: '日付から「年」を取り出す',
+          formula: '=YEAR(A2)',
+          desc: 'A2セル（2026-11-06）から年の「2026」を取り出すよ',
+          result: 2026
+        },
+        question: '売上シート2行目の日付（A2: 2026-11-06）から、MONTH関数を使って「月」を取り出してみよう！（答えは 11）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 11,
+        modelFormula: '=MONTH(A2)',
+        hints: [
+          '日付から月を取り出す関数は「MONTH」だよ。',
+          'カッコの中に対象のセル「A2」を指定しよう。',
+          '「=MONTH(A2)」と入力してみてね！'
+        ],
+        afterNote: '大正解！見事に「11」月が取り出せたね！YEAR・MONTH・DAYを使い分ければ、月別集計や年別集計が驚くほど簡単になるよ！'
+      },
+      {
+        id: 's4-06',
+        stageId: 'stage-4',
+        stageBadge: 'Stage 4 6/6',
+        title: '日付を計算する',
+        subtitle: '日付の引き算・経過日数・月末（EOMONTH）',
+        type: 'calc',
+        sheet: '売上',
+        explain: `Excelの中では、日付は**「1900年1月1日からの通算日数（シリアル値）」**という数字で管理されています。<br>
+1日につき「1」増えるだけなので、**日付どうしはそのまま足し算・引き算ができる**んです！<br><br>
+・日数の差（引き算）：<code>=新しい日付 - 古い日付</code><br>
+　例: <code>=A6 - A2</code> ➔ 「11/12」引く「11/6」で **6日間** の差！<br>
+・7日後（足し算）：<code>=A2 + 7</code> ➔ 7日後の日付<br>
+・月末を求める：<strong>EOMONTH(開始日, 0)</strong> ➔ 当月の末日（End of Monthの略）<br><br>
+締め切りまでの残り日数や、納品予定日の計算など、実務で毎日大活躍する感覚だよ！`,
+        example: {
+          label: '2日目（A3）と初日（A2）の日数の差を引く',
+          formula: '=A3-A2',
+          desc: '2026-11-08 から 2026-11-06 を引き算して日数の差（2日）を計算するよ',
+          result: 2
+        },
+        question: '売上シートの最後の売上日（A6: 2026-11-12）から最初の売上日（A2: 2026-11-06）を引き算して、何日間のデータがあるか日数の差を求めてみよう！（答えは 6）',
+        targetCell: { col: 4, row: 5, label: 'E6' },
+        answerCell: 'E6',
+        expectedValue: 6,
+        modelFormula: '=A6-A2',
+        hints: [
+          'Excelでは日付どうしを「-」で引き算するだけで日数の差が求められるよ。',
+          '最後の売上日は「A6」、最初の売上日は「A2」だよ。',
+          '「=A6-A2」と入力してみてね！'
+        ],
+        afterNote: '完璧！「=A6-A2」で日数の差（6日間）を計算できたね！日付が「ただの数字（日数）」として引き算できる感覚をつかめば、スケジュール管理もバッチリだよ！Stage 4制覇おめでとう！🎉'
+      },
+
+      // --- Stage 5：複数条件と実務集計 (6レッスン) ---
+      {
+        id: 's5-01',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 1/6',
+        title: '複数条件で数える（COUNTIFS）',
+        subtitle: 'AND条件で指定した複数の条件に当てはまる行をカウント',
+        type: 'calc',
+        sheet: '売上',
+        explain: `Stage 2で学んだ COUNTIF は「条件1つ」でしたが、実務では「AかつB」と複数条件で数えたい場面が山ほどあります。<br>
+そんなときに使うのが末尾に「S」がついた**COUNTIFS（カウント・イフ・エス）関数**！<br><br>
+**書き方：<code>=COUNTIFS(範囲1, 条件1, 範囲2, 条件2, ...)</code>**<br>
+条件をペアにして後ろに並べるだけで、すべてを満たす行（AND条件）を自動で数えてくれます。<br>
+例: <code>=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")</code> ➔ スタンプ名が「癒しのまるもち」かつ個数が2個以上の行（行3と行5の2件）<br><br>
+「関東在住かつ会員登録あり」のように、顧客の絞り込みやアンケート集計で大活躍するよ！`,
+        example: {
+          label: '「癒しのまるもち」かつ個数1の行を数える',
+          formula: '=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, 1)',
+          desc: 'B列が「癒しのまるもち」かつC列が1個の行をカウントするよ',
+          result: 1
+        },
+        question: '売上シートから「スタンプ名（B2:B6）が『癒しのまるもち』で、かつ個数（C2:C6）が2以上（>=2）」の行が何件あるか、COUNTIFS関数を使って数えてみよう！（答えは 2）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 2,
+        modelFormula: '=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")',
+        hints: [
+          '書き方は「=COUNTIFS(範囲1, 条件1, 範囲2, 条件2)」だよ。',
+          '範囲1はB2:B6、条件1は"癒しのまるもち"、範囲2はC2:C6、条件2は">=2"だよ。',
+          '「=COUNTIFS(B2:B6, "癒しのまるもち", C2:C6, ">=2")」と入力してみてね！'
+        ],
+        afterNote: '大正解！条件を2つ並べて、条件にピッタリ合う「2件」を正確にカウントできたね！3つ以上の条件も同じように後ろにつなげていけるよ！'
+      },
+      {
+        id: 's5-02',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 2/6',
+        title: '複数条件で合計する（SUMIFS）',
+        subtitle: '合計範囲が先頭にくる順番に注意しよう',
+        type: 'calc',
+        sheet: '売上',
+        explain: `複数条件を満たす行だけ合計したいときは**SUMIFS（サム・イフ・エス）関数**を使うよ！<br><br>
+⚠️ **超重要ポイント：引数の順番に注意！**<br>
+単数条件のSUMIFは「条件範囲 ➔ 条件 ➔ 合計範囲」でしたが、<br>
+複数条件のSUMIFSは**「合計範囲」が一番最初**に来ます！<br><br>
+**書き方：<code>=SUMIFS(合計範囲, 条件範囲1, 条件1, 条件範囲2, 条件2, ...)</code>**<br>
+・金額を合計したいなら、まず先頭に <code>D2:D6</code><br>
+・その後ろに条件ペア <code>B2:B6, "癒しのまるもち", C2:C6, ">=2"</code> と続けます。<br><br>
+「合計したい列を真っ先に指定する」と覚えておけば迷わないよ！`,
+        example: {
+          label: '「癒しのまるもち」で個数1の金額合計',
+          formula: '=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, 1)',
+          desc: '合計範囲D2:D6を先頭に、条件を並べて合計するよ',
+          result: 190
+        },
+        question: '売上シートから「スタンプ名が『癒しのまるもち』で、かつ個数が2以上」の行だけ、売上金額（D2:D6）を合計してみよう！（行3の380円と行5の570円で、答えは 950）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 950,
+        modelFormula: '=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")',
+        hints: [
+          'SUMIFSは「合計範囲」を先頭に書くよ！合計したいのは金額（D2:D6）だよ。',
+          '「=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")」の順で指定しよう。',
+          '「=SUMIFS(D2:D6, B2:B6, "癒しのまるもち", C2:C6, ">=2")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！合計範囲を先頭に書く順番をバッチリ押さえて「950」円を算出できたね！実務の売上レポート作成で最も信頼される関数の1つだよ！'
+      },
+      {
+        id: 's5-03',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 3/6',
+        title: '配列の掛け算合計（SUMPRODUCT入門）',
+        subtitle: '条件判定（TRUE/FALSE）× 金額の掛け算で集計',
+        type: 'calc',
+        sheet: '売上',
+        explain: `**SUMPRODUCT（サム・プロダクト）**は、「対応する要素を掛け算して、その合計を出す」関数です。<br>
+単なる個数×単価の計算だけでなく、実務では**「条件判定×数値」の強力な集計ツール**として大活躍します！<br><br>
+例えば <code>(B2:B6="癒しのまるもち")*D2:D6</code> と書くと：<br>
+・条件が一致する行は <code>TRUE(1)</code>、違う行は <code>FALSE(0)</code> になる<br>
+・<code>1 × 金額</code> はそのまま金額になり、<code>0 × 金額</code> はゼロになる！<br>
+・それをすべて合計すると、Stage 2で学んだSUMIFとまったく同じ「1,140円」になるんだ！<br><br>
+この「条件を掛け算する配列計算」の感覚が身につくと、Excel上級者への階段を一気に駆け上がれるよ！`,
+        example: {
+          label: '個数（C列）と単価（仮に全品190円）の掛け算合計',
+          formula: '=SUMPRODUCT(C2:C6*190)',
+          desc: '個数の配列に190を掛けた合計（7個×190=1330）を計算するよ',
+          result: 1330
+        },
+        question: '売上シートで、SUMPRODUCT関数を使って「スタンプ名が『癒しのまるもち』」の行の売上金額（D2:D6）を合計してみよう！（SUMIFと同じ答え 1140）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 1140,
+        modelFormula: '=SUMPRODUCT((B2:B6="癒しのまるもち")*D2:D6)',
+        hints: [
+          '「(条件)*合計範囲」の掛け算をSUMPRODUCTのカッコの中に入れよう。',
+          '条件は「(B2:B6="癒しのまるもち")」、金額範囲は「D2:D6」だよ。掛け算記号「*」でつなごう。',
+          '「=SUMPRODUCT((B2:B6="癒しのまるもち")*D2:D6)」と入力してみてね！'
+        ],
+        afterNote: 'すばらしい！「条件が合えば1、違えば0」を掛けて足し合わせる配列計算の仕組みを体感できたね！SUMIFでは書けない複雑な複数条件の集計でも重宝される奥義だよ！'
+      },
+      {
+        id: 's5-04',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 4/6',
+        title: '条件付きの最大・最小（MAXIFS / MINIFS）',
+        subtitle: '指定条件に合うデータの中から最大値・最小値を抽出',
+        type: 'calc',
+        sheet: '売上',
+        explain: `「ある商品の中での最高売上」や「特定部署の中での最低点数」を求めたいときに使うのが**MAXIFS（マックス・イフ・エス）**と**MINIFS（ミニ・イフ・エス）**です！<br><br>
+SUMIFSと同じで、**「調べたい数値の範囲」が先頭**に来ます。<br>
+**書き方：<code>=MAXIFS(最大値範囲, 条件範囲, 条件)</code>**<br>
+・最大値を求める：<code>=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")</code> ➔ 570<br>
+・最小値を求める：<code>=MINIFS(D2:D6, B2:B6, "癒しのまるもち")</code> ➔ 190<br><br>
+フィルターを手動でかけて探す手間がなくなり、瞬時にトップやワーストの数値を把握できるよ！`,
+        example: {
+          label: '「癒しのまるもち」の最小売上金額を求める（MINIFS）',
+          formula: '=MINIFS(D2:D6, B2:B6, "癒しのまるもち")',
+          desc: 'B列が癒しのまるもちの中で最も小さい金額（190）を抽出するよ',
+          result: 190
+        },
+        question: '売上シートから、スタンプ名（B2:B6）が「癒しのまるもち」の行の中で、一番大きい売上金額（D2:D6）をMAXIFS関数で求めてみよう！（答えは 570）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 570,
+        modelFormula: '=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")',
+        hints: [
+          '最大値を調べる範囲（D2:D6）を先頭に書くよ。',
+          '後ろに条件範囲「B2:B6」、探す条件「"癒しのまるもち"」を指定しよう。',
+          '「=MAXIFS(D2:D6, B2:B6, "癒しのまるもち")」と入力してみてね！'
+        ],
+        afterNote: '完璧！MAXIFSで「癒しのまるもち」の最高売上570円を瞬時に取り出せたね！最小値を調べたいときは関数名を「MINIFS」に変えるだけでOKだよ！'
+      },
+      {
+        id: 's5-05',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 5/6',
+        title: '重複データのチェック',
+        subtitle: 'COUNTIFと絶対参照で2回目以降の重複を発見する',
+        type: 'calc',
+        sheet: '顧客',
+        explain: `名簿や売上データに「同じ人が2回登録されていないか？」を調べるのは実務の最頻出タスクです！<br><br>
+まずは表全体の中で名前が何件あるかを数える基本：<br>
+<code>=COUNTIF(A2:A7, "さくら")</code> ➔ 2件あるので「重複あり」と分かります。<br><br>
+💡 **実務のプロワザ：範囲の始点を「$」で固定する！**<br>
+各行の横に <code>=COUNTIF($A$2:A2, A2)</code> と書いて下へコピーしていくと…<br>
+・1回目の登場では <code>1</code> になる<br>
+・2回目以降の登場では <code>2</code> や <code>3</code> になる！<br>
+「2以上の行＝重複データ」と一目で判定できる、現場で重宝される超名作テクニックだよ！`,
+        example: {
+          label: '顧客リストの先頭行（A2）での登場回数を調べる',
+          formula: '=COUNTIF($A$2:A2, A2)',
+          desc: '先頭A$2を固定して数えるプロ技。1回目の出現なので結果は1になるよ',
+          result: 1
+        },
+        question: '顧客シートの名前一覧（A2:A7）の中に、名前「さくら」が全部で何件登録されているか、COUNTIF関数で数えてみよう！（答えは 2）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 2,
+        modelFormula: '=COUNTIF(A2:A7, "さくら")',
+        hints: [
+          '範囲内の特定の文字を数えるのは「COUNTIF(範囲, 検索条件)」だよ。',
+          '範囲は名簿の名前列「A2:A7」、探す文字は「"さくら"」だよ。',
+          '「=COUNTIF(A2:A7, "さくら")」と入力してみてね！'
+        ],
+        afterNote: '大正解！名簿の中に「さくら」さんが2件あることが確認できたね！「$A$2:A2」のように始点をピン留めして上から伸ばしていくテクニックもぜひ現場で使ってみてね！'
+      },
+      {
+        id: 's5-06',
+        stageId: 'stage-5',
+        stageBadge: 'Stage 5 6/6',
+        title: '実務集計の総合問題（AVERAGEIFS）',
+        subtitle: '売れた行（個数1以上）だけを対象にした平均金額の算出',
+        type: 'calc',
+        sheet: '売上',
+        explain: `実務のデータ分析では「0個（未売上）のデータも含めて平均すると、平均値が不当に下がってしまう」という問題がよく起きます。<br>
+そんなときは**AVERAGEIFS（アベレージ・イフ・エス）関数**で「売れた行（個数が1以上）だけ」を対象に平均を求めましょう！<br><br>
+SUMIFSと同じく、**「平均したい数値の範囲」を先頭**に書きます。<br>
+**書き方：<code>=AVERAGEIFS(平均範囲, 条件範囲, ">=1")</code>**<br>
+・売上金額 D2:D6 のうち、個数が1以上の行（行2〜5の4件）だけを集計<br>
+・合計1,390円 ÷ 4件 ＝ **347.5円**！<br><br>
+条件を絞り込んで正確な分析数値を導き出す、実務集計の総仕上げ問題だよ！`,
+        example: {
+          label: '「癒しのまるもち」だけの平均金額を求める',
+          formula: '=AVERAGEIFS(D2:D6, B2:B6, "癒しのまるもち")',
+          desc: '癒しのまるもち3件の金額（190, 380, 570）の平均（380）を計算するよ',
+          result: 380
+        },
+        question: '売上シートから「売れた行（個数C2:C6が1以上：">=1"）だけ」を対象にして、売上金額（D2:D6）の平均値をAVERAGEIFS関数で求めてみよう！（答えは 347.5）',
+        targetCell: { col: 4, row: 1, label: 'E2' },
+        answerCell: 'E2',
+        expectedValue: 347.5,
+        modelFormula: '=AVERAGEIFS(D2:D6, C2:C6, ">=1")',
+        hints: [
+          '平均範囲は金額「D2:D6」だよ。これを先頭に書こう。',
+          '条件範囲は個数「C2:C6」、条件は「">=1"」だよ。',
+          '「=AVERAGEIFS(D2:D6, C2:C6, ">=1")」と入力してみてね！'
+        ],
+        afterNote: 'お見事！個数0の行を除外して正確な平均値「347.5」を算出できたね！複数条件のCOUNTIFS・SUMIFS・MAXIFS・AVERAGEIFS、そして配列計算のSUMPRODUCTまでマスターすれば、実務の集計業務はもうプロ級だよ！Stage 5完全制覇おめでとう！🎉'
+      },
+
+      // --- Stage 6：卒業編（実務再現） (4レッスン) ---
+      {
+        id: 'g-01',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 1/4',
+        title: '総合課題1：売上レポート',
+        subtitle: '【実務仕様】カテゴリ別売上金額の算出',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの集計担当さんへ。<br>
+商品カテゴリが<strong>『アニメ』</strong>の商品の、<strong>売上金額の合計</strong>を算出してください。」<br><br>
+※ここからは実務と同じ総合課題です！商品シートと注文シートを連携させて数式を組み立ててみましょう。`,
+        example: {
+          label: '【参考】商品ID=1の注文個数合計を出す',
+          formula: '=SUMIF(C2:C9, 1, D2:D9)',
+          desc: '注文シートから商品IDが1の個数を合計するよ',
+          result: 4
+        },
+        question: '【仕様書】商品シートと注文シートを照合し、カテゴリが「アニメ」の商品の売上金額の合計を計算してみよう！（答えは 1250）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 1250,
+        modelFormula: '=SUMIF(C2:C9, 2, D2:D9)*250',
+        hints: [
+          'まずは「商品シート」を確認しよう。カテゴリが「アニメ」の商品は商品ID「2」、価格は「250」円だよ。',
+          '次に「注文シート」で商品IDが2の個数をSUMIFで集計し、単価250円を掛け算しよう。SUMIFの範囲は商品ID（C2:C9）、合計範囲は個数（D2:D9）だよ。',
+          '「=SUMIF(C2:C9, 2, D2:D9)*250」または「=SUMIF(C2:C9, 2, D2:D9)*VLOOKUP(2, 商品!A2:D5, 4, FALSE)」と入力してみてね！'
+        ],
+        afterNote: '見事クリア！商品シートでIDと価格を特定し、注文シートの個数と掛け合わせて「1,250円」を正確に導き出せたね！複数表を読み解く実務力がついてきたよ！'
+      },
+      {
+        id: 'g-02',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 2/4',
+        title: '総合課題2：顧客レポート',
+        subtitle: '【実務仕様】特定地域の注文個数集計',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの分析担当さんへ。<br>
+地域が<strong>『関西』</strong>の顧客からの注文について、<strong>合計注文個数</strong>を算出してください。」<br><br>
+顧客シートで対象の顧客IDを洗い出し、注文シートで該当する注文の個数を合計してみましょう！`,
+        example: {
+          label: '【参考】顧客ID=1からの注文個数合計',
+          formula: '=SUMIF(B2:B9, 1, D2:D9)',
+          desc: '注文シートから顧客IDが1の個数を集計するよ',
+          result: 3
+        },
+        question: '【仕様書】顧客シートで地域が「関西」の顧客ID（3・4・6）を特定し、注文シートで該当する顧客の合計注文個数を計算してみよう！（答えは 4）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 4,
+        modelFormula: '=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 4, D2:D9)+SUMIF(B2:B9, 6, D2:D9)',
+        hints: [
+          'まずは顧客シートを確認！地域が「関西」なのは、顧客ID 3（はなこ）、4（じろう）、6（さくら）の3名だよ。',
+          '注文シートの顧客ID列（B2:B9）と個数列（D2:D9）を使って、ID 3・4・6 の注文個数をそれぞれ SUMIF で足し合わせよう。',
+          '「=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 4, D2:D9)+SUMIF(B2:B9, 6, D2:D9)」または「=SUMIF(B2:B9, 3, D2:D9)+SUMIF(B2:B9, 6, D2:D9)」と入力してみてね！'
+        ],
+        afterNote: '素晴らしい！関西の顧客（3, 4, 6）を洗い出し、注文シートで合計4個の注文を見事に集計できたね！条件を満たすグループを名寄せして集計する実務スキルの証明だよ！'
+      },
+      {
+        id: 'g-03',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 3/4',
+        title: '総合課題3：請求データ作成',
+        subtitle: '【実務仕様】検索・計算・文字列結合の連携',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>📋 実務依頼書</strong><br>
+「まるもちショップの経理担当さんへ。<br>
+<strong>注文ID=5</strong> の請求書送信用に、<strong>『（顧客名）様：（金額）円』</strong>という文字列形式の請求データを作成してください。」<br><br>
+顧客シートから名前を引き、商品シートから単価を引いて金額（個数×単価）を計算し、「&」で美しく結合しましょう！`,
+        example: {
+          label: '【参考】注文ID=1（顧客1・商品1・2個）の請求データ',
+          formula: '="さくら様："&(2*190)&"円"',
+          desc: '顧客名と金額を「様：」と「円」でつないで請求文面を作るよ',
+          result: 'さくら様：380円'
+        },
+        question: '【仕様書】注文ID=5（6行目のセル）のデータから顧客名と請求金額を求め、「（顧客名）様：（金額）円」の文字列を作成してみよう！（答えは「みき様：750円」）',
+        targetCell: { col: 5, row: 5, label: 'F6' },
+        answerCell: 'F6',
+        expectedValue: 'みき様：750円',
+        modelFormula: '=XLOOKUP(B6, 顧客!D2:D7, 顧客!A2:A7)&"様："&(D6*XLOOKUP(C6, 商品!A2:A5, 商品!D2:D5))&"円"',
+        hints: [
+          '注文5（6行目）は、顧客IDが「B6」（5）、商品IDが「C6」（2）、個数が「D6」（3）だよ。',
+          '顧客シートから顧客ID 5 の名前（みき）を引き、商品シートから商品ID 2 の単価（250）を引いて、個数 D6 と掛け算しよう。',
+          '「=XLOOKUP(B6, 顧客!D2:D7, 顧客!A2:A7)&"様："&(D6*XLOOKUP(C6, 商品!A2:A5, 商品!D2:D5))&"円"」または「="みき様："&(D6*250)&"円"」と入力してみてね！'
+        ],
+        afterNote: 'パーフェクト！名前の検索、単価の検索、掛け算、そして文字列の結合まで、複数の関数と演算子を見事に統合して「みき様：750円」を完成させたね！実務の自動化システムそのものだよ！'
+      },
+      {
+        id: 'g-boss',
+        stageId: 'stage-6',
+        stageBadge: 'Stage 6 4/4',
+        title: '卒業試験：全売上高の総決算',
+        subtitle: '【最終仕様】全注文の売上金額総計を算出せよ',
+        type: 'calc',
+        sheet: '注文',
+        explain: `<strong>🎓 卒業最終試験 📋 実務仕様書</strong><br>
+「まるもちショップ店長より。<br>
+これが最後の課題です！解説はありません。<br>
+仕様書：<strong>全注文（注文ID 1〜8）の売上金額の総計</strong>を算出してください。」<br><br>
+商品シートの各単価と、注文シートの各商品の注文個数を総合して、全体の売上総計を導き出しましょう！`,
+        example: {
+          label: '【参考】商品ID=1と商品ID=2の売上小計',
+          formula: '=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250',
+          desc: '商品1（4個×190）と商品2（5個×250）の売上を足すよ',
+          result: 2010
+        },
+        question: '【卒業仕様書】商品ごとに注文シートの個数を合計し、商品シートの単価を掛けて足し合わせ、全注文の売上総計を計算してみよう！（答えは 2760）',
+        targetCell: { col: 5, row: 1, label: 'F2' },
+        answerCell: 'F2',
+        expectedValue: 2760,
+        modelFormula: '=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250 + SUMIF(C2:C9, 3, D2:D9)*250',
+        hints: [
+          '各商品の単価を確認しよう：商品1は190円、商品2は250円、商品3は250円、商品4は480円だよ。',
+          '注文シートで各商品の注文個数をSUMIFで合計しよう：商品1は4個、商品2は5個、商品3は3個（商品4は0個）だよ。',
+          '「=SUMIF(C2:C9, 1, D2:D9)*190 + SUMIF(C2:C9, 2, D2:D9)*250 + SUMIF(C2:C9, 3, D2:D9)*250」と入力してみてね！'
+        ],
+        afterNote: '🎊 おめでとうございます！！全注文の売上総計「2,760円」を見事に導き出し、卒業試験を完全制覇しました！プロローグの四則演算から始まり、集計・条件分岐・検索・文字列・日付・複数条件・実務連携まで、Excelの全スキルをマスターしました！これにてまるもちExcel関数ドリル堂々の修了です！🎉🍡'
+      }
+    ];
+
+    /* ====================================================
+       2. APP STATE & STORAGE
+       ==================================================== */
+    const STORAGE_KEY = 'excel_marumochi_progress_v1';
+
+    let appState = {
+      currentView: 'home', // 'home' | 'lesson' | 'playground'
+      currentLessonId: null,
+      hintLevel: 0,
+      completedLessons: [],
+      celebratedStages: [] // 表示済みステージお祝い記録 ('stage-prologue', 'stage-0', 'stage-1', 'all_clear')
+    };
+
+    // Load progress from localStorage
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedLessons)) {
+            appState.completedLessons = parsed.completedLessons;
+          }
+          if (Array.isArray(parsed.celebratedStages)) {
+            appState.celebratedStages = parsed.celebratedStages;
+            // 新レッスンが追加されて全クリア状態でなくなっていれば 'all_clear' を外して再度祝えるようにする
+            if (!isAllImplementedLessonsCompleted()) {
+              appState.celebratedStages = appState.celebratedStages.filter(s => s !== 'all_clear');
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load progress from localStorage', e);
+      }
+    }
+
+    // Save progress to localStorage
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          completedLessons: appState.completedLessons,
+          celebratedStages: appState.celebratedStages,
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (e) {
+        console.warn('Failed to save progress', e);
+      }
+    }
+
+    /* ====================================================
+       3. HYPERFORMULA HELPER & ERROR TRANSLATION
+       ==================================================== */
+
+    // エラー種別を親しみやすい日本語に変換するマップ
+    function getFriendlyErrorInfo(errorType, rawMessage) {
+      const typeStr = String(errorType || '').toUpperCase().replace(/[#!?]/g, '');
+      const map = {
+        'VALUE': {
+          code: '#VALUE!',
+          title: 'データの種類が合っていないよ',
+          desc: '文字と数字を掛け算しようとしたり、関数の引き出し方が違っているかも。足し算や範囲を見直してみてね！'
+        },
+        'NOT_AVAILABLE': {
+          code: '#N/A',
+          title: '探している値が見つからなかったよ',
+          desc: '指定した言葉が表の中に存在しないかも。探すキーワードのスペルを確認してみてね。'
+        },
+        'N/A': {
+          code: '#N/A',
+          title: '探している値が見つからなかったよ',
+          desc: '指定した言葉が表の中に存在しないかも。探すキーワードのスペルを確認してみてね。'
+        },
+        'NAME': {
+          code: '#NAME?',
+          title: '関数の名前やつづりが違うかも',
+          desc: '関数のスペル（SUM, AVERAGEなど）や、セルの記号（A1など）の打ち間違いがないか確かめてみてね！'
+        },
+        'DIV_BY_ZERO': {
+          code: '#DIV/0!',
+          title: '0で割り算しようとしているよ',
+          desc: '0や、何もない空っぽのマスで割ろうとしていないか確認してね。'
+        },
+        'DIV/0': {
+          code: '#DIV/0!',
+          title: '0で割り算しようとしているよ',
+          desc: '0や、何もない空っぽのマスで割ろうとしていないか確認してね。'
+        },
+        'REF': {
+          code: '#REF!',
+          title: '参照先のセルが見つからないよ',
+          desc: 'セルの番号が消えてしまったか、存在しない場所を指しているよ。'
+        },
+        'NUM': {
+          code: '#NUM!',
+          title: '数値の範囲に問題があるよ',
+          desc: '計算できる数字の大きさを超えているか、関数に渡した数字が正しくないよ。'
+        },
+        'CYCLE': {
+          code: '#CYCLE!',
+          title: '数式が無限ループになっているよ',
+          desc: '自分自身のセルを計算式の中で使ってしまっているよ。自分以外のセルを指定してね。'
+        },
+        'PARSE_ERROR': {
+          code: '#ERROR!',
+          title: '数式の書き方にミスがあるよ',
+          desc: 'カッコ「( )」の閉じ忘れや、カンマ「,」の抜けがないかもう一度見直してみてね。'
+        }
+      };
+
+      return map[typeStr] || {
+        code: '#ERROR!',
+        title: '計算エラーが発生したよ',
+        desc: '数式の書き方に誤りがあるみたい。もう一度ゆっくり見直してみよう！（' + (rawMessage || errorType || '構文エラー') + '）'
+      };
+    }
+
+    // HyperFormula用の数式正規化（日本語シート名のクォート処理およびTRUE/FALSE、AVERAGEIFSの補正）
+    function normalizeFormulaForHyperFormula(formula) {
+      if (!formula) return '';
+      // 1. 日本語シート名のクォート処理（商品! ➔ '商品'!、顧客! ➔ '顧客'! など）
+      const sheetNames = ['売上', '顧客', '商品', '注文'];
+      sheetNames.forEach(sheet => {
+        const re = new RegExp(`(?<!['"a-zA-Z0-9_])${sheet}!`, 'g');
+        formula = formula.replace(re, `'${sheet}'!`);
+      });
+
+      // 2. ダブルクォーテーション外の単独 TRUE / FALSE を TRUE() / FALSE() に変換
+      const parts = formula.split(/("(?:[^"\\]|\\.)*")/);
+      for (let i = 0; i < parts.length; i += 2) {
+        parts[i] = parts[i]
+          .replace(/\bTRUE\b(?!\s*\()/gi, 'TRUE()')
+          .replace(/\bFALSE\b(?!\s*\()/gi, 'FALSE()');
+      }
+      formula = parts.join('');
+
+      // 3. AVERAGEIFS の補正（HyperFormula に AVERAGEIFS が未搭載のため、同等の SUMIFS(...) / COUNTIFS(...) に変換）
+      formula = formula.replace(/\bAVERAGEIFS\s*\(([^()]+)\)/gi, (_, argsStr) => {
+        const args = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < argsStr.length; i++) {
+          const ch = argsStr[i];
+          if (ch === '"') {
+            inQuotes = !inQuotes;
+            cur += ch;
+          } else if (ch === ',' && !inQuotes) {
+            args.push(cur.trim());
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        if (cur.trim()) args.push(cur.trim());
+        if (args.length < 3) return `AVERAGEIFS(${argsStr})`;
+        const sumifsArgs = args.join(', ');
+        const countifsArgs = args.slice(1).join(', ');
+        return `(SUMIFS(${sumifsArgs}) / COUNTIFS(${countifsArgs}))`;
+      });
+
+      return formula;
+    }
+
+    // SUMPRODUCT の配列掛け算合計評価関数（HyperFormulaの配列積和未対応を補正）
+    function evaluateSumproduct(formula, sheetData) {
+      const match = formula.match(/SUMPRODUCT\s*\(([\s\S]+)\)/i);
+      if (!match) return null;
+      const inner = match[1].trim();
+      const rangeMatches = [...inner.matchAll(/(?:'?[^'!]+'?!)?([A-Z]+)(\d+):(?:'?[^'!]+'?!)?([A-Z]+)(\d+)/gi)];
+      if (rangeMatches.length === 0) return null;
+
+      let minRow = Infinity;
+      let maxRow = -Infinity;
+      for (const m of rangeMatches) {
+        minRow = Math.min(minRow, parseInt(m[2], 10), parseInt(m[4], 10));
+        maxRow = Math.max(maxRow, parseInt(m[2], 10), parseInt(m[4], 10));
+      }
+
+      let totalSum = 0;
+      for (let r = minRow; r <= maxRow; r++) {
+        let rowExpr = inner;
+        for (const m of rangeMatches) {
+          const fullRange = m[0];
+          const colLetter = m[1];
+          rowExpr = rowExpr.split(fullRange).join(colLetter + r);
+        }
+
+        const evaluatedRow = rowExpr.replace(/(?:'?[^'!]+'?!)?([A-Z]+)(\d+)/gi, (cell, colStr, rowNum) => {
+          const c = colStr.toUpperCase().charCodeAt(0) - 65;
+          const rIdx = parseInt(rowNum, 10) - 1;
+          const cellVal = (sheetData[rIdx] && sheetData[rIdx][c] !== undefined) ? sheetData[rIdx][c] : 0;
+          if (typeof cellVal === 'string') {
+            return JSON.stringify(cellVal);
+          }
+          return Number(cellVal) || 0;
+        });
+
+        let jsExpr = evaluatedRow
+          .replace(/<>/g, '!==')
+          .replace(/<=/g, '<=')
+          .replace(/>=/g, '>=')
+          .replace(/(?<![<>=!])=(?!=)/g, '===')
+          .replace(/--/g, '+')
+          .replace(/,/g, '*');
+
+        try {
+          const rowVal = Function('"use strict"; return (' + jsExpr + ')')();
+          totalSum += Number(rowVal) || 0;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      return totalSum;
+    }
+
+    // HyperFormula を使って指定セルで数式を評価する
+    function runHyperFormula(formula, targetCol = 3, targetRow = 6, sheetName = '売上') {
+      const trimmed = String(formula || '').trim();
+
+      // 先頭が「=」で始まっているかチェック
+      if (!trimmed.startsWith('=')) {
+        return {
+          success: false,
+          isEqualMissing: true,
+          errorInfo: {
+            code: '「=」がないよ！',
+            title: '数式は「=」から始まるよ！',
+            desc: 'Excelにお願いするときは、先頭に半角の「=（イコール）」をつけるのが合言葉だよ！'
+          }
+        };
+      }
+
+      const normalized = normalizeFormulaForHyperFormula(trimmed);
+
+      try {
+        // 練習シートデータをクローン
+        const salesData = SALES_SHEET_DATA.map(row => [...row]);
+        const customersData = CUSTOMERS_SHEET_DATA.map(row => [...row]);
+        const productsData = PRODUCTS_SHEET_DATA.map(row => [...row]);
+        const ordersData = ORDERS_SHEET_DATA.map(row => [...row]);
+
+        const sheetsMap = {
+          '売上': salesData,
+          '顧客': customersData,
+          '商品': productsData,
+          '注文': ordersData
+        };
+
+        const activeData = sheetsMap[sheetName] || salesData;
+
+        // SUMPRODUCT の配列計算補正（HyperFormula では配列引数の積和が未対応のため独自計算）
+        if (/SUMPRODUCT\s*\(/i.test(normalized)) {
+          const spVal = evaluateSumproduct(normalized, activeData);
+          if (spVal !== null) {
+            return {
+              success: true,
+              value: spVal
+            };
+          }
+        }
+
+        // ターゲットセルが入るように配列を行・列方向に拡張
+        while (activeData.length <= targetRow) {
+          activeData.push(new Array(activeData[0].length).fill(''));
+        }
+        for (let r = 0; r < activeData.length; r++) {
+          while (activeData[r].length <= targetCol) {
+            activeData[r].push('');
+          }
+        }
+
+        // HyperFormula インスタンス生成 (GPL-v3 ライセンスキー指定、全シート対応)
+        const hf = HyperFormula.buildFromSheets({
+          '売上': salesData,
+          '顧客': customersData,
+          '商品': productsData,
+          '注文': ordersData
+        }, {
+          licenseKey: 'gpl-v3',
+          dateFormats: ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']
+        });
+
+        const targetSheetId = hf.getSheetId(sheetName) !== undefined ? hf.getSheetId(sheetName) : 0;
+
+        // ターゲットセルに数式をセット
+        hf.setCellContents({ col: targetCol, row: targetRow, sheet: targetSheetId }, [[ normalized ]]);
+
+        // 計算結果を取得
+        const rawVal = hf.getCellValue({ col: targetCol, row: targetRow, sheet: targetSheetId });
+
+        // エラーチェック
+        if (rawVal && typeof rawVal === 'object' && rawVal.type) {
+          return {
+            success: false,
+            errorInfo: getFriendlyErrorInfo(rawVal.type, rawVal.message),
+            raw: rawVal
+          };
+        }
+
+        if (typeof rawVal === 'string' && rawVal.startsWith('#')) {
+          return {
+            success: false,
+            errorInfo: getFriendlyErrorInfo(rawVal, rawVal),
+            raw: rawVal
+          };
+        }
+
+        let processedVal = rawVal;
+        // HyperFormulaのTEXT関数のカンマ区切り補助（#,##0 など）
+        if (typeof processedVal === 'string') {
+          processedVal = processedVal.replace(/(\d+),(?:##0|###)/g, (_, n) => Number(n).toLocaleString('en-US'));
+        }
+
+        return {
+          success: true,
+          value: processedVal
+        };
+
+      } catch (err) {
+        return {
+          success: false,
+          errorInfo: {
+            code: '#ERROR!',
+            title: '数式の書き方にミスがあるよ',
+            desc: 'カッコの対応やスペルを確かめてみてね。（' + err.message + '）'
+          }
+        };
+      }
+    }
+
+    /* ====================================================
+       4. UI RENDERING & INTERACTIONS
+       ==================================================== */
+
+    // まるもちの表情とセリフを更新する関数
+    function setMarumochi(text, mood = 'normal') {
+      const bubble = document.getElementById('global-bubble-text');
+      const avatar = document.getElementById('global-marumochi');
+      if (bubble) bubble.innerHTML = text;
+      if (avatar) {
+        avatar.className = 'marumochi-avatar';
+        if (mood === 'happy') avatar.classList.add('happy');
+        if (mood === 'thinking') avatar.classList.add('thinking');
+        if (mood === 'sad') avatar.classList.add('sad');
+      }
+    }
+
+    // スプレッドシートHTMLを生成する関数（全シートおよび任意セル配置に対応）
+    function renderSpreadsheet(targetCell = null, targetValue = null, sheetName = '売上') {
+      const sheetsMap = {
+        '売上': SALES_SHEET_DATA,
+        '顧客': CUSTOMERS_SHEET_DATA,
+        '商品': PRODUCTS_SHEET_DATA,
+        '注文': ORDERS_SHEET_DATA
+      };
+      const rawData = sheetsMap[sheetName] || SALES_SHEET_DATA;
+      const baseColCount = rawData[0].length;
+      const baseRowCount = rawData.length;
+
+      const totalCols = Math.max(baseColCount, targetCell ? targetCell.col + 1 : 0);
+      const totalRows = Math.max(baseRowCount, targetCell ? targetCell.row + 1 : 0);
+
+      const colLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      const colHeaders = [];
+      for (let c = 0; c < totalCols; c++) {
+        colHeaders.push(colLetters[c] || String.fromCharCode(65 + c));
+      }
+
+      let html = '<table class="excel-table">';
+      
+      // 列見出し行
+      html += '<thead><tr><th class="col-head"></th>';
+      colHeaders.forEach(col => {
+        html += `<th class="col-head">${col}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+
+      for (let rIdx = 0; rIdx < totalRows; rIdx++) {
+        const rowNum = rIdx + 1;
+        const isHeader = (rIdx === 0);
+        html += `<tr><td class="row-num">${rowNum}</td>`;
+
+        for (let cIdx = 0; cIdx < totalCols; cIdx++) {
+          const isTarget = targetCell && targetCell.row === rIdx && targetCell.col === cIdx;
+          let cellVal = '';
+          if (rIdx < baseRowCount && cIdx < rawData[rIdx].length) {
+            cellVal = rawData[rIdx][cIdx];
+          }
+
+          let isNum = typeof cellVal === 'number';
+          let displayVal = cellVal;
+
+          if (isTarget) {
+            if (targetValue !== null && targetValue !== undefined) {
+              displayVal = targetValue;
+            } else {
+              displayVal = '（答え）';
+            }
+            if (typeof displayVal === 'number') isNum = true;
+          }
+
+          if (typeof displayVal === 'boolean') {
+            displayVal = displayVal ? 'TRUE' : 'FALSE';
+          }
+
+          let tdClass = '';
+          if (isHeader) tdClass = 'header-cell';
+          else if (isNum) tdClass = 'num-cell';
+          if (isTarget) tdClass += ' cell-target';
+
+          if (isTarget) {
+            html += `<td class="${tdClass}"><span class="cell-target-label">${targetCell.label}</span>${displayVal}</td>`;
+          } else if (rIdx >= baseRowCount || (rIdx > 0 && cIdx >= (rawData[rIdx] ? rawData[rIdx].length : 0))) {
+            html += `<td style="background:#faf8f5;"></td>`;
+          } else {
+            html += `<td class="${tdClass}">${displayVal}</td>`;
+          }
+        }
+        html += '</tr>';
+      }
+
+      html += '</tbody></table>';
+      return html;
+    }
+
+    // ホーム画面（ステージ地図）のレンダリング
+    function renderHomeView() {
+      // 進捗サマリーの計算
+      const totalLessons = LESSONS.length;
+      const completedCount = appState.completedLessons.length;
+      const pct = Math.round((completedCount / totalLessons) * 100);
+
+      document.getElementById('progress-summary-count').textContent = `${completedCount} / ${totalLessons} レッスン (${pct}%)`;
+      document.getElementById('progress-summary-bar').style.width = `${pct}%`;
+
+      const container = document.getElementById('stages-roadmap-container');
+      container.innerHTML = '';
+
+      STAGES.forEach(stage => {
+        const stageLessons = LESSONS.filter(l => l.stageId === stage.id);
+        const stageCompleted = stageLessons.filter(l => appState.completedLessons.includes(l.id)).length;
+
+        const card = document.createElement('div');
+        card.className = `stage-card ${stage.locked ? 'locked' : ''}`;
+
+        let lessonsHtml = '';
+        if (stage.locked) {
+          lessonsHtml = `
+            <div style="padding: 18px 16px; text-align: center; color: var(--text-muted); font-size: 13.5px;">
+              🔒 準備中・近日公開予定！
+            </div>
+          `;
+        } else {
+          lessonsHtml = '<ul class="stage-lessons">';
+          stageLessons.forEach(lesson => {
+            const isDone = appState.completedLessons.includes(lesson.id);
+            lessonsHtml += `
+              <li class="lesson-item ${isDone ? 'completed' : ''}" data-lesson-id="${lesson.id}">
+                <div class="lesson-left">
+                  <span class="lesson-status-icon">${isDone ? '✓' : '○'}</span>
+                  <div>
+                    <div class="lesson-title-text">${lesson.title}</div>
+                    <div class="lesson-sub-text">${lesson.subtitle}</div>
+                  </div>
+                </div>
+                <span class="lesson-arrow">➔</span>
+              </li>
+            `;
+          });
+          lessonsHtml += '</ul>';
+        }
+
+        card.innerHTML = `
+          <div class="stage-header">
+            <div>
+              <span class="stage-badge ${stage.locked ? 'badge-locked' : 'badge-available'}">
+                ${stage.locked ? '近日公開' : (stageCompleted === stageLessons.length ? '🌟 クリア！' : `${stageCompleted}/${stageLessons.length} 完了`)}
+              </span>
+              <h3 class="stage-name">${stage.title}</h3>
+              <p class="stage-desc">${stage.desc}</p>
+            </div>
+          </div>
+          ${lessonsHtml}
+        `;
+
+        container.appendChild(card);
+      });
+
+      // レッスンクリックイベント設定
+      document.querySelectorAll('.lesson-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const lId = item.getAttribute('data-lesson-id');
+          if (lId) openLesson(lId);
+        });
+      });
+
+      // まるもちのメッセージ
+      if (completedCount === totalLessons) {
+        setMarumochi('全レッスン制覇おめでとう！！もう立派なExcelマスターだよ！🍡🎉', 'happy');
+      } else if (completedCount > 0) {
+        setMarumochi(`現在 ${completedCount} レッスンクリア中！この調子でどんどん進もうね！🍡`, 'happy');
+      } else {
+        setMarumochi('こんにちは！まるもちだよ。まずは「プロローグ」から気軽に始めてみてね！🍡', 'normal');
+      }
+    }
+
+    /* ====================================================
+       S0-04 INTERACTIVE DEMO (HyperFormula 実機計算駆動)
+       ==================================================== */
+    let s004DemoState = {
+      mode: 'relative', // 'relative' | 'absolute'
+      step: 0,          // 0: B2のみ, 1: B3追加, 2: B4追加, 3: B5追加
+      maxStep: 3
+    };
+
+    function initS004Demo() {
+      s004DemoState.step = 0;
+      updateS004DemoView();
+
+      const btnRelative = document.getElementById('demo-tab-relative');
+      const btnAbsolute = document.getElementById('demo-tab-absolute');
+      const btnCopy = document.getElementById('btn-demo-step-copy');
+      const btnReset = document.getElementById('btn-demo-reset');
+
+      if (btnRelative) {
+        btnRelative.onclick = () => {
+          s004DemoState.mode = 'relative';
+          s004DemoState.step = 0;
+          btnRelative.classList.add('active');
+          if (btnAbsolute) btnAbsolute.classList.remove('active');
+          updateS004DemoView();
+        };
+      }
+
+      if (btnAbsolute) {
+        btnAbsolute.onclick = () => {
+          s004DemoState.mode = 'absolute';
+          s004DemoState.step = 0;
+          btnAbsolute.classList.add('active');
+          if (btnRelative) btnRelative.classList.remove('active');
+          updateS004DemoView();
+        };
+      }
+
+      if (btnCopy) {
+        btnCopy.onclick = () => {
+          if (s004DemoState.step < s004DemoState.maxStep) {
+            s004DemoState.step++;
+            updateS004DemoView();
+          }
+        };
+      }
+
+      if (btnReset) {
+        btnReset.onclick = () => {
+          s004DemoState.step = 0;
+          updateS004DemoView();
+        };
+      }
+    }
+
+    function updateS004DemoView() {
+      const banner = document.getElementById('demo-info-banner-text');
+      const stepBtn = document.getElementById('btn-demo-step-copy');
+
+      if (banner) {
+        if (s004DemoState.mode === 'relative') {
+          banner.innerHTML = `<strong>【相対参照モード】</strong> 下にコピーするたびに、数式内のセル番号（<code>A2</code> ➔ <code>A3</code> ➔ <code>A4</code>...）が1行ずつズレていきます！`;
+        } else {
+          banner.innerHTML = `<strong>【絶対参照モード】</strong> <code>$A$2</code> とピン留め（$）されているので、下にコピーしても参照先がズレずにずっと A2 のままです！`;
+        }
+      }
+
+      if (stepBtn) {
+        if (s004DemoState.step >= s004DemoState.maxStep) {
+          stepBtn.disabled = true;
+          stepBtn.innerHTML = `✅ すべての行へコピー完了！`;
+        } else {
+          stepBtn.disabled = false;
+          stepBtn.innerHTML = `⬇️ 1行下にコピーする（${s004DemoState.step + 1}/${s004DemoState.maxStep}）`;
+        }
+      }
+
+      // HyperFormula による実際の計算（見た目だけの偽デモにしない）
+      const initialSheet = [
+        ['数値', '計算結果'],
+        [10, ''],
+        [20, ''],
+        [30, ''],
+        [40, '']
+      ];
+
+      let hf;
+      try {
+        hf = HyperFormula.buildFromArray(initialSheet, { licenseKey: 'gpl-v3' });
+      } catch (e) {
+        console.error('HyperFormula build error in demo:', e);
+      }
+      const sheetId = hf ? (hf.getSheetId('Sheet1') || 0) : 0;
+
+      const rowsData = [
+        { rowNum: 2, aVal: 10 },
+        { rowNum: 3, aVal: 20 },
+        { rowNum: 4, aVal: 30 },
+        { rowNum: 5, aVal: 40 }
+      ];
+
+      let tableHtml = `
+        <table class="demo-table">
+          <thead>
+            <tr>
+              <th style="width: 36px;"></th>
+              <th style="width: 90px;">A (数値)</th>
+              <th>B (式 と 計算結果)</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      rowsData.forEach((row, i) => {
+        const isCopied = (i <= s004DemoState.step);
+        let formula = '';
+        let calcVal = '';
+
+        if (isCopied) {
+          if (s004DemoState.mode === 'relative') {
+            formula = `=A${row.rowNum}*2`;
+          } else {
+            formula = `=$A$2*2`;
+          }
+
+          if (hf) {
+            try {
+              hf.setCellContents({ col: 1, row: i + 1, sheet: sheetId }, [[ formula ]]);
+              calcVal = hf.getCellValue({ col: 1, row: i + 1, sheet: sheetId });
+            } catch (err) {
+              calcVal = 'エラー';
+            }
+          }
+        }
+
+        // ハイライトのクラス判定
+        // コピー元: i === 0
+        // コピー先（最新）: i === s004DemoState.step && s004DemoState.step > 0
+        let bClass = '';
+        let bBadge = '';
+        if (i === 0) {
+          bClass = 'demo-cell-source';
+          bBadge = `<span style="font-size:10px; color:#2e7d32; display:block; font-weight:800; line-height:1; margin-bottom:3px;">📌 コピー元（最初の式）</span>`;
+        } else if (i === s004DemoState.step) {
+          bClass = 'demo-cell-target-active';
+          bBadge = `<span style="font-size:10px; color:#e65100; display:block; font-weight:800; line-height:1; margin-bottom:3px;">✨ コピー先（最新）</span>`;
+        }
+
+        // 参照されているA列セルのハイライト
+        let aClass = 'num-cell';
+        let aBadge = '';
+        const isReferenced = (s004DemoState.mode === 'relative')
+          ? (i === s004DemoState.step)
+          : (i === 0);
+
+        if (isReferenced) {
+          aClass += ' demo-cell-ref-highlight';
+          aBadge = `<span style="font-size:9px; color:#0288d1; display:block; line-height:1; margin-bottom:2px;">参照先</span>`;
+        }
+
+        let bCellContent = '';
+        if (isCopied) {
+          bCellContent = `
+            ${bBadge}
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px;">
+              <span class="formula-tag">${formula}</span>
+              <span class="result-tag">➔ ${calcVal}</span>
+            </div>
+          `;
+        } else {
+          bCellContent = `<span style="color:#b0bec5; font-size:12px;">（未コピー）</span>`;
+        }
+
+        tableHtml += `
+          <tr>
+            <td style="background:var(--excel-header-bg); text-align:center; font-weight:700; color:var(--text-muted);">${row.rowNum}</td>
+            <td class="${aClass}" style="text-align:right; font-weight:700;">
+              ${aBadge}${row.aVal}
+            </td>
+            <td class="${bClass}">
+              ${bCellContent}
+            </td>
+          </tr>
+        `;
+      });
+
+      tableHtml += `</tbody></table>`;
+      const tableContainer = document.getElementById('demo-table-container');
+      if (tableContainer) {
+        tableContainer.innerHTML = tableHtml;
+      }
+    }
+
+    // レッスン詳細画面を開く
+    function openLesson(lessonId) {
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      appState.currentLessonId = lessonId;
+      appState.hintLevel = 0;
+
+      // ヘッダー情報
+      document.getElementById('lesson-stage-badge').textContent = lesson.stageBadge;
+      document.getElementById('lesson-detail-title').textContent = lesson.title;
+      document.getElementById('lesson-detail-subtitle').textContent = lesson.subtitle;
+      document.getElementById('lesson-explain-body').innerHTML = lesson.explain;
+      document.getElementById('lesson-question-text').innerHTML = lesson.question;
+
+      // 例題エリアの表示制御
+      const exampleCard = document.getElementById('lesson-example-card');
+      if (lesson.example) {
+        exampleCard.style.display = 'block';
+        document.getElementById('example-desc-text').textContent = lesson.example.desc;
+        document.getElementById('example-formula-text').textContent = lesson.example.formula;
+        document.getElementById('example-calc-result').style.display = 'none';
+        document.getElementById('btn-run-example').onclick = () => {
+          const sheet = lesson.sheet || '売上';
+          const targetCol = lesson.targetCell ? lesson.targetCell.col : 3;
+          const targetRow = lesson.targetCell ? lesson.targetCell.row : 6;
+          const res = runHyperFormula(lesson.example.formula, targetCol, targetRow, sheet);
+          const resEl = document.getElementById('example-calc-result');
+          let displayVal = res.success ? res.value : 'エラー';
+          if (typeof displayVal === 'boolean') {
+            displayVal = displayVal ? 'TRUE' : 'FALSE';
+          }
+          resEl.textContent = `計算結果: ${displayVal}`;
+          resEl.style.display = 'inline';
+        };
+      } else {
+        exampleCard.style.display = 'none';
+      }
+
+      // s0-04 デモ表示制御（参照をコピーする感覚）
+      const s004DemoCard = document.getElementById('s004-demo-card');
+      if (s004DemoCard) {
+        if (lessonId === 's0-04') {
+          s004DemoCard.style.display = 'block';
+          initS004Demo();
+        } else {
+          s004DemoCard.style.display = 'none';
+        }
+      }
+
+      // シート描画
+      const lessonSheet = lesson.sheet || '売上';
+      const sheetArea = document.getElementById('lesson-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(lesson.targetCell || null, null, lessonSheet);
+
+      const titleBar = document.getElementById('lesson-sheet-title-bar');
+      if (titleBar) {
+        const sheetTitles = {
+          '売上': '📊 練習シート「売上」（まるもちのスタンプ売上）',
+          '顧客': '👥 練習シート「顧客」（名前・地域・メール・顧客ID）',
+          '商品': '📦 練習シート「商品」（商品ID・商品名・カテゴリ・価格）',
+          '注文': '🛒 練習シート「注文」（注文ID・顧客ID・商品ID・個数・日付）'
+        };
+        titleBar.textContent = sheetTitles[lessonSheet] || `📊 練習シート「${lessonSheet}」`;
+      }
+
+      // UI切り替え (選択肢 vs 数式入力)
+      const choiceUi = document.getElementById('lesson-choice-ui');
+      const formulaUi = document.getElementById('lesson-formula-ui');
+      const feedbackBox = document.getElementById('lesson-feedback-box');
+      const solvedModal = document.getElementById('lesson-solved-modal');
+
+      feedbackBox.style.display = 'none';
+      solvedModal.style.display = 'none';
+
+      if (lesson.type === 'choice') {
+        choiceUi.style.display = 'block';
+        formulaUi.style.display = 'none';
+        renderChoices(lesson);
+      } else {
+        choiceUi.style.display = 'none';
+        formulaUi.style.display = 'block';
+
+        const inputEl = document.getElementById('lesson-formula-input');
+        inputEl.value = lesson.defaultFormula || '=';
+        // レッスン開始時は解説とタイトルを先頭で読めるよう、入力欄への自動フォーカスは行わない
+      }
+
+      // ヒントのリセット
+      renderHints(lesson);
+
+      // まるもちの案内
+      setMarumochi(`「${lesson.title}」へようこそ！解説を読んだら問題にチャレンジしてみてね！🍡`, 'normal');
+
+      // 画面切り替え & レッスン画面最上部へスクロール
+      switchView('lesson');
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+
+    // 選択肢問題のレンダリング (プロローグ)
+    function renderChoices(lesson) {
+      const container = document.getElementById('choices-container-list');
+      container.innerHTML = '';
+
+      lesson.choices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = `
+          <span class="choice-indicator">${String.fromCharCode(65 + idx)}</span>
+          <span>${choice.text}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          // すべてのボタンのスタイルを更新
+          const allBtns = container.querySelectorAll('.choice-btn');
+          allBtns.forEach(b => b.classList.remove('correct', 'incorrect'));
+
+          if (choice.correct) {
+            btn.classList.add('correct');
+            showFeedback('success', '🎉 大正解！', choice.feedback);
+            setMarumochi('大正解！すばらしい！よく見て選べたね！🍡🎉', 'happy');
+            triggerConfetti();
+            markLessonCompleted(lesson.id);
+            showSolvedCard(lesson);
+          } else {
+            btn.classList.add('incorrect');
+            showFeedback('error', 'おしい！もう一度考えてみよう', choice.feedback);
+            setMarumochi('うーん、おしい！もう1つの選択肢もよく読んでみてね！🍡', 'thinking');
+          }
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    // ヒントアコーディオンのレンダリング
+    function renderHints(lesson) {
+      const hintsList = document.getElementById('hints-list-container');
+      const toggleBtn = document.getElementById('btn-toggle-hint');
+      const stepCount = document.getElementById('hint-step-count');
+
+      hintsList.innerHTML = '';
+      appState.hintLevel = 0;
+      stepCount.textContent = '1';
+      toggleBtn.style.display = (lesson.hints && lesson.hints.length > 0) ? 'inline-flex' : 'none';
+
+      toggleBtn.onclick = () => {
+        if (!lesson.hints || appState.hintLevel >= lesson.hints.length) return;
+        
+        appState.hintLevel++;
+        const hintText = lesson.hints[appState.hintLevel - 1];
+
+        const bubble = document.createElement('div');
+        bubble.className = 'hint-bubble';
+        bubble.innerHTML = `
+          <div class="hint-step-tag">💡 ヒント ${appState.hintLevel}</div>
+          <div>${hintText}</div>
+        `;
+        hintsList.appendChild(bubble);
+
+        setMarumochi(`ヒント${appState.hintLevel}を出したよ！参考にしてみてね。🍡`, 'thinking');
+
+        if (appState.hintLevel < lesson.hints.length) {
+          stepCount.textContent = (appState.hintLevel + 1);
+        } else {
+          toggleBtn.style.display = 'none';
+        }
+      };
+    }
+
+    // フィードバック表示ヘルパー
+    function showFeedback(type, title, message) {
+      const box = document.getElementById('lesson-feedback-box');
+      const titleEl = document.getElementById('feedback-header-title');
+      const descEl = document.getElementById('feedback-desc-text');
+
+      box.className = `feedback-box ${type}`;
+      titleEl.innerHTML = title;
+      descEl.innerHTML = message;
+      box.style.display = 'block';
+    }
+
+    // 正解カードの表示
+    function showSolvedCard(lesson) {
+      const modal = document.getElementById('lesson-solved-modal');
+      const modelBox = document.getElementById('solved-model-formula');
+      const noteBox = document.getElementById('solved-after-note');
+
+      if (lesson.modelFormula) {
+        modelBox.textContent = lesson.modelFormula;
+        modelBox.style.display = 'block';
+      } else {
+        modelBox.style.display = 'none';
+      }
+
+      noteBox.innerHTML = lesson.afterNote || 'このレッスンのポイントをしっかり身につけたね！';
+      modal.style.display = 'block';
+
+      // 次のレッスンへ進むボタン
+      document.getElementById('btn-next-lesson-action').onclick = () => {
+        const curIdx = LESSONS.findIndex(l => l.id === lesson.id);
+        if (curIdx >= 0 && curIdx < LESSONS.length - 1) {
+          openLesson(LESSONS[curIdx + 1].id);
+        } else {
+          switchView('home');
+        }
+      };
+    }
+
+    // レッスン完了マーク
+    function markLessonCompleted(lessonId) {
+      if (!appState.completedLessons.includes(lessonId)) {
+        appState.completedLessons.push(lessonId);
+        saveProgress();
+      }
+
+      // レッスン完了後、ステージクリア / 全レッスンクリアを判定してお祝い表示
+      const lesson = LESSONS.find(l => l.id === lessonId);
+      const stageId = lesson ? lesson.stageId : null;
+      setTimeout(() => {
+        checkAndTriggerCelebration(stageId);
+      }, 450);
+    }
+
+    /* ====================================================
+       CLEAR CELEBRATION MODAL FUNCTIONS
+       ==================================================== */
+    // ステージ全クリア判定（動的数え上げ）
+    function isStageFullyCompleted(stageId) {
+      const stageLessons = LESSONS.filter(l => l.stageId === stageId);
+      if (stageLessons.length === 0) return false;
+      return stageLessons.every(l => appState.completedLessons.includes(l.id));
+    }
+
+    // 実装済み全レッスンクリア判定（動的数え上げ）
+    function isAllImplementedLessonsCompleted() {
+      if (LESSONS.length === 0) return false;
+      return LESSONS.every(l => appState.completedLessons.includes(l.id));
+    }
+
+    // ステージクリア／全レッスンクリア判定とお祝い表示トリガー
+    function checkAndTriggerCelebration(triggerStageId = null) {
+      // 1. 実装済み全レッスンクリア判定（動的総数）
+      if (isAllImplementedLessonsCompleted() && !appState.celebratedStages.includes('all_clear')) {
+        appState.celebratedStages.push('all_clear');
+        saveProgress();
+        triggerConfetti();
+        showAllLessonsClearModal();
+        return;
+      }
+
+      // 2. 個別ステージクリア判定
+      const stagesToCheck = triggerStageId
+        ? STAGES.filter(s => s.id === triggerStageId && !s.locked)
+        : STAGES.filter(s => !s.locked);
+
+      for (const stage of stagesToCheck) {
+        if (isStageFullyCompleted(stage.id) && !appState.celebratedStages.includes(stage.id)) {
+          appState.celebratedStages.push(stage.id);
+          saveProgress();
+          triggerConfetti();
+          showStageClearModal(stage);
+          break;
+        }
+      }
+    }
+
+    // 起動時のお祝いチェック（未表示のクリア済みステージがあれば1回だけ表示）
+    function checkStartupCelebration() {
+      // 既に全クリアしていて未祝なら全クリアモーダル
+      if (isAllImplementedLessonsCompleted() && !appState.celebratedStages.includes('all_clear')) {
+        appState.celebratedStages.push('all_clear');
+        saveProgress();
+        triggerConfetti();
+        showAllLessonsClearModal();
+        return;
+      }
+
+      // 未表示のステージクリアがあれば最初の1件を表示
+      const unlockedStages = STAGES.filter(s => !s.locked);
+      for (const stage of unlockedStages) {
+        if (isStageFullyCompleted(stage.id) && !appState.celebratedStages.includes(stage.id)) {
+          appState.celebratedStages.push(stage.id);
+          saveProgress();
+          triggerConfetti();
+          showStageClearModal(stage);
+          break;
+        }
+      }
+    }
+
+    // ステージクリアモーダル表示
+    function showStageClearModal(stage) {
+      const modal = document.getElementById('stage-clear-modal');
+      const card = document.getElementById('modal-card-container');
+      const badgeEl = document.getElementById('modal-clear-badge');
+      const titleEl = document.getElementById('modal-stage-title');
+      const statsEl = document.getElementById('modal-stage-stats');
+      const msgEl = document.getElementById('modal-stage-message');
+      if (!modal) return;
+
+      if (card) card.classList.remove('all-cleared');
+
+      const totalLessons = LESSONS.length;
+      const completedCount = appState.completedLessons.length;
+
+      // タイトルの出し分け（プロローグの場合は「プロローグ クリア！」、それ以外は「Stage ○ クリア！」）
+      let stageTitle = '';
+      if (stage.id === 'stage-prologue') {
+        stageTitle = '🎉 プロローグ クリア！';
+      } else {
+        const stageNumLabel = stage.num !== undefined ? `Stage ${stage.num}` : stage.title.split('：')[0];
+        stageTitle = `🎉 ${stageNumLabel} クリア！`;
+      }
+
+      // まるもちのお祝いコメント
+      let mochiMsg = 'お見事！このステージをぜんぶクリアしたよ！素晴らしい集中力だね！';
+      if (stage.id === 'stage-prologue') {
+        mochiMsg = 'お見事！プロローグをぜんぶクリアしたよ！Excelの基本がしっかり掴めたね！';
+      } else if (stage.id === 'stage-0') {
+        mochiMsg = 'Stage 0 制覇！四則演算もセル参照もバッチリ身について、数式の基礎が完成したよ！';
+      } else if (stage.id === 'stage-1') {
+        mochiMsg = 'Stage 1 制覇！SUMやAVERAGEなど、実務で最頻出の集計関数をマスターしたね！';
+      } else if (stage.id === 'stage-2') {
+        mochiMsg = 'Stage 2 制覇！IF・IFSやCOUNTIF・SUMIFなど、条件に応じた計算を完全マスターしたね！';
+      } else if (stage.id === 'stage-3') {
+        mochiMsg = 'Stage 3 制覇！VLOOKUPやXLOOKUP、INDEX+MATCHまで表の検索と名寄せを完全マスターしたね！';
+      } else if (stage.id === 'stage-4') {
+        mochiMsg = 'Stage 4 制覇！文字列の操作や日付の計算までExcelの実務スキルを完全マスターしたね！';
+      } else if (stage.id === 'stage-5') {
+        mochiMsg = 'Stage 5 制覇！複数条件の集計やSUMPRODUCT、重複チェックまで高度な実務ワザを完全マスターしたね！';
+      } else if (stage.id === 'stage-6') {
+        mochiMsg = 'Stage 6 卒業編クリア！仕様書から自分で数式を組み立てる実務力を完全に証明したね！';
+      }
+
+      if (badgeEl) badgeEl.textContent = '🎉 STAGE CLEAR!';
+      if (titleEl) titleEl.textContent = stageTitle;
+      if (statsEl) statsEl.textContent = `全${totalLessons}レッスン中 ${completedCount}レッスン クリア`;
+      if (msgEl) msgEl.innerHTML = `<strong>まるもち：</strong>「${mochiMsg}」`;
+
+      modal.style.display = 'flex';
+    }
+
+    // 全レッスンクリアモーダル表示
+    function showAllLessonsClearModal() {
+      const modal = document.getElementById('stage-clear-modal');
+      const card = document.getElementById('modal-card-container');
+      const badgeEl = document.getElementById('modal-clear-badge');
+      const titleEl = document.getElementById('modal-stage-title');
+      const statsEl = document.getElementById('modal-stage-stats');
+      const msgEl = document.getElementById('modal-stage-message');
+      if (!modal) return;
+
+      if (card) card.classList.add('all-cleared');
+
+      const totalLessons = LESSONS.length;
+
+      if (badgeEl) badgeEl.textContent = '🎊 ALL LESSONS CLEAR!';
+      if (titleEl) titleEl.textContent = '🎉 全レッスンクリア！';
+      if (statsEl) statsEl.textContent = `全${totalLessons} / ${totalLessons} レッスン完全制覇！`;
+      if (msgEl) {
+        msgEl.innerHTML = `<strong>まるもち：</strong>「ゼロから始めて、Excelの数式を書ける基礎がバッチリ身についたね！本当にお疲れさまでした！いつでも復習や自由練習に使ってね！🍡」`;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    // モーダルを閉じる
+    function closeCelebrationModal() {
+      const modal = document.getElementById('stage-clear-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // 数式判定ロジック (Stage 0, 1, 2, p-05)
+    function checkFormulaAnswer() {
+      const lesson = LESSONS.find(l => l.id === appState.currentLessonId);
+      if (!lesson) return;
+
+      const input = document.getElementById('lesson-formula-input');
+      const formula = input.value.trim();
+
+      const lessonSheet = lesson.sheet || '売上';
+      // ターゲットセルの取得
+      const targetCol = lesson.targetCell ? lesson.targetCell.col : 3;
+      const targetRow = lesson.targetCell ? lesson.targetCell.row : 6;
+
+      // HyperFormulaで計算
+      const result = runHyperFormula(formula, targetCol, targetRow, lessonSheet);
+
+      // 計算結果をシートに反映して再描画
+      const sheetArea = document.getElementById('lesson-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(
+        lesson.targetCell || null,
+        result.success ? result.value : 'エラー',
+        lessonSheet
+      );
+
+      // エラー時のハンドリング
+      if (!result.success) {
+        setMarumochi('おっと！エラーが出ちゃったよ。メッセージを読んでみてね！🍡', 'sad');
+        showFeedback('error', `⚠️ ${result.errorInfo.code} ${result.errorInfo.title}`, result.errorInfo.desc);
+        return;
+      }
+
+      // プロローグ p-05 のような体験レッスンの場合（計算が成功すればOK）
+      if (lesson.allowAnyValidCalculation) {
+        showFeedback('success', '🎉 計算成功！', `計算結果は <strong>${result.value}</strong> だよ！バッチリ計算できたね！`);
+        setMarumochi('やったね！一瞬で計算結果が出たね！これがExcelの気持ちよさだよ！🍡🎉', 'happy');
+        triggerConfetti();
+        markLessonCompleted(lesson.id);
+        showSolvedCard(lesson);
+        return;
+      }
+
+      // 期待値比較
+      const expected = lesson.expectedValue;
+      let isCorrect = false;
+
+      if (typeof expected === 'number') {
+        const numVal = Number(result.value);
+        if (!isNaN(numVal) && Math.abs(numVal - expected) < 0.01) {
+          isCorrect = true;
+        }
+      } else if (typeof expected === 'boolean') {
+        if (typeof result.value === 'boolean') {
+          isCorrect = (result.value === expected);
+        } else {
+          isCorrect = (String(result.value).trim().toUpperCase() === (expected ? 'TRUE' : 'FALSE'));
+        }
+      } else {
+        isCorrect = (String(result.value).trim() === String(expected).trim());
+      }
+
+      let displayResultVal = result.value;
+      if (typeof displayResultVal === 'boolean') {
+        displayResultVal = displayResultVal ? 'TRUE' : 'FALSE';
+      }
+      let displayExpectedVal = expected;
+      if (typeof displayExpectedVal === 'boolean') {
+        displayExpectedVal = displayExpectedVal ? 'TRUE' : 'FALSE';
+      }
+
+      if (isCorrect) {
+        showFeedback('success', '🎉 大正解！', `計算結果は見事に <strong>${displayResultVal}</strong>！目標値とピッタリ一致したよ！`);
+        setMarumochi('大正解！すばらしい！数式が完璧に機能したね！🍡🎉', 'happy');
+        triggerConfetti();
+        markLessonCompleted(lesson.id);
+        showSolvedCard(lesson);
+      } else {
+        setMarumochi('計算はできたけど、目標の数値と違うみたい。もう一度確認してみよう！🍡', 'thinking');
+        showFeedback(
+          'info',
+          'おしい！計算結果が目標と違うよ',
+          `今回の計算結果は <strong>${displayResultVal}</strong> だったよ。（目標の答えは <strong>${displayExpectedVal}</strong>）<br>参照するセルの番号や条件の指定を見直してみてね！`
+        );
+      }
+    }
+
+    let currentPlaygroundSheet = '売上';
+
+    // 自由練習モードのシート切り替え
+    function switchPlaygroundSheet(sheetName) {
+      currentPlaygroundSheet = sheetName;
+
+      document.querySelectorAll('.btn-sheet-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-sheet') === sheetName);
+      });
+
+      const titleBar = document.getElementById('playground-sheet-title-bar');
+      if (titleBar) {
+        const sheetTitles = {
+          '売上': '📊 練習シート「売上」（日付・スタンプ名・個数・金額）',
+          '顧客': '👥 練習シート「顧客」（名前・地域・メール・顧客ID）',
+          '商品': '📦 練習シート「商品」（商品ID・商品名・カテゴリ・価格）',
+          '注文': '🛒 練習シート「注文」（注文ID・顧客ID・商品ID・個数・日付）'
+        };
+        titleBar.textContent = sheetTitles[sheetName] || `📊 練習シート「${sheetName}」`;
+      }
+
+      const sheetArea = document.getElementById('playground-sheet-render-area');
+      if (sheetArea) {
+        sheetArea.innerHTML = renderSpreadsheet(null, null, sheetName);
+      }
+    }
+
+    // 自由練習モードの初期化
+    function initPlayground() {
+      switchPlaygroundSheet(currentPlaygroundSheet || '売上');
+
+      setMarumochi('自由練習モードへようこそ！全4シート（売上・顧客・商品・注文）を使って、どんな数式でも試してみてね！🍡', 'normal');
+
+      // タブ切り替えボタン
+      document.querySelectorAll('.btn-sheet-tab').forEach(btn => {
+        btn.onclick = () => {
+          const s = btn.getAttribute('data-sheet');
+          if (s) switchPlaygroundSheet(s);
+        };
+      });
+
+      // サンプルボタン
+      document.querySelectorAll('.btn-sample').forEach(btn => {
+        btn.onclick = () => {
+          const sample = btn.getAttribute('data-sample');
+          const sampleSheet = btn.getAttribute('data-sheet');
+          if (sampleSheet && sampleSheet !== currentPlaygroundSheet) {
+            switchPlaygroundSheet(sampleSheet);
+          }
+          document.getElementById('playground-formula-input').value = sample;
+          runPlaygroundFormula();
+        };
+      });
+    }
+
+    // 自由練習モードでの数式実行
+    function runPlaygroundFormula() {
+      const input = document.getElementById('playground-formula-input');
+      const formula = input.value.trim();
+      const sheet = currentPlaygroundSheet || '売上';
+
+      // ターゲットセルの設定（売上: D7, 顧客: B8, 商品: E5, 注文: F9）
+      let targetCol = 3;
+      let targetRow = 6;
+      let targetLabel = 'D7';
+      if (sheet === '顧客') {
+        targetCol = 1; targetRow = 7; targetLabel = 'B8';
+      } else if (sheet === '商品') {
+        targetCol = 4; targetRow = 4; targetLabel = 'E5';
+      } else if (sheet === '注文') {
+        targetCol = 5; targetRow = 8; targetLabel = 'F9';
+      }
+
+      const result = runHyperFormula(formula, targetCol, targetRow, sheet);
+
+      const resultBox = document.getElementById('playground-result-display');
+      const resultText = document.getElementById('playground-result-text');
+      const feedbackBox = document.getElementById('playground-feedback-box');
+      const feedbackTitle = document.getElementById('playground-feedback-title');
+      const feedbackDesc = document.getElementById('playground-feedback-desc');
+
+      let displayRes = result.success ? result.value : 'エラー';
+      if (typeof displayRes === 'boolean') {
+        displayRes = displayRes ? 'TRUE' : 'FALSE';
+      }
+
+      // シートを反映
+      const sheetArea = document.getElementById('playground-sheet-render-area');
+      sheetArea.innerHTML = renderSpreadsheet(
+        { col: targetCol, row: targetRow, label: targetLabel },
+        displayRes,
+        sheet
+      );
+
+      if (result.success) {
+        resultBox.style.display = 'flex';
+        resultText.textContent = displayRes;
+        feedbackBox.style.display = 'none';
+        setMarumochi(`計算できたよ！結果は「${displayRes}」だよ！🍡`, 'happy');
+      } else {
+        resultBox.style.display = 'none';
+        feedbackBox.className = 'feedback-box error';
+        feedbackTitle.innerHTML = `⚠️ ${result.errorInfo.code} ${result.errorInfo.title}`;
+        feedbackDesc.innerHTML = result.errorInfo.desc;
+        feedbackBox.style.display = 'block';
+        setMarumochi('エラーが出たよ。数式のつづりやイコール「=」を確認してみてね！🍡', 'sad');
+      }
+    }
+
+    // 入力補助ボタンのセットアップ
+    function setupFunctionChips() {
+      // 記号ボタン（カーソル位置に文字を挿入: SQL版と同じ方式）
+      document.querySelectorAll('[data-insert]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const char = btn.getAttribute('data-insert');
+          const isPlayground = (appState.currentView === 'playground');
+          const input = isPlayground
+            ? document.getElementById('playground-formula-input')
+            : document.getElementById('lesson-formula-input');
+
+          if (!input) return;
+
+          const start = (input.selectionStart !== null && input.selectionStart !== undefined) ? input.selectionStart : input.value.length;
+          const end = (input.selectionEnd !== null && input.selectionEnd !== undefined) ? input.selectionEnd : input.value.length;
+          const val = input.value;
+
+          input.value = val.substring(0, start) + char + val.substring(end);
+          input.focus();
+          input.selectionStart = input.selectionEnd = start + char.length;
+        });
+      });
+
+      // 関数ボタン（カーソル位置に関数を挿入）
+      document.querySelectorAll('.fn-chip[data-fn]').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          e.preventDefault();
+          const fnName = chip.getAttribute('data-fn');
+          const isPlayground = (appState.currentView === 'playground');
+          const input = isPlayground
+            ? document.getElementById('playground-formula-input')
+            : document.getElementById('lesson-formula-input');
+
+          if (!input) return;
+
+          let val = input.value;
+          if (!val || val === '=') {
+            input.value = `=${fnName}()`;
+            input.focus();
+            input.setSelectionRange(fnName.length + 2, fnName.length + 2);
+          } else {
+            // カーソル位置に挿入
+            const start = (input.selectionStart !== null && input.selectionStart !== undefined) ? input.selectionStart : val.length;
+            const end = (input.selectionEnd !== null && input.selectionEnd !== undefined) ? input.selectionEnd : val.length;
+            const textToInsert = `${fnName}()`;
+            input.value = val.substring(0, start) + textToInsert + val.substring(end);
+            input.focus();
+            input.setSelectionRange(start + fnName.length + 1, start + fnName.length + 1);
+          }
+        });
+      });
+    }
+
+    // 画面切り替え
+    function switchView(viewName) {
+      appState.currentView = viewName;
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) target.classList.add('active');
+
+      // ナビゲーションボタンのアクティブ状態
+      document.getElementById('nav-btn-home').classList.toggle('active', viewName === 'home');
+      document.getElementById('nav-btn-playground').classList.toggle('active', viewName === 'playground');
+
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      if (viewName === 'home') {
+        renderHomeView();
+      } else if (viewName === 'playground') {
+        initPlayground();
+      }
+    }
+
+    /* ====================================================
+       5. CONFETTI ANIMATION (Celebration)
+       ==================================================== */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#107C41', '#0B5C2E', '#E6F4EA', '#34a853', '#81c784', '#ffd54f'];
+
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: canvas.width * 0.5,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.8) * 14,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let activeCount = 0;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // 重力
+          p.rotation += p.vRot;
+          p.opacity -= 0.015;
+
+          if (p.opacity > 0) {
+            activeCount++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        frames++;
+        if (activeCount > 0 && frames < 120) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    /* ====================================================
+       6. INITIALIZATION & EVENT LISTENERS
+       ==================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadProgress();
+      setupFunctionChips();
+
+      // ナビゲーションイベント
+      document.getElementById('brand-home-btn').onclick = () => switchView('home');
+      document.getElementById('nav-btn-home').onclick = () => switchView('home');
+      document.getElementById('nav-btn-playground').onclick = () => switchView('playground');
+      document.getElementById('btn-lesson-back').onclick = () => switchView('home');
+
+      // 数式実行ボタン
+      document.getElementById('btn-run-formula').onclick = checkFormulaAnswer;
+      document.getElementById('lesson-formula-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          checkFormulaAnswer();
+        }
+      });
+
+      // 自由練習ボタン
+      document.getElementById('btn-run-playground').onclick = runPlaygroundFormula;
+      document.getElementById('playground-formula-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          runPlaygroundFormula();
+        }
+      });
+
+      // 進捗リセット
+      document.getElementById('btn-reset-progress').onclick = () => {
+        if (confirm('これまでの学習進捗をすべてリセットしますか？')) {
+          appState.completedLessons = [];
+          appState.celebratedStages = [];
+          saveProgress();
+          renderHomeView();
+        }
+      };
+
+      // クリアお祝いモーダルイベント
+      const clearModal = document.getElementById('stage-clear-modal');
+      if (clearModal) {
+        clearModal.addEventListener('click', (e) => {
+          if (e.target === clearModal) closeCelebrationModal();
+        });
+      }
+      const btnModalHome = document.getElementById('btn-modal-home');
+      if (btnModalHome) {
+        btnModalHome.onclick = () => {
+          closeCelebrationModal();
+          switchView('home');
+        };
+      }
+      const btnModalClose = document.getElementById('btn-modal-close');
+      if (btnModalClose) {
+        btnModalClose.onclick = () => {
+          closeCelebrationModal();
+        };
+      }
+
+      // 初期ビュー
+      renderHomeView();
+
+      // 起動時：過去にクリア済みだが未表示のステージお祝いがあれば1回だけ表示
+      setTimeout(() => {
+        checkStartupCelebration();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
